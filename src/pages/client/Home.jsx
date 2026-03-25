@@ -1,8 +1,22 @@
 import { Link } from 'react-router-dom'
-import { barbers, services, upcomingAppointments } from '../../data/mockData'
+import { useState, useEffect } from 'react'
+import { upcomingAppointments } from '../../data/mockData'
+import { getBarbers, getServices } from '../../services/api'
 
 export default function Home() {
   const nextAppt = upcomingAppointments[0]
+  const [barbers, setBarbers] = useState([])
+  const [services, setServices] = useState([])
+  
+  useEffect(() => {
+    async function loadData() {
+      const bData = await getBarbers()
+      const sData = await getServices()
+      if(bData.length > 0) setBarbers(bData)
+      if(sData.length > 0) setServices(sData)
+    }
+    loadData()
+  }, [])
 
   return (
     <div className="px-6 max-w-2xl mx-auto space-y-10 py-6">

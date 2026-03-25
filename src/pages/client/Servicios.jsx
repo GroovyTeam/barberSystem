@@ -1,12 +1,17 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { services } from '../../data/mockData'
+import { getServices } from '../../services/api'
 
-const categories = ['Todos', 'Corte', 'Barba', 'Combo']
+const categories = ['Todos', 'Hair', 'Beard'] // Updated to match Prisma enums
 
 export default function Servicios() {
   const [activeCategory, setActiveCategory] = useState('Todos')
   const [expanded, setExpanded] = useState(null)
+  const [services, setServices] = useState([])
+
+  useEffect(() => {
+    getServices().then(setServices)
+  }, [])
 
   const filtered = services.filter(s =>
     activeCategory === 'Todos' ? true : s.category === activeCategory
@@ -34,13 +39,14 @@ export default function Servicios() {
                 : 'bg-surface-container text-outline hover:text-on-surface'
             }`}
           >
-            {cat}
+            {cat === 'Hair' ? 'Corte' : cat === 'Beard' ? 'Barba' : cat}
           </button>
         ))}
       </div>
 
-      {/* Service Drawer List */}
-      <div className="space-y-3">
+        {/* Service Drawer List */}
+        <div className="space-y-3">
+          {services.length === 0 && <p className="text-outline text-center py-8">Cargando servicios...</p>}
         {filtered.map(service => (
           <div key={service.id} className="overflow-hidden">
             {/* Closed State */}

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { pastAppointments } from '../../data/mockData'
-import { updateUserProfile } from '../../../services/api' // Simulando conexión API
+import { updateUserProfile } from '../../services/api' // Simulando conexión API
 
 export default function Perfil() {
   const [isEditing, setIsEditing] = useState(false)
