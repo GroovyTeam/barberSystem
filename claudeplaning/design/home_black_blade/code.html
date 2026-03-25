@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-container": "#67655f",
+              "inverse-surface": "#e5e2e1",
+              "tertiary-fixed": "#e7e2da",
+              "on-surface": "#e5e2e1",
+              "on-error-container": "#ffdad6",
+              "secondary-container": "#5c4214",
+              "outline-variant": "#51443a",
+              "outline": "#9e8e82",
+              "on-secondary": "#432c01",
+              "on-primary-fixed": "#2e1500",
+              "tertiary": "#cac6be",
+              "surface-variant": "#353534",
+              "on-surface-variant": "#d5c3b6",
+              "secondary": "#e7c187",
+              "on-tertiary-fixed": "#1d1c17",
+              "on-secondary-fixed": "#281900",
+              "secondary-fixed": "#ffdeae",
+              "on-primary-fixed-variant": "#683d0f",
+              "inverse-on-surface": "#313030",
+              "surface-container-high": "#2a2a2a",
+              "surface-tint": "#f9ba82",
+              "surface": "#131313",
+              "background": "#131313",
+              "on-tertiary": "#32302b",
+              "error": "#ffb4ab",
+              "surface-container-low": "#1c1b1b",
+              "primary": "#f9ba82",
+              "primary-fixed-dim": "#f9ba82",
+              "on-primary-container": "#ffddc2",
+              "on-error": "#690005",
+              "on-secondary-fixed-variant": "#5c4214",
+              "surface-container-highest": "#353534",
+              "surface-dim": "#131313",
+              "surface-bright": "#3a3939",
+              "on-tertiary-fixed-variant": "#494741",
+              "on-secondary-container": "#d4af77",
+              "surface-container-lowest": "#0e0e0e",
+              "inverse-primary": "#835425",
+              "on-tertiary-container": "#e7e3db",
+              "tertiary-fixed-dim": "#cac6be",
+              "surface-container": "#201f1f",
+              "on-background": "#e5e2e1",
+              "on-primary": "#4c2700",
+              "primary-container": "#8b5a2b",
+              "primary-fixed": "#ffdcc1",
+              "error-container": "#93000a",
+              "secondary-fixed-dim": "#e7c187"
+            },
+            fontFamily: {
+              "headline": ["Epilogue"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary/30">
+<!-- TopAppBar -->
+<header class="bg-[#131313] dark:bg-[#131313] docked full-width top-0 z-50 fixed w-full">
+<div class="flex justify-between items-center w-full px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/30">
+<img alt="Profile" data-alt="close-up portrait of a stylish man with a well-groomed beard in a dimly lit, high-end environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOMYYVP7kzazB1RITWeH8CRhaMML8Wze5-i_YYnf8MBx1HWtk5jYM0YGl-K-fK94zkeegvmjoV-Y8eQQMZ6AHZdaZJB_QIhkrH4aU6LziIoAAIlI8l2CXYONHRJWBZrhigQp6-uPKUr4rbIoqHUOvgpzvylDXhahbiJ6i612pWlL_mzzEnKrpQMlqU7yr3jnZq__pKOvumed4to1Bn45j-1ID8OOMW9qVjhwOvQbCmjDjdbcEojCnpXJwS1cB_2BCKPd4PzQE1Jxdn"/>
+</div>
+<h1 class="font-epilogue font-bold tracking-tight text-xl text-[#E5E2E1]">Black &amp; Blade</h1>
+</div>
+<div class="text-[#F9BA82]">
+<span class="material-symbols-outlined text-2xl">notifications</span>
+</div>
+</div>
+<div class="bg-[#1C1B1B] h-px w-full"></div>
+</header>
+<main class="pt-24 pb-32 px-6 max-w-2xl mx-auto space-y-10">
+<!-- Next Appointment Card -->
+<section>
+<div class="bg-surface-container rounded-xl p-5 relative overflow-hidden group">
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-8xl text-secondary opacity-5 pointer-events-none">event_available</span>
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="text-secondary font-headline text-xs font-semibold tracking-widest uppercase mb-1">Próxima Cita</p>
+<h3 class="text-on-surface font-headline text-lg font-bold">Corte Clásico</h3>
+</div>
+<div class="bg-primary-container/20 px-3 py-1 rounded-full">
+<span class="text-primary text-xs font-bold">Mañana</span>
+</div>
+</div>
+<div class="flex items-center gap-4 text-on-surface-variant text-sm">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-base">schedule</span>
+<span>10:30 AM</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-base">person</span>
+<span>Marco</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Hero Carousel Section -->
+<section class="relative">
+<div class="relative h-[220px] rounded-xl overflow-hidden bg-surface-container-lowest">
+<img class="absolute inset-0 w-full h-full object-cover opacity-60" data-alt="close-up of polished dark walnut wood grain texture with warm golden lighting and depth of field" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjkIz57vOemDfMglWGzdIpXAKgCTfqG3lZS3uHKbUJ0EFu7NfSar7iW3kAnKwS1LfrRMy3fvp1kWYI24NF6uiecK6m2HQC3ZlfJB9E_SMg8yA8oj_ZJikuXv2KPve6__J7G9CaU95BSimMqyHcQ9OP1dfftwxK7mY55t55J713lJt7OLZuLh1TjZn84ryxwrpGWDdlT8RJsaqu8RmvwHmEL7oR-EnfeZZlhZK-78p6SiZ47gI048UB6ne2_n_6GQaNxvo67qyqX0lK"/>
+<div class="absolute inset-0 bg-gradient-to-r from-surface-container-lowest via-transparent to-transparent"></div>
+<div class="relative h-full flex flex-col justify-center px-8">
+<span class="text-secondary font-headline text-xs font-bold tracking-[0.2em] uppercase mb-2">Promoción Exclusiva</span>
+<h2 class="text-3xl font-headline font-extrabold text-on-surface leading-tight mb-4 max-w-[200px]">Corte &amp; Barba Premium</h2>
+<div class="flex items-center gap-4">
+<span class="text-primary font-headline text-2xl font-black">15% Off</span>
+<button class="bg-primary-container hover:bg-primary text-on-primary-container px-5 py-2 rounded-md font-headline font-semibold text-sm transition-colors active:scale-95 duration-200 shadow-lg shadow-primary-container/20">
+                            Reservar
+                        </button>
+</div>
+</div>
+</div>
+<!-- Carousel Dots -->
+<div class="flex justify-center gap-2 mt-4">
+<div class="w-8 h-1 rounded-full bg-primary"></div>
+<div class="w-2 h-1 rounded-full bg-outline-variant"></div>
+<div class="w-2 h-1 rounded-full bg-outline-variant"></div>
+</div>
+</section>
+<!-- Barberos Destacados -->
+<section>
+<div class="flex justify-between items-end mb-6">
+<div>
+<h2 class="font-headline text-2xl font-bold text-on-surface tracking-tight">Barberos Destacados</h2>
+<p class="text-on-surface-variant text-sm mt-1">Nuestros maestros artesanos</p>
+</div>
+<button class="text-secondary text-sm font-semibold hover:underline decoration-secondary/30 transition-all">Ver todos</button>
+</div>
+<div class="flex gap-5 overflow-x-auto no-scrollbar pb-4 -mx-6 px-6">
+<!-- Barber Card 1 -->
+<div class="min-w-[160px] bg-surface-container rounded-xl overflow-hidden group">
+<div class="aspect-[3/4] overflow-hidden">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-100" data-alt="professional barber with tattoos and stylish haircut in a vintage barbershop setting, moody lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPrWEUKHpHxLTfZa2UyYVUQvjae2AbpyDhCQIDQ_4sC0bTv9rubGtXYgZrAHcuKmWLcMzzdw-6IZhEJ-GEuSYQrGQahTaMKgaW2nhRGX2YE-FYiYTPB3jwbmNF50M_4ibP2-3XL1eZ3A486stj-LXp4eRdlD-01YqB__37s4O0wnrL9urFrtUc4JUTCQqtmYPKS4UDB_XOYUFEw0K4A7yQjWaqCw6fjDvtqAmrg5rYCGGTPPjcxxoykj7AL8UfQ8hXQeQfvbngxVrY"/>
+</div>
+<div class="p-4">
+<h4 class="font-headline font-bold text-on-surface">Marco</h4>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-widest mt-1">Navaja Maestra</p>
+<div class="flex items-center gap-1 mt-3">
+<span class="material-symbols-outlined text-secondary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold text-on-surface">4.9</span>
+</div>
+</div>
+</div>
+<!-- Barber Card 2 -->
+<div class="min-w-[160px] bg-surface-container rounded-xl overflow-hidden group">
+<div class="aspect-[3/4] overflow-hidden">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-100" data-alt="smiling male barber with short hair and clean shave, wearing a leather apron in a modern rustic shop" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdyumwkPT5xjx1DRFKJ6tMnYtfByQn0rIHxd1cg4XyxGveskkZDLXe-yo198zJ0i7LE2JdLRO_s2k66SxpD5e9bv65q7uEkXt_I0taUXCeWuOh0lSgCZvO6DnYE8x9FdIMCkw5V5BDq3vvrVGseMqxTW_36qXwX0W42LnlESxoAZgVDNv0pQlScCZMiKnaHdPF-TGJCR4dTmt8sn2bv5KaooRNACV0GDDPzaO-TYckVOR7sl8RmyNCBAdrh3sWWqLbz7u_LJPeXHNr"/>
+</div>
+<div class="p-4">
+<h4 class="font-headline font-bold text-on-surface">Lukas</h4>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-widest mt-1">Fade Specialist</p>
+<div class="flex items-center gap-1 mt-3">
+<span class="material-symbols-outlined text-secondary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold text-on-surface">4.8</span>
+</div>
+</div>
+</div>
+<!-- Barber Card 3 -->
+<div class="min-w-[160px] bg-surface-container rounded-xl overflow-hidden group">
+<div class="aspect-[3/4] overflow-hidden">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-100" data-alt="focused barber trimming a beard with precision scissors, warm ambient lighting, leather details" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsAKnJNuNM1obmbmSsZVpAOTqFISjEqS2PZZ-gWTUflhoXQ-d1jsKX8iKmCUUvnTUEm64OhtE-f1EJa69obGYJNSI4ayf3c9P0RDLXW1hK6wvWJSKhpA5VL4HRZehshipCVBrVJ3Pg3EBVOA_q7Su9PWDLf0Z5_crCLFEgnyZd4tlEFBgRLbswczg5wkNdGNGGz6vF_7Cg5kfxbQ5WZp8W7B-SQZEL32UZSBdNLgBBFlDDOApX3qXVNw4u29Zy0jsYKrdjPgckfnu8"/>
+</div>
+<div class="p-4">
+<h4 class="font-headline font-bold text-on-surface">Elena</h4>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-widest mt-1">Classic Stylist</p>
+<div class="flex items-center gap-1 mt-3">
+<span class="material-symbols-outlined text-secondary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold text-on-surface">5.0</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Quick Services Grid -->
+<section>
+<h2 class="font-headline text-2xl font-bold text-on-surface tracking-tight mb-6">Nuestros Servicios</h2>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-low p-6 rounded-lg flex flex-col gap-4 hover:bg-surface-container-high transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-secondary text-3xl group-hover:scale-110 transition-transform">content_cut</span>
+<div>
+<p class="font-headline font-bold text-on-surface">Corte</p>
+<p class="text-xs text-on-surface-variant mt-1">Tradicional o Moderno</p>
+</div>
+</div>
+<div class="bg-surface-container-low p-6 rounded-lg flex flex-col gap-4 hover:bg-surface-container-high transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-secondary text-3xl group-hover:scale-110 transition-transform">face</span>
+<div>
+<p class="font-headline font-bold text-on-surface">Barba</p>
+<p class="text-xs text-on-surface-variant mt-1">Perfilado a navaja</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 pb-safe bg-[#131313]/90 backdrop-blur-xl border-t border-[#353534]/20 shadow-[0_-4px_24px_rgba(249,186,130,0.06)]">
+<div class="flex justify-around items-center px-4 py-3">
+<a class="flex flex-col items-center justify-center text-[#F9BA82] scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-inter text-[10px] font-medium uppercase tracking-widest mt-1">Inicio</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9E8E82] opacity-60 hover:opacity-100 transition-opacity active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined text-2xl">content_cut</span>
+<span class="font-inter text-[10px] font-medium uppercase tracking-widest mt-1">Servicios</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9E8E82] opacity-60 hover:opacity-100 transition-opacity active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined text-2xl">event_note</span>
+<span class="font-inter text-[10px] font-medium uppercase tracking-widest mt-1">Mis Citas</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9E8E82] opacity-60 hover:opacity-100 transition-opacity active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined text-2xl">person</span>
+<span class="font-inter text-[10px] font-medium uppercase tracking-widest mt-1">Perfil</span>
+</a>
+</div>
+</nav>
+<!-- Contextual FAB (Only for Home/Main sections as per hierarchy) -->
+<button class="fixed bottom-24 right-6 bg-primary-container text-on-primary-container p-4 rounded-full shadow-2xl active:scale-95 transition-all duration-200 z-40 group">
+<span class="material-symbols-outlined text-2xl">add</span>
+<span class="max-w-0 overflow-hidden group-hover:max-w-xs group-hover:ml-2 transition-all duration-500 font-headline font-bold text-sm whitespace-nowrap align-middle">Agendar Cita</span>
+</button>
+</body></html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-container": "#67655f",
+              "inverse-surface": "#e5e2e1",
+              "tertiary-fixed": "#e7e2da",
+              "on-surface": "#e5e2e1",
+              "on-error-container": "#ffdad6",
+              "secondary-container": "#5c4214",
+              "outline-variant": "#51443a",
+              "outline": "#9e8e82",
+              "on-secondary": "#432c01",
+              "on-primary-fixed": "#2e1500",
+              "tertiary": "#cac6be",
+              "surface-variant": "#353534",
+              "on-surface-variant": "#d5c3b6",
+              "secondary": "#e7c187",
+              "on-tertiary-fixed": "#1d1c17",
+              "on-secondary-fixed": "#281900",
+              "secondary-fixed": "#ffdeae",
+              "on-primary-fixed-variant": "#683d0f",
+              "inverse-on-surface": "#313030",
+              "surface-container-high": "#2a2a2a",
+              "surface-tint": "#f9ba82",
+              "surface": "#131313",
+              "background": "#131313",
+              "on-tertiary": "#32302b",
+              "error": "#ffb4ab",
+              "surface-container-low": "#1c1b1b",
+              "primary": "#f9ba82",
+              "primary-fixed-dim": "#f9ba82",
+              "on-primary-container": "#ffddc2",
+              "on-error": "#690005",
+              "on-secondary-fixed-variant": "#5c4214",
+              "surface-container-highest": "#353534",
+              "surface-dim": "#131313",
+              "surface-bright": "#3a3939",
+              "on-tertiary-fixed-variant": "#494741",
+              "on-secondary-container": "#d4af77",
+              "surface-container-lowest": "#0e0e0e",
+              "inverse-primary": "#835425",
+              "on-tertiary-container": "#e7e3db",
+              "tertiary-fixed-dim": "#cac6be",
+              "surface-container": "#201f1f",
+              "on-background": "#e5e2e1",
+              "on-primary": "#4c2700",
+              "primary-container": "#8b5a2b",
+              "primary-fixed": "#ffdcc1",
+              "error-container": "#93000a",
+              "secondary-fixed-dim": "#e7c187"
+            },
+            fontFamily: {
+              "headline": ["Epilogue"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary/30">
+<!-- TopAppBar Shell -->
+<header class="bg-[#131313] docked full-width top-0 z-50 fixed w-full">
+<div class="flex justify-between items-center w-full px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-high ring-1 ring-outline-variant/30">
+<img alt="User profile photo" class="w-full h-full object-cover" data-alt="close-up portrait of a stylish man with a well-groomed beard and undercut hairstyle in a warm studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHX5qj_g449p7uhOtk1cxfjPmu9C89lMh5tRM7zv68RsbCvVnb0PjFIbN_6TT0sY03smrrrRNUtB5RFoLMWGOujy6sZIIWPTkcZdI85-o2uhBf20c-grGJTywzIQl0r_W9uMag-5PhZlqTLQj7-z10jIwrJFND5yy8nV9LJstQ9TH5sLgbGKzA1XNKvlfzKkaENP1w-EaxksXo71txf00mb-Ip9YJrr4A5LXYwLUIltUgSgfufa2-9cYtpJYjyD3cuX8ApMxIXVuus"/>
+</div>
+<span class="font-epilogue font-bold tracking-tight text-xl text-[#E5E2E1]">Black &amp; Blade</span>
+</div>
+<div class="text-[#F9BA82]">
+<span class="material-symbols-outlined text-2xl active:scale-95 duration-200 cursor-pointer">notifications</span>
+</div>
+</div>
+<div class="bg-[#1C1B1B] h-px w-full"></div>
+</header>
+<main class="pt-24 pb-32 px-6 max-w-5xl mx-auto">
+<!-- Header Section -->
+<section class="mb-12">
+<h1 class="font-headline text-4xl font-extrabold tracking-tighter text-on-surface mb-2">Mis Citas</h1>
+<p class="text-outline font-medium text-sm">Gestiona tus reservas y revisa tu historial de estilo.</p>
+</section>
+<!-- Proximas Citas Section -->
+<section class="mb-16">
+<div class="flex items-center justify-between mb-6">
+<h2 class="font-headline text-xl font-bold tracking-tight text-secondary">Próximas Citas</h2>
+<span class="text-[10px] uppercase tracking-widest text-outline-variant font-bold">1 Reserva activa</span>
+</div>
+<!-- Focused Appointment Bento-style Card -->
+<div class="relative overflow-hidden rounded-xl bg-surface-container shadow-2xl transition-all duration-300">
+<!-- Golden Accent Gradient -->
+<div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-primary to-primary-container"></div>
+<div class="p-8">
+<div class="flex flex-col md:flex-row gap-8">
+<!-- Date & Time Large -->
+<div class="flex flex-col justify-center items-start md:items-center md:border-r md:border-outline-variant/20 md:pr-10 min-w-[140px]">
+<span class="font-headline text-5xl font-extrabold text-primary leading-none">24</span>
+<span class="font-label text-xs uppercase tracking-[0.2em] text-outline mt-1">Octubre</span>
+<div class="mt-4 flex items-center gap-2 px-3 py-1 bg-surface-container-high rounded-full">
+<span class="material-symbols-outlined text-primary text-sm">schedule</span>
+<span class="font-bold text-sm text-on-surface">10:30 AM</span>
+</div>
+</div>
+<!-- Details -->
+<div class="flex-grow">
+<div class="flex items-center gap-2 text-secondary mb-1">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="text-[10px] uppercase font-bold tracking-widest">Confirmado</span>
+</div>
+<h3 class="font-headline text-2xl font-bold text-on-surface mb-4">Corte de Autor &amp; Barba</h3>
+<div class="flex items-center gap-4 mb-8">
+<div class="w-12 h-12 rounded-lg overflow-hidden bg-surface-container-highest">
+<img alt="Barber" class="w-full h-full object-cover" data-alt="professional barber with tattoos and dark vest smiling in a high-end vintage barbershop setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTMjZXmTZSTIiU_xGwD_-m4GlLBA6hCBMJ2m_pTuK7lQGjlyX5ljb_gJWUI9dLHNWcsWT5EPqvuFRZTp1EYY71yXwLwo2adaF9gGbbwH3INXcfUYoCDE0t432IgMnO2O5nfeSB33HD2Ny78JSoc5DhPERBxspsLtxBmeKt2Dbc7ElrRaqPA8JWRDn9wPLNQCp6J1DTgiAEu0Hc3BvOiWvnUSBttE114VN7zLNz8G7WzDcpHTNNEFI_Yqje2Ra0n2ZCPc2uhT42DdUC"/>
+</div>
+<div>
+<p class="text-[10px] uppercase tracking-widest text-outline font-bold">Barbero</p>
+<p class="font-headline text-lg font-semibold text-on-surface">Mateo Ricci</p>
+</div>
+</div>
+<!-- Options -->
+<div class="flex flex-wrap gap-4">
+<button class="flex-1 min-w-[140px] py-4 bg-primary-container text-on-primary-container font-headline font-bold text-sm rounded-md active:scale-95 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-lg">calendar_today</span>
+                                    Reagendar
+                                </button>
+<button class="flex-1 min-w-[140px] py-4 border border-outline/20 text-outline font-headline font-bold text-sm rounded-md hover:bg-surface-variant/30 active:scale-95 transition-all">
+                                    Cancelar
+                                </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Subtle Icon Watermark -->
+<span class="material-symbols-outlined absolute -bottom-6 -right-6 text-9xl text-secondary opacity-[0.03] rotate-12 pointer-events-none">content_cut</span>
+</div>
+</section>
+<!-- Historial Section -->
+<section>
+<h2 class="font-headline text-xl font-bold tracking-tight text-on-surface mb-6 px-1">Historial</h2>
+<div class="space-y-4">
+<!-- History Item 1 -->
+<div class="group bg-surface-container-low p-5 rounded-lg flex items-center justify-between transition-colors hover:bg-surface-container">
+<div class="flex items-center gap-5">
+<div class="bg-surface-container-high w-14 h-14 rounded-md flex items-center justify-center text-outline">
+<span class="material-symbols-outlined text-3xl">content_cut</span>
+</div>
+<div>
+<h4 class="font-headline text-base font-semibold text-on-surface">Black &amp; Blade Signature</h4>
+<p class="text-xs text-outline mt-0.5">12 Sep 2023 • Barbero: Julian V.</p>
+<div class="mt-2 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-[10px] font-bold text-secondary uppercase tracking-tighter">Servicio Premium</span>
+</div>
+</div>
+</div>
+<button class="px-5 py-2.5 border border-secondary/20 text-secondary font-headline font-bold text-xs rounded-md hover:bg-secondary/10 transition-all flex items-center gap-2">
+                        Repetir
+                    </button>
+</div>
+<!-- History Item 2 -->
+<div class="group bg-surface-container-low p-5 rounded-lg flex items-center justify-between transition-colors hover:bg-surface-container">
+<div class="flex items-center gap-5">
+<div class="bg-surface-container-high w-14 h-14 rounded-md flex items-center justify-center text-outline">
+<span class="material-symbols-outlined text-3xl">brush</span>
+</div>
+<div>
+<h4 class="font-headline text-base font-semibold text-on-surface">Ritual de Toalla Caliente</h4>
+<p class="text-xs text-outline mt-0.5">28 Ago 2023 • Barbero: Mateo R.</p>
+<div class="mt-2 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-[10px] font-bold text-secondary uppercase tracking-tighter">Servicio Premium</span>
+</div>
+</div>
+</div>
+<button class="px-5 py-2.5 border border-secondary/20 text-secondary font-headline font-bold text-xs rounded-md hover:bg-secondary/10 transition-all flex items-center gap-2">
+                        Repetir
+                    </button>
+</div>
+<!-- History Item 3 -->
+<div class="group bg-surface-container-low p-5 rounded-lg flex items-center justify-between transition-colors hover:bg-surface-container opacity-80">
+<div class="flex items-center gap-5">
+<div class="bg-surface-container-high w-14 h-14 rounded-md flex items-center justify-center text-outline">
+<span class="material-symbols-outlined text-3xl">face</span>
+</div>
+<div>
+<h4 class="font-headline text-base font-semibold text-on-surface">Limpieza Facial Express</h4>
+<p class="text-xs text-outline mt-0.5">15 Jul 2023 • Barbero: Julian V.</p>
+</div>
+</div>
+<button class="px-5 py-2.5 border border-secondary/20 text-secondary font-headline font-bold text-xs rounded-md hover:bg-secondary/10 transition-all flex items-center gap-2">
+                        Repetir
+                    </button>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar Shell -->
+<nav class="bg-[#131313]/90 backdrop-blur-xl fixed bottom-0 w-full z-50 pb-safe shadow-[0_-4px_24px_rgba(249,186,130,0.06)] border-t border-[#353534]/20">
+<div class="flex justify-around items-center px-4 py-3">
+<!-- Inicio -->
+<a class="flex flex-col items-center justify-center text-[#9E8E82] opacity-60 hover:opacity-100 transition-opacity active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-inter text-[10px] font-medium uppercase tracking-widest mt-1">Inicio</span>
+</a>
+<!-- Servicios -->
+<a class="flex flex-col items-center justify-center text-[#9E8E82] opacity-60 hover:opacity-100 transition-opacity active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">content_cut</span>
+<span class="font-inter text-[10px] font-medium uppercase tracking-widest mt-1">Servicios</span>
+</a>
+<!-- Mis Citas (Active) -->
+<a class="flex flex-col items-center justify-center text-[#F9BA82] scale-110 transition-transform active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">event_note</span>
+<span class="font-inter text-[10px] font-medium uppercase tracking-widest mt-1">Mis Citas</span>
+</a>
+<!-- Perfil -->
+<a class="flex flex-col items-center justify-center text-[#9E8E82] opacity-60 hover:opacity-100 transition-opacity active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-inter text-[10px] font-medium uppercase tracking-widest mt-1">Perfil</span>
+</a>
+</div>
+</nav>
+</body></html>

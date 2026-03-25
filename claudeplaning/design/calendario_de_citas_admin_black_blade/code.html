@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@300;400;500;600;700;800;900&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-container": "#67655f",
+              "inverse-surface": "#e5e2e1",
+              "surface-container": "#201f1f",
+              "primary-container": "#8b5a2b",
+              "on-primary-container": "#ffddc2",
+              "secondary-container": "#5c4214",
+              "on-primary": "#4c2700",
+              "error": "#ffb4ab",
+              "surface-container-lowest": "#0e0e0e",
+              "on-secondary": "#432c01",
+              "surface": "#131313",
+              "secondary": "#e7c187",
+              "on-tertiary-container": "#e7e3db",
+              "on-tertiary": "#32302b",
+              "outline-variant": "#51443a",
+              "inverse-on-surface": "#313030",
+              "surface-container-highest": "#353534",
+              "on-tertiary-fixed": "#1d1c17",
+              "surface-bright": "#3a3939",
+              "on-background": "#e5e2e1",
+              "on-surface": "#e5e2e1",
+              "surface-tint": "#f9ba82",
+              "surface-dim": "#131313",
+              "on-secondary-container": "#d4af77",
+              "outline": "#9e8e82",
+              "on-primary-fixed-variant": "#683d0f",
+              "tertiary-fixed-dim": "#cac6be",
+              "secondary-fixed": "#ffdeae",
+              "on-surface-variant": "#d5c3b6",
+              "secondary-fixed-dim": "#e7c187",
+              "primary-fixed-dim": "#f9ba82",
+              "on-error-container": "#ffdad6",
+              "surface-container-low": "#1c1b1b",
+              "on-primary-fixed": "#2e1500",
+              "surface-variant": "#353534",
+              "tertiary-fixed": "#e7e2da",
+              "on-secondary-fixed-variant": "#5c4214",
+              "tertiary": "#cac6be",
+              "surface-container-high": "#2a2a2a",
+              "primary-fixed": "#ffdcc1",
+              "on-tertiary-fixed-variant": "#494741",
+              "on-secondary-fixed": "#281900",
+              "inverse-primary": "#835425",
+              "on-error": "#690005",
+              "background": "#131313",
+              "primary": "#f9ba82",
+              "error-container": "#93000a"
+            },
+            fontFamily: {
+              "headline": ["Epilogue"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: 80px repeat(7, 1fr);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #131313;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #353534;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body antialiased selection:bg-primary-container selection:text-on-primary-container">
+<aside class="flex flex-col fixed left-0 top-0 h-full z-40 h-screen w-64 border-r border-[#353534]/20 bg-[#131313] dark:bg-[#131313] font-['Epilogue'] antialiased text-[#E5E2E1] shadow-2xl shadow-black/50">
+<div class="p-8">
+<h1 class="text-2xl font-black tracking-tighter text-[#F9BA82] uppercase">Black &amp; Blade</h1>
+<p class="text-xs tracking-widest text-outline mt-1 opacity-60">MASTER ADMIN</p>
+</div>
+<nav class="flex-1 px-4 space-y-2">
+<a class="flex items-center gap-4 px-4 py-3 text-[#9E8E82] hover:text-[#E7C187] transition-colors duration-300 hover:bg-[#201F1F]" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 bg-gradient-to-r from-[#8B5A2B] to-[#F9BA82] text-[#FFDDC2] rounded-r-full font-bold shadow-lg shadow-[#8B5A2B]/20" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-medium">Calendar</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#9E8E82] hover:text-[#E7C187] transition-colors duration-300 hover:bg-[#201F1F]" href="#">
+<span class="material-symbols-outlined" data-icon="content_cut">content_cut</span>
+<span class="font-medium">Barbers</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#9E8E82] hover:text-[#E7C187] transition-colors duration-300 hover:bg-[#201F1F]" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-medium">Clients</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#9E8E82] hover:text-[#E7C187] transition-colors duration-300 hover:bg-[#201F1F]" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span class="font-medium">Reports</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#9E8E82] hover:text-[#E7C187] transition-colors duration-300 hover:bg-[#201F1F]" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-medium">Settings</span>
+</a>
+</nav>
+<div class="p-6 mt-auto">
+<div class="flex items-center gap-3 p-3 bg-surface-container rounded-lg">
+<img alt="Admin Profile Avatar" class="w-10 h-10 rounded-full border border-outline-variant/30" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYdJGkd04tXtkI-LcoFrXQN9UGfvGXKzWId7O8nNe3wQ21UoId7F6QD9D8gRI7j6wpqhYeKL8qOPQUWhwdyW1uG2PQ9P50KWb0jJR1VAhzQ8QUHdgvHq5Kwjl2KFAdlvkkthMD5rt8m9hi3YywZt6LCKwC0EhgfnO3tCAWguRyyL3NdOWqyp0Nh2WcBq0cYCgqk0K0CbzXPaKDHAeDl7KkPVlOamyG1InT-kGC6L7BAMf5rL_Jj70w8pc8XzLpauLY4EjS4HmUqHRb"/>
+<div>
+<p class="text-sm font-bold text-on-surface">Marcos S.</p>
+<p class="text-[10px] text-outline uppercase tracking-tighter">Dueñó Principal</p>
+</div>
+</div>
+</div>
+</aside>
+<header class="fixed top-0 right-0 left-64 z-30 flex justify-between items-center px-8 w-full h-20 bg-[#131313]/70 backdrop-blur-xl border-b border-[#353534]/15 font-['Epilogue'] tracking-tight">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline/50 group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full bg-surface-container-low border-none focus:ring-1 focus:ring-primary-container pl-12 pr-4 py-2.5 rounded-lg text-sm text-on-surface placeholder:text-outline/40" placeholder="Buscar citas, clientes o servicios..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<button class="relative p-2 text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-surface"></span>
+</button>
+<button class="p-2 text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+</div>
+<div class="h-8 w-[1px] bg-outline-variant/20"></div>
+<div class="flex items-center gap-3">
+<span class="text-right hidden lg:block">
+<p class="text-xs font-bold text-on-surface uppercase tracking-widest">Sucursal Centro</p>
+<p class="text-[10px] text-primary">Abierto hasta 21:00</p>
+</span>
+<div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary-container to-secondary-container flex items-center justify-center text-on-primary-container font-black">
+                    BB
+                </div>
+</div>
+</div>
+</header>
+<main class="ml-64 pt-20 p-8 min-h-screen">
+<div class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 mb-10">
+<div>
+<h2 class="text-4xl font-black font-headline tracking-tighter text-on-surface mb-2">Gestión de Calendario</h2>
+<nav class="flex items-center gap-2 text-sm text-outline">
+<span>Admin</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-secondary">Agenda Semanal</span>
+</nav>
+</div>
+<div class="flex items-center gap-4 bg-surface-container p-1 rounded-xl">
+<button class="px-6 py-2.5 text-sm font-bold bg-primary-container text-on-primary-container rounded-lg shadow-lg">Semana</button>
+<button class="px-6 py-2.5 text-sm font-medium text-outline hover:text-on-surface transition-colors">Día</button>
+<button class="px-6 py-2.5 text-sm font-medium text-outline hover:text-on-surface transition-colors">Mes</button>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-8">
+<div class="col-span-12 lg:col-span-3 space-y-6">
+<div class="bg-surface-container p-6 rounded-xl relative overflow-hidden">
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-secondary/5 text-8xl pointer-events-none" style="font-variation-settings: 'FILL' 1;">content_cut</span>
+<h3 class="text-secondary text-xs font-bold uppercase tracking-widest mb-4">Filtrar por Barbero</h3>
+<div class="space-y-3">
+<label class="flex items-center justify-between p-3 rounded-lg border border-outline-variant/10 bg-surface-container-high cursor-pointer group hover:border-primary/30 transition-all">
+<div class="flex items-center gap-3">
+<img class="w-8 h-8 rounded-full grayscale group-hover:grayscale-0 transition-all" data-alt="portrait of a professional male barber with a styled beard" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWzyD5rSj0hPCH9IRZcYmIcoqpHU7qMjVvXd3NXW1GmhNIzsNnEMDPCGL-UOx11hdQ88RrtNn3rJzGWICpCtKgqRResGLSPCQFHiAF8S-iIAdk2-G0eF7_4WDXpZOPOuL4aPW4k5KLbcufxtcMdFeYKQrOQcFT8eQI_X6KQSiOaT5qcM3DeoMM4Exnk4rdLpyRGTGzK7uWF1BeKjj6IHS3lIi8neRPi-uYfUDmvp2ox_txKHzhM-OiZ951hO8BVjm64ZyCPAAddEsr"/>
+<span class="text-sm font-medium text-on-surface">Todos los Barberos</span>
+</div>
+<input checked="" class="text-primary bg-surface border-outline-variant focus:ring-primary ring-offset-surface" name="barber" type="radio"/>
+</label>
+<label class="flex items-center justify-between p-3 rounded-lg border border-outline-variant/10 hover:bg-surface-container-high cursor-pointer group transition-all">
+<div class="flex items-center gap-3">
+<img class="w-8 h-8 rounded-full grayscale group-hover:grayscale-0 transition-all" data-alt="stylish barber with tattoos and professional attire" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-qkvxXzdX-SYSiamsSTcPf83oJjK-vuE-7Z8nPl4wwlpJmfxld9yY7LNKy0MDngPKNNSRY058hmlcTnBhoD4S9gxZS__C4lRyfwB9A6GMhTrC2frAiTEcKx3ylctHzIUfk923uQTQHc-LuV1m_XI_SF_NAV7eaz58sTjIf7nLFQXGeL07Bd-g602PMB2QcyyEZYh6RX1bHC-iV5lKQ3DjZQ_tOLxHNatTs63zktC4VHH58Fx27xsEjtS73NsxN4pqKffCBJFq2VvB"/>
+<span class="text-sm font-medium text-on-surface">Mateo Ricci</span>
+</div>
+<input class="text-primary bg-surface border-outline-variant focus:ring-primary ring-offset-surface" name="barber" type="radio"/>
+</label>
+<label class="flex items-center justify-between p-3 rounded-lg border border-outline-variant/10 hover:bg-surface-container-high cursor-pointer group transition-all">
+<div class="flex items-center gap-3">
+<img class="w-8 h-8 rounded-full grayscale group-hover:grayscale-0 transition-all" data-alt="professional barber focused and smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8Y_pAbszsC6rWQsfGP6ZFfPQc2j7G-Sk21c5Qkl-kVJhQFQzB4OHESrex0Ayz23fL3tA1iQYEe9N95wtMaAwEx_OSCvaPyB8-ndQFu79p56clEAAHNcs-7m940tlkrVY4hOUbsL4PH8pL3yyZ8cm8_1DQmLZls4UoFcUGLOmjGIRyuLDx63mUZqPITMcFwGRdioJbXnphZfL7P2ZZw_6UN-6Lo4td7Hwda75wH9GPak7woNt_AZPf_4nXtA7JWB-2x0upC5K25EcY"/>
+<span class="text-sm font-medium text-on-surface">Julián Soto</span>
+</div>
+<input class="text-primary bg-surface border-outline-variant focus:ring-primary ring-offset-surface" name="barber" type="radio"/>
+</label>
+</div>
+</div>
+<div class="bg-surface-container p-6 rounded-xl">
+<h3 class="text-secondary text-xs font-bold uppercase tracking-widest mb-4">Resumen de Hoy</h3>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="text-sm text-outline">Citas Totales</span>
+<span class="text-sm font-bold text-on-surface">24</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-sm text-outline">Disponibles</span>
+<span class="text-sm font-bold text-primary">6</span>
+</div>
+<div class="w-full h-[2px] bg-outline-variant/10"></div>
+<button class="w-full py-3 bg-secondary-container text-secondary font-bold text-sm rounded-lg hover:bg-secondary hover:text-on-secondary transition-all">
+                            NUEVA CITA
+                        </button>
+</div>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-9">
+<div class="bg-surface-container rounded-2xl overflow-hidden shadow-2xl">
+<div class="calendar-grid border-b border-outline-variant/10 bg-surface-container-high/50 backdrop-blur-md">
+<div class="p-4 flex items-center justify-center">
+<span class="material-symbols-outlined text-outline">schedule</span>
+</div>
+<div class="p-4 text-center">
+<p class="text-[10px] text-outline uppercase font-bold tracking-tighter">LUN</p>
+<p class="text-lg font-black text-on-surface">18</p>
+</div>
+<div class="p-4 text-center">
+<p class="text-[10px] text-outline uppercase font-bold tracking-tighter">MAR</p>
+<p class="text-lg font-black text-on-surface">19</p>
+</div>
+<div class="p-4 text-center bg-primary/5 relative">
+<div class="absolute bottom-0 left-0 right-0 h-1 bg-primary"></div>
+<p class="text-[10px] text-primary uppercase font-bold tracking-tighter">MIE</p>
+<p class="text-lg font-black text-primary">20</p>
+</div>
+<div class="p-4 text-center">
+<p class="text-[10px] text-outline uppercase font-bold tracking-tighter">JUE</p>
+<p class="text-lg font-black text-on-surface">21</p>
+</div>
+<div class="p-4 text-center">
+<p class="text-[10px] text-outline uppercase font-bold tracking-tighter">VIE</p>
+<p class="text-lg font-black text-on-surface">22</p>
+</div>
+<div class="p-4 text-center">
+<p class="text-[10px] text-outline uppercase font-bold tracking-tighter">SAB</p>
+<p class="text-lg font-black text-on-surface">23</p>
+</div>
+<div class="p-4 text-center">
+<p class="text-[10px] text-outline uppercase font-bold tracking-tighter text-error/50">DOM</p>
+<p class="text-lg font-black text-on-surface/50">24</p>
+</div>
+</div>
+<div class="h-[600px] overflow-y-auto custom-scrollbar relative">
+<div class="calendar-grid">
+<div class="contents">
+<div class="h-20 border-b border-r border-outline-variant/10 flex items-start justify-center pt-2 text-xs font-bold text-outline">09:00</div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1">
+<div class="absolute inset-1 bg-gradient-to-br from-[#8B5A2B] to-[#F9BA82] rounded-lg p-2 shadow-lg z-10">
+<p class="text-[10px] font-black text-on-primary-container leading-none mb-1">CORTE CLÁSICO</p>
+<p class="text-xs font-medium text-on-primary-container truncate">Carlos Ruiz</p>
+</div>
+</div>
+<div class="h-20 border-b border-outline-variant/10 bg-primary/5 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+</div>
+<div class="contents">
+<div class="h-20 border-b border-r border-outline-variant/10 flex items-start justify-center pt-2 text-xs font-bold text-outline">10:00</div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 bg-primary/5 relative p-1">
+<div class="absolute inset-1 bg-gradient-to-br from-[#8B5A2B] to-[#F9BA82] rounded-lg p-2 shadow-lg z-10 border-l-4 border-secondary">
+<p class="text-[10px] font-black text-on-primary-container leading-none mb-1">BARBA &amp; CORTE</p>
+<p class="text-xs font-medium text-on-primary-container truncate">Luis Méndez</p>
+</div>
+</div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1">
+<div class="absolute inset-1 bg-gradient-to-br from-[#8B5A2B] to-[#F9BA82] rounded-lg p-2 shadow-lg z-10">
+<p class="text-[10px] font-black text-on-primary-container leading-none mb-1">LIMPIEZA FACIAL</p>
+<p class="text-xs font-medium text-on-primary-container truncate">Roberto G.</p>
+</div>
+</div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+</div>
+<div class="contents">
+<div class="h-20 border-b border-r border-outline-variant/10 flex items-start justify-center pt-2 text-xs font-bold text-outline">11:00</div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1">
+<div class="absolute inset-1 bg-gradient-to-br from-[#8B5A2B] to-[#F9BA82] rounded-lg p-2 shadow-lg z-10">
+<p class="text-[10px] font-black text-on-primary-container leading-none mb-1">CORTE NIÑO</p>
+<p class="text-xs font-medium text-on-primary-container truncate">Daniel S.</p>
+</div>
+</div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 bg-primary/5 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1">
+<div class="absolute inset-1 bg-gradient-to-br from-[#8B5A2B] to-[#F9BA82] rounded-lg p-2 shadow-lg z-10">
+<p class="text-[10px] font-black text-on-primary-container leading-none mb-1">CORTE CLÁSICO</p>
+<p class="text-xs font-medium text-on-primary-container truncate">Alejandro P.</p>
+</div>
+</div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+</div>
+<div class="contents">
+<div class="h-20 border-b border-r border-outline-variant/10 flex items-start justify-center pt-2 text-xs font-bold text-outline">12:00</div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 bg-primary/5 relative p-1">
+<div class="absolute inset-x-1 top-1 h-[150px] bg-gradient-to-br from-[#8B5A2B] to-[#F9BA82] rounded-lg p-2 shadow-lg z-20">
+<p class="text-[10px] font-black text-on-primary-container leading-none mb-1">VIP EXPERIENCE</p>
+<p class="text-xs font-medium text-on-primary-container truncate">Sr. Rodriguez</p>
+<p class="mt-4 text-[9px] text-on-primary-container/70 uppercase">90 MIN TOTAL</p>
+</div>
+</div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+</div>
+<div class="contents">
+<div class="h-20 border-b border-r border-outline-variant/10 flex items-start justify-center pt-2 text-xs font-bold text-outline">13:00</div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 bg-primary/5 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+</div>
+<div class="contents">
+<div class="h-20 border-b border-r border-outline-variant/10 flex items-start justify-center pt-2 text-xs font-bold text-outline">14:00</div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 bg-primary/5 relative p-1 flex items-center justify-center">
+<span class="text-[10px] text-outline/30 uppercase font-black tracking-widest">ALMUERZO</span>
+</div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+</div>
+<div class="contents">
+<div class="h-20 border-b border-r border-outline-variant/10 flex items-start justify-center pt-2 text-xs font-bold text-outline">15:00</div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 bg-primary/5 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+<div class="h-20 border-b border-outline-variant/10 relative p-1"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<div class="fixed bottom-10 right-10 flex flex-col gap-4">
+<button class="w-14 h-14 bg-surface-container rounded-full border border-outline-variant/20 flex items-center justify-center text-primary shadow-xl hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined" data-icon="print">print</span>
+</button>
+<button class="w-16 h-16 bg-gradient-to-tr from-primary-container to-secondary-container rounded-full flex items-center justify-center text-on-primary-container shadow-2xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-3xl" data-icon="add">add</span>
+</button>
+</div>
+</body></html>

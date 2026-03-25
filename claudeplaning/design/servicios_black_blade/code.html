@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-container": "#67655f",
+              "inverse-surface": "#e5e2e1",
+              "tertiary-fixed": "#e7e2da",
+              "on-surface": "#e5e2e1",
+              "on-error-container": "#ffdad6",
+              "secondary-container": "#5c4214",
+              "outline-variant": "#51443a",
+              "outline": "#9e8e82",
+              "on-secondary": "#432c01",
+              "on-primary-fixed": "#2e1500",
+              "tertiary": "#cac6be",
+              "surface-variant": "#353534",
+              "on-surface-variant": "#d5c3b6",
+              "secondary": "#e7c187",
+              "on-tertiary-fixed": "#1d1c17",
+              "on-secondary-fixed": "#281900",
+              "secondary-fixed": "#ffdeae",
+              "on-primary-fixed-variant": "#683d0f",
+              "inverse-on-surface": "#313030",
+              "surface-container-high": "#2a2a2a",
+              "surface-tint": "#f9ba82",
+              "surface": "#131313",
+              "background": "#131313",
+              "on-tertiary": "#32302b",
+              "error": "#ffb4ab",
+              "surface-container-low": "#1c1b1b",
+              "primary": "#f9ba82",
+              "primary-fixed-dim": "#f9ba82",
+              "on-primary-container": "#ffddc2",
+              "on-error": "#690005",
+              "on-secondary-fixed-variant": "#5c4214",
+              "surface-container-highest": "#353534",
+              "surface-dim": "#131313",
+              "surface-bright": "#3a3939",
+              "on-tertiary-fixed-variant": "#494741",
+              "on-secondary-container": "#d4af77",
+              "surface-container-lowest": "#0e0e0e",
+              "inverse-primary": "#835425",
+              "on-tertiary-container": "#e7e3db",
+              "tertiary-fixed-dim": "#cac6be",
+              "surface-container": "#201f1f",
+              "on-background": "#e5e2e1",
+              "on-primary": "#4c2700",
+              "primary-container": "#8b5a2b",
+              "primary-fixed": "#ffdcc1",
+              "error-container": "#93000a",
+              "secondary-fixed-dim": "#e7c187"
+            },
+            fontFamily: {
+              "headline": ["Epilogue"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-header {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="bg-[#131313] docked full-width top-0 z-50 fixed w-full">
+<div class="flex justify-between items-center w-full px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/30">
+<img alt="User profile photo" class="w-full h-full object-cover" data-alt="close-up portrait of a stylish bearded man in a modern barbershop setting with warm lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuArJTeTIblDXMv3p1YxsLPxjt0-joUmpItMfG5wJxN5eCDPdfR2hhuOGB5LwwpgeF-f2DZcvFa3BuqpzpLvvjfRWQonmOP9E5VoeIWHw7p3_90tfX8o95Ls3VxiMRZSL3BFfuHw3S_Tb-aM9ePkBL3wQpUOCto-MJ-16nRYoYQQyeBQ-ZLMP-2qQhqWhMU-wYznuV0AfzU7FOkgHW0QhmRMztMGUIXVkGAyXOTgRYEFjgmvxoDXxEVdRelrXCYvFlIA2uQpx_E-49kF"/>
+</div>
+<h1 class="font-epilogue font-bold tracking-tight text-xl text-[#E5E2E1]">Black &amp; Blade</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#F9BA82] cursor-pointer" data-icon="notifications">notifications</span>
+</div>
+</div>
+<div class="bg-[#1C1B1B] h-px w-full"></div>
+</header>
+<main class="pt-24 pb-32 px-6 max-w-5xl mx-auto">
+<!-- Hero Title Section -->
+<section class="mb-12">
+<span class="text-secondary font-headline font-semibold text-sm tracking-[0.2em] uppercase mb-2 block">Menú de Especialidades</span>
+<h2 class="text-on-surface font-headline text-5xl font-extrabold tracking-tighter leading-none mb-4">Servicios Artesanales</h2>
+<p class="text-outline max-w-md body-md">Maestría en cada corte, tradición en cada afeitado. Seleccione el tratamiento que define su estilo.</p>
+</section>
+<!-- Category Filter (Bento Style Layout) -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+<button class="flex flex-col items-center justify-center p-6 bg-surface-container rounded-lg border border-outline-variant/10 hover:border-primary/40 transition-all group">
+<span class="material-symbols-outlined text-primary mb-3 text-3xl group-hover:scale-110 transition-transform" data-icon="content_cut">content_cut</span>
+<span class="font-headline font-bold text-[10px] uppercase tracking-widest text-secondary">Corte de Cabello</span>
+</button>
+<button class="flex flex-col items-center justify-center p-6 bg-surface-container rounded-lg border border-outline-variant/10 hover:border-primary/40 transition-all group">
+<span class="material-symbols-outlined text-primary mb-3 text-3xl group-hover:scale-110 transition-transform" data-icon="face_6">face_6</span>
+<span class="font-headline font-bold text-[10px] uppercase tracking-widest text-secondary">Barba &amp; Afeitado</span>
+</button>
+<button class="flex flex-col items-center justify-center p-6 bg-surface-container rounded-lg border border-outline-variant/10 hover:border-primary/40 transition-all group">
+<span class="material-symbols-outlined text-primary mb-3 text-3xl group-hover:scale-110 transition-transform" data-icon="spa">spa</span>
+<span class="font-headline font-bold text-[10px] uppercase tracking-widest text-secondary">Tratamientos</span>
+</button>
+<button class="flex flex-col items-center justify-center p-6 bg-surface-container rounded-lg border border-outline-variant/10 hover:border-primary/40 transition-all group">
+<span class="material-symbols-outlined text-primary mb-3 text-3xl group-hover:scale-110 transition-transform" data-icon="card_giftcard">card_giftcard</span>
+<span class="font-headline font-bold text-[10px] uppercase tracking-widest text-secondary">Paquetes Premium</span>
+</button>
+</div>
+<!-- Services List -->
+<div class="space-y-16">
+<!-- Category Group: Corte de Cabello -->
+<div class="space-y-8">
+<div class="flex items-center gap-4">
+<div class="h-px bg-outline-variant/30 flex-grow"></div>
+<h3 class="font-headline text-xl font-bold text-[#E7C187]">Corte de Cabello</h3>
+<div class="h-px bg-outline-variant/30 w-12"></div>
+</div>
+<div class="grid md:grid-cols-2 gap-8">
+<!-- Service Card 1 -->
+<div class="relative group bg-surface-container-low p-8 rounded-xl overflow-hidden">
+<span class="material-symbols-outlined absolute -bottom-4 -right-4 text-secondary opacity-[0.03] text-9xl pointer-events-none" data-icon="content_cut">content_cut</span>
+<div class="flex justify-between items-start mb-6">
+<div>
+<h4 class="text-on-surface font-headline text-2xl font-bold mb-1">Corte Signature</h4>
+<div class="flex items-center gap-3 text-outline text-sm">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span> 45 min</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full"></span>
+<span>Incluye lavado y peinado</span>
+</div>
+</div>
+<span class="text-primary font-headline text-2xl font-bold">$30</span>
+</div>
+<button class="w-full bg-primary-container text-on-primary-container font-headline font-bold py-3 px-6 rounded-md hover:bg-primary transition-colors active:scale-95 duration-200">
+                            Reservar
+                        </button>
+</div>
+<!-- Service Card 2 -->
+<div class="relative group bg-surface-container p-8 rounded-xl overflow-hidden border border-secondary/10">
+<span class="material-symbols-outlined absolute -bottom-4 -right-4 text-secondary opacity-[0.03] text-9xl pointer-events-none" data-icon="architecture">architecture</span>
+<div class="flex justify-between items-start mb-6">
+<div>
+<h4 class="text-on-surface font-headline text-2xl font-bold mb-1">Corte con Navaja</h4>
+<div class="flex items-center gap-3 text-outline text-sm">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span> 60 min</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full"></span>
+<span>Estilo tradicional clásico</span>
+</div>
+</div>
+<span class="text-primary font-headline text-2xl font-bold">$35</span>
+</div>
+<button class="w-full bg-primary-container text-on-primary-container font-headline font-bold py-3 px-6 rounded-md hover:bg-primary transition-colors active:scale-95 duration-200">
+                            Reservar
+                        </button>
+</div>
+</div>
+</div>
+<!-- Category Group: Barba & Afeitado -->
+<div class="space-y-8">
+<div class="flex items-center gap-4">
+<div class="h-px bg-outline-variant/30 w-12"></div>
+<h3 class="font-headline text-xl font-bold text-[#E7C187]">Barba &amp; Afeitado</h3>
+<div class="h-px bg-outline-variant/30 flex-grow"></div>
+</div>
+<div class="grid md:grid-cols-2 gap-8">
+<div class="relative group bg-surface-container-low p-8 rounded-xl overflow-hidden">
+<span class="material-symbols-outlined absolute -bottom-4 -right-4 text-secondary opacity-[0.03] text-9xl pointer-events-none" data-icon="face_6">face_6</span>
+<div class="flex justify-between items-start mb-6">
+<div>
+<h4 class="text-on-surface font-headline text-2xl font-bold mb-1">Perfilado de Barba</h4>
+<div class="flex items-center gap-3 text-outline text-sm">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span> 30 min</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full"></span>
+<span>Toalla caliente y aceites</span>
+</div>
+</div>
+<span class="text-primary font-headline text-2xl font-bold">$20</span>
+</div>
+<button class="w-full bg-primary-container text-on-primary-container font-headline font-bold py-3 px-6 rounded-md hover:bg-primary transition-colors active:scale-95 duration-200">
+                            Reservar
+                        </button>
+</div>
+<div class="relative group bg-surface-container-low p-8 rounded-xl overflow-hidden">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h4 class="text-on-surface font-headline text-2xl font-bold mb-1">Afeitado de Lujo</h4>
+<div class="flex items-center gap-3 text-outline text-sm">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span> 45 min</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full"></span>
+<span>Ritual tradicional completo</span>
+</div>
+</div>
+<span class="text-primary font-headline text-2xl font-bold">$25</span>
+</div>
+<button class="w-full bg-primary-container text-on-primary-container font-headline font-bold py-3 px-6 rounded-md hover:bg-primary transition-colors active:scale-95 duration-200">
+                            Reservar
+                        </button>
+</div>
+</div>
+</div>
+<!-- Promotional Banner (Bento Style) -->
+<div class="relative rounded-2xl overflow-hidden bg-surface-container-highest p-12 flex flex-col md:flex-row items-center gap-12">
+<div class="absolute inset-0 opacity-20 pointer-events-none">
+<img alt="Barber working" class="w-full h-full object-cover grayscale" data-alt="dramatic wide shot of a master barber working with precision in a dimly lit atelier with industrial aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3utJ1UFEP2K7S0Wn44tJZoICWlllNFLY4bT8SsURZth0sbwpcfV2aChvK1PzAszlnUr1TA9tBLTVyvpmNoI3fZi2vUr8UMO2licNA-YlwSJauF8AITvL6spj0U6FI8_pL9NA3zZGFBfincaC8iCgyYYXOhW95jFR_iFvYLQtxBeYoHgbfo2LCUl9XA0jq-73WmiOfIfqeOeryWyugJ-e_0OOUfc5206QDE5dozsxcntbCXSKMdy9DEJkJ21rPe9t3XMo4yh5szTVM"/>
+</div>
+<div class="relative z-10 md:w-2/3">
+<span class="text-primary font-headline font-bold uppercase tracking-widest text-xs mb-4 block">Experiencia Exclusiva</span>
+<h3 class="text-on-surface font-headline text-4xl font-extrabold mb-4">El Ritual del Caballero</h3>
+<p class="text-on-surface-variant mb-8 leading-relaxed">Combine nuestro Corte Signature con el Afeitado de Lujo y reciba un tratamiento facial de cortesía. El estándar de oro para el hombre moderno.</p>
+<div class="flex gap-4">
+<button class="bg-primary text-on-primary font-headline font-bold px-8 py-4 rounded-md shadow-lg shadow-primary/10">Reservar Paquete</button>
+</div>
+</div>
+<div class="relative z-10 md:w-1/3 flex justify-center">
+<div class="text-center bg-surface/80 glass-header p-8 rounded-full border border-primary/20 aspect-square flex flex-col justify-center items-center w-48 h-48">
+<span class="text-outline text-sm uppercase font-bold tracking-tighter">Desde</span>
+<span class="text-primary font-headline text-5xl font-black">$55</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 pb-safe bg-[#131313]/90 backdrop-blur-xl border-t border-[#353534]/20 shadow-[0_-4px_24px_rgba(249,186,130,0.06)]">
+<div class="flex justify-around items-center px-4 py-3">
+<a class="flex flex-col items-center justify-center text-[#9E8E82] opacity-60 hover:opacity-100 transition-opacity" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-inter text-[10px] font-medium uppercase tracking-widest mt-1">Inicio</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#F9BA82] scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="content_cut">content_cut</span>
+<span class="font-inter text-[10px] font-medium uppercase tracking-widest mt-1">Servicios</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9E8E82] opacity-60 hover:opacity-100 transition-opacity" href="#">
+<span class="material-symbols-outlined" data-icon="event_note">event_note</span>
+<span class="font-inter text-[10px] font-medium uppercase tracking-widest mt-1">Mis Citas</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9E8E82] opacity-60 hover:opacity-100 transition-opacity" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-inter text-[10px] font-medium uppercase tracking-widest mt-1">Perfil</span>
+</a>
+</div>
+</nav>
+</body></html>

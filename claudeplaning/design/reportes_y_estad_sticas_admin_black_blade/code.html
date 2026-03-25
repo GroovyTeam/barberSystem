@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "tertiary-container": "#67655f",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-container": "#201f1f",
+                        "primary-container": "#8b5a2b",
+                        "on-primary-container": "#ffddc2",
+                        "secondary-container": "#5c4214",
+                        "on-primary": "#4c2700",
+                        "error": "#ffb4ab",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-secondary": "#432c01",
+                        "surface": "#131313",
+                        "secondary": "#e7c187",
+                        "on-tertiary-container": "#e7e3db",
+                        "on-tertiary": "#32302b",
+                        "outline-variant": "#51443a",
+                        "inverse-on-surface": "#313030",
+                        "surface-container-highest": "#353534",
+                        "on-tertiary-fixed": "#1d1c17",
+                        "surface-bright": "#3a3939",
+                        "on-background": "#e5e2e1",
+                        "on-surface": "#e5e2e1",
+                        "surface-tint": "#f9ba82",
+                        "surface-dim": "#131313",
+                        "on-secondary-container": "#d4af77",
+                        "outline": "#9e8e82",
+                        "on-primary-fixed-variant": "#683d0f",
+                        "tertiary-fixed-dim": "#cac6be",
+                        "secondary-fixed": "#ffdeae",
+                        "on-surface-variant": "#d5c3b6",
+                        "secondary-fixed-dim": "#e7c187",
+                        "primary-fixed-dim": "#f9ba82",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-low": "#1c1b1b",
+                        "on-primary-fixed": "#2e1500",
+                        "surface-variant": "#353534",
+                        "tertiary-fixed": "#e7e2da",
+                        "on-secondary-fixed-variant": "#5c4214",
+                        "tertiary": "#cac6be",
+                        "surface-container-high": "#2a2a2a",
+                        "primary-fixed": "#ffdcc1",
+                        "on-tertiary-fixed-variant": "#494741",
+                        "on-secondary-fixed": "#281900",
+                        "inverse-primary": "#835425",
+                        "on-error": "#690005",
+                        "background": "#131313",
+                        "primary": "#f9ba82",
+                        "error-container": "#93000a"
+                    },
+                    fontFamily: {
+                        "headline": ["Epilogue"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Epilogue', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-surface antialiased">
+<!-- SideNavBar -->
+<aside class="flex flex-col fixed left-0 top-0 h-full z-40 h-screen w-64 border-r border-[#353534]/20 bg-[#131313] dark:bg-[#131313] font-['Epilogue'] antialiased text-[#E5E2E1] shadow-2xl shadow-black/50">
+<div class="p-8">
+<h1 class="text-2xl font-black tracking-tighter text-[#F9BA82] uppercase">Black &amp; Blade</h1>
+<p class="text-[10px] tracking-[0.2em] text-outline opacity-70 mt-1 uppercase">Master Admin</p>
+</div>
+<nav class="flex-1 bg-[#1C1B1B] space-y-4 py-6">
+<a class="flex items-center px-8 py-3 mx-4 text-[#9E8E82] hover:text-[#E7C187] transition-colors duration-300 hover:bg-[#201F1F] group" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="dashboard">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center px-8 py-3 mx-4 text-[#9E8E82] hover:text-[#E7C187] transition-colors duration-300 hover:bg-[#201F1F] group" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="calendar_today">calendar_today</span>
+<span class="text-sm font-medium">Calendar</span>
+</a>
+<a class="flex items-center px-8 py-3 mx-4 text-[#9E8E82] hover:text-[#E7C187] transition-colors duration-300 hover:bg-[#201F1F] group" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="content_cut">content_cut</span>
+<span class="text-sm font-medium">Barbers</span>
+</a>
+<a class="flex items-center px-8 py-3 mx-4 text-[#9E8E82] hover:text-[#E7C187] transition-colors duration-300 hover:bg-[#201F1F] group" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="group">group</span>
+<span class="text-sm font-medium">Clients</span>
+</a>
+<!-- Active State: Reports -->
+<a class="flex items-center px-8 py-3 mx-4 bg-gradient-to-r from-[#8B5A2B] to-[#F9BA82] text-[#FFDDC2] rounded-r-full font-bold shadow-lg shadow-[#8B5A2B]/20 transition-transform duration-150 ease-in-out active:scale-95" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="assessment">assessment</span>
+<span class="text-sm">Reports</span>
+</a>
+<a class="flex items-center px-8 py-3 mx-4 text-[#9E8E82] hover:text-[#E7C187] transition-colors duration-300 hover:bg-[#201F1F] group" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="settings">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</nav>
+<div class="p-8 border-t border-outline-variant/10">
+<div class="flex items-center gap-3">
+<img alt="Admin Profile Avatar" class="w-10 h-10 rounded-full border border-primary/30" data-alt="professional portrait of a head barber with a groomed beard wearing a black apron in a vintage barbershop setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWlZEWUnPs9ccJAM7WzhzXFLbw3E7x1h1wLGf_GQ412Xi6lrqKBCcyW-J8acz1kTChZNIU9dBLB6qgbIZesDw17X5epHvEsUrPIUnPNLhLdNf2w2OKotTIZxijDCA27TPe4y_MMJODsPaJtHDgyFqXY2yQSUYBzJpZPnb7VR7xRqD7WESZ26M4nphgsFdwB-bGRrHf7-dgTZDHVzmoX3SQCFfmr0BISbYPO30l17HSp7Jb3Sfwk76G6Aanxc223DtiBQgsbt1bQ2bS"/>
+<div>
+<p class="text-xs font-bold text-on-surface">Admin User</p>
+<p class="text-[10px] text-outline">Panel de Control</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-64 z-30 flex justify-between items-center px-8 w-full h-20 bg-[#131313]/70 backdrop-blur-xl border-b border-[#353534]/15 font-['Epilogue'] tracking-tight">
+<div class="flex items-center gap-4">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors" data-icon="search">search</span>
+<input class="bg-surface-container-low border-none rounded-md pl-10 pr-4 py-2 text-sm text-on-surface focus:ring-1 focus:ring-[#8B5A2B] w-64 transition-all" placeholder="Buscar reportes..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<button class="text-[#9E8E82] hover:text-[#F9BA82] transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-[#9E8E82] hover:text-[#F9BA82] transition-colors">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+</div>
+<div class="h-8 w-[1px] bg-outline-variant/20"></div>
+<span class="text-sm font-bold text-primary">Black &amp; Blade Barbershop</span>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-20 p-8 min-h-screen">
+<!-- Header Section -->
+<section class="mb-12">
+<div class="flex justify-between items-end">
+<div>
+<h2 class="text-4xl font-black text-on-surface tracking-tighter uppercase leading-none">Reportes de <span class="text-primary">Rendimiento</span></h2>
+<p class="text-secondary mt-2 font-medium tracking-wide">Análisis detallado de ingresos y servicios · Mayo 2024</p>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-2 bg-surface-container-high border border-outline-variant/20 text-on-surface text-sm font-bold rounded-md hover:bg-surface-bright transition-all">Exportar PDF</button>
+<button class="px-6 py-2 bg-gradient-to-br from-primary-container to-primary text-on-primary-container text-sm font-bold rounded-md shadow-lg shadow-primary/10">Generar Reporte Mensual</button>
+</div>
+</div>
+</section>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Summary Stats -->
+<div class="col-span-12 grid grid-cols-4 gap-6 mb-4">
+<div class="bg-surface-container p-6 rounded-xl relative overflow-hidden group">
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-9xl opacity-5 text-secondary" data-icon="payments">payments</span>
+<p class="text-xs text-outline uppercase tracking-widest font-bold">Ingresos Totales</p>
+<h3 class="text-3xl font-black mt-2">$12,450.00</h3>
+<p class="text-xs text-emerald-400 mt-2 flex items-center"><span class="material-symbols-outlined text-sm mr-1" data-icon="trending_up">trending_up</span> +12% vs mes anterior</p>
+</div>
+<div class="bg-surface-container p-6 rounded-xl relative overflow-hidden group">
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-9xl opacity-5 text-secondary" data-icon="content_cut">content_cut</span>
+<p class="text-xs text-outline uppercase tracking-widest font-bold">Servicios Realizados</p>
+<h3 class="text-3xl font-black mt-2">482</h3>
+<p class="text-xs text-emerald-400 mt-2 flex items-center"><span class="material-symbols-outlined text-sm mr-1" data-icon="trending_up">trending_up</span> +5% vs mes anterior</p>
+</div>
+<div class="bg-surface-container p-6 rounded-xl relative overflow-hidden group">
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-9xl opacity-5 text-secondary" data-icon="star">star</span>
+<p class="text-xs text-outline uppercase tracking-widest font-bold">Calificación Media</p>
+<h3 class="text-3xl font-black mt-2">4.9/5.0</h3>
+<p class="text-xs text-on-surface-variant mt-2 flex items-center">Basado en 320 reseñas</p>
+</div>
+<div class="bg-surface-container p-6 rounded-xl relative overflow-hidden group">
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-9xl opacity-5 text-secondary" data-icon="person_add">person_add</span>
+<p class="text-xs text-outline uppercase tracking-widest font-bold">Nuevos Clientes</p>
+<h3 class="text-3xl font-black mt-2">84</h3>
+<p class="text-xs text-secondary mt-2 flex items-center">22% de la base total</p>
+</div>
+</div>
+<!-- Revenue Chart (Large Area) -->
+<div class="col-span-8 bg-surface-container p-8 rounded-xl h-[400px] flex flex-col">
+<div class="flex justify-between items-center mb-8">
+<h4 class="text-lg font-bold tracking-tight">Evolución de Ingresos Mensuales</h4>
+<div class="flex gap-2">
+<span class="px-3 py-1 bg-primary-container/20 text-primary text-[10px] font-black rounded-full uppercase tracking-widest">Semanal</span>
+<span class="px-3 py-1 bg-surface-container-highest text-outline text-[10px] font-black rounded-full uppercase tracking-widest">Mensual</span>
+</div>
+</div>
+<div class="flex-1 flex items-end justify-between gap-4 px-4">
+<!-- Custom Bar Chart Simulation -->
+<div class="w-full flex flex-col items-center gap-2 group">
+<div class="w-full bg-surface-container-high rounded-t-sm h-32 group-hover:bg-primary/40 transition-all"></div>
+<span class="text-[10px] text-outline">ENE</span>
+</div>
+<div class="w-full flex flex-col items-center gap-2 group">
+<div class="w-full bg-surface-container-high rounded-t-sm h-48 group-hover:bg-primary/40 transition-all"></div>
+<span class="text-[10px] text-outline">FEB</span>
+</div>
+<div class="w-full flex flex-col items-center gap-2 group">
+<div class="w-full bg-surface-container-high rounded-t-sm h-40 group-hover:bg-primary/40 transition-all"></div>
+<span class="text-[10px] text-outline">MAR</span>
+</div>
+<div class="w-full flex flex-col items-center gap-2 group">
+<div class="w-full bg-surface-container-high rounded-t-sm h-56 group-hover:bg-primary/40 transition-all"></div>
+<span class="text-[10px] text-outline">ABR</span>
+</div>
+<div class="w-full flex flex-col items-center gap-2 group">
+<div class="w-full bg-gradient-to-t from-primary-container to-primary rounded-t-sm h-72 transition-all shadow-[0_-10px_20px_rgba(249,186,130,0.1)]"></div>
+<span class="text-[10px] text-primary font-bold">MAY</span>
+</div>
+<div class="w-full flex flex-col items-center gap-2 group opacity-30">
+<div class="w-full bg-surface-container-high rounded-t-sm h-32"></div>
+<span class="text-[10px] text-outline">JUN</span>
+</div>
+</div>
+</div>
+<!-- Most Popular Services -->
+<div class="col-span-4 bg-surface-container p-8 rounded-xl h-[400px] flex flex-col">
+<h4 class="text-lg font-bold tracking-tight mb-8">Servicios Top</h4>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="font-medium text-on-surface">Corte Signature</span>
+<span class="text-primary font-bold">42%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 42%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="font-medium text-on-surface">Afeitado Clásico</span>
+<span class="text-primary font-bold">28%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary/70 rounded-full" style="width: 28%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="font-medium text-on-surface">Arreglo de Barba</span>
+<span class="text-primary font-bold">18%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary/50 rounded-full" style="width: 18%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="font-medium text-on-surface">Tratamiento Facial</span>
+<span class="text-primary font-bold">12%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary/30 rounded-full" style="width: 12%"></div>
+</div>
+</div>
+</div>
+<div class="mt-auto pt-6 border-t border-outline-variant/10">
+<p class="text-xs text-outline leading-relaxed italic">"El Corte Signature sigue siendo el pilar de ingresos de este trimestre."</p>
+</div>
+</div>
+<!-- Top Barberos Performance -->
+<div class="col-span-12 bg-surface-container rounded-xl overflow-hidden">
+<div class="p-8 border-b border-outline-variant/10 flex justify-between items-center">
+<h4 class="text-lg font-bold tracking-tight">Rendimiento de Barberos</h4>
+<button class="text-secondary text-sm font-bold flex items-center hover:underline">Ver todos los barberos <span class="material-symbols-outlined text-sm ml-1" data-icon="chevron_right">chevron_right</span></button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-container-low text-[10px] uppercase tracking-[0.2em] text-outline">
+<th class="px-8 py-4">Barbero</th>
+<th class="px-8 py-4">Servicios</th>
+<th class="px-8 py-4">Retención</th>
+<th class="px-8 py-4">Ingresos Generados</th>
+<th class="px-8 py-4 text-right">Estatus</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/5">
+<tr class="hover:bg-surface-bright/5 transition-colors">
+<td class="px-8 py-6 flex items-center gap-4">
+<img alt="Barber profile" class="w-10 h-10 rounded-full grayscale hover:grayscale-0 transition-all duration-500 border border-outline-variant/30" data-alt="close-up portrait of a master barber with tattoos and a groomed mustache in a moody barbershop" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARrkrFAbUzVlHeMBk8ydIJIHL35ThfO9543ff427WW8lQmngu58_qP2n4-ctL1QW_cw2lCgx7phl19p3bfs_ttw9k96Do_H80532TnLOfoiSe6ch9aC6efvphtFbwK5V-gPv9stLkW6MYrSAPJq9DJSiUPWTop5db4fzLjNpEWD3b37R2hAlqqz_c2Im5UEcMIGlCZEVyP7eSSPU3tdpw4bbmbNWYpHhMUzqkZ07GiJSpwzAoKLpFkp34q_6y5X69fh6kxE2Un4bb0"/>
+<div>
+<p class="text-sm font-bold text-on-surface">Mateo "El Filo" Ruiz</p>
+<p class="text-[10px] text-secondary tracking-widest uppercase">Senior Master</p>
+</div>
+</td>
+<td class="px-8 py-6">
+<p class="text-sm font-medium">142 cortes</p>
+</td>
+<td class="px-8 py-6">
+<div class="flex items-center gap-2">
+<span class="text-sm">88%</span>
+<div class="w-12 h-1 bg-surface-container-highest rounded-full">
+<div class="h-full bg-emerald-500 w-[88%] rounded-full"></div>
+</div>
+</div>
+</td>
+<td class="px-8 py-6">
+<p class="text-sm font-black text-primary">$4,820.00</p>
+</td>
+<td class="px-8 py-6 text-right">
+<span class="px-3 py-1 bg-emerald-500/10 text-emerald-500 text-[10px] font-black rounded-full uppercase tracking-tighter">Top Performer</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-bright/5 transition-colors">
+<td class="px-8 py-6 flex items-center gap-4">
+<img alt="Barber profile" class="w-10 h-10 rounded-full grayscale hover:grayscale-0 transition-all duration-500 border border-outline-variant/30" data-alt="portrait of a young professional barber with clean-cut style and trendy glasses in a workshop environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8WbdulU5nv1STiMD_udePo5r9iqeqAF1ZfeZ9r44DQJucT9mj-dB1FTnIkzG9gxZ6v_gVQ6XF8N6Nr-UV5lEq3_QPl7GU_xAIYxNYTBju0BOgMHF6UZSY3arzc7PESz0P9ZIx1tqlq9alJ9b9eIhO0L5JhqJdKMDMSEk7K9zuaXcwe2czl-r63_72R1bcEUojuDuB86dD1CPFZDw4ymEEBvC5Bw9_21wun2A9IHjtt-1CixNuch30I53lb_znK2Rmdx1zytX-ZKS9"/>
+<div>
+<p class="text-sm font-bold text-on-surface">Carlos Mendoza</p>
+<p class="text-[10px] text-secondary tracking-widest uppercase">Especialista Barba</p>
+</div>
+</td>
+<td class="px-8 py-6">
+<p class="text-sm font-medium">118 cortes</p>
+</td>
+<td class="px-8 py-6">
+<div class="flex items-center gap-2">
+<span class="text-sm">74%</span>
+<div class="w-12 h-1 bg-surface-container-highest rounded-full">
+<div class="h-full bg-primary-container w-[74%] rounded-full"></div>
+</div>
+</div>
+</td>
+<td class="px-8 py-6">
+<p class="text-sm font-black text-primary">$3,150.00</p>
+</td>
+<td class="px-8 py-6 text-right">
+<span class="px-3 py-1 bg-secondary/10 text-secondary text-[10px] font-black rounded-full uppercase tracking-tighter">Estable</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-bright/5 transition-colors">
+<td class="px-8 py-6 flex items-center gap-4">
+<img alt="Barber profile" class="w-10 h-10 rounded-full grayscale hover:grayscale-0 transition-all duration-500 border border-outline-variant/30" data-alt="professional portrait of an experienced barber with silver hair and a sharp vest in a luxury studio setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrNd362_QKSSO6l1tA43NqfIoz_SWsth73dPuRtXqlX0FddHdZtfnppY9FDX-jyGGMuM-WFTf0SpU8XSe_I-NBW-AQa1hDwna_kw1C0bZzW-ojhZ7LGGfOAYXpS2ujQiECiUmdwVFgMYS6jAEPsNa9YrCUP8ixV1rW3cpuLcX8_usnB36RAQdVIov5UKhXs1t5YNvnnLZa5tMfcJy1yFvQksXo_5pfa5MNrDBaiHhT1P1mKY44NrvAeWYQsM9ohsZZtm5g4QoPh_Xh"/>
+<div>
+<p class="text-sm font-bold text-on-surface">Luis Ferrán</p>
+<p class="text-[10px] text-secondary tracking-widest uppercase">Estilista Senior</p>
+</div>
+</td>
+<td class="px-8 py-6">
+<p class="text-sm font-medium">96 cortes</p>
+</td>
+<td class="px-8 py-6">
+<div class="flex items-center gap-2">
+<span class="text-sm">92%</span>
+<div class="w-12 h-1 bg-surface-container-highest rounded-full">
+<div class="h-full bg-emerald-500 w-[92%] rounded-full"></div>
+</div>
+</div>
+</td>
+<td class="px-8 py-6">
+<p class="text-sm font-black text-primary">$2,980.00</p>
+</td>
+<td class="px-8 py-6 text-right">
+<span class="px-3 py-1 bg-emerald-500/10 text-emerald-500 text-[10px] font-black rounded-full uppercase tracking-tighter">Alta Retención</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Feedback (Optional) -->
+<div class="fixed bottom-8 right-8">
+<button class="flex items-center gap-2 bg-surface-container-high border border-outline-variant/30 px-4 py-3 rounded-full shadow-2xl backdrop-blur-md hover:bg-surface-bright transition-all group">
+<span class="material-symbols-outlined text-primary group-hover:rotate-12 transition-transform" data-icon="auto_awesome">auto_awesome</span>
+<span class="text-xs font-bold uppercase tracking-widest text-on-surface">Insights IA</span>
+</button>
+</div>
+</body></html>

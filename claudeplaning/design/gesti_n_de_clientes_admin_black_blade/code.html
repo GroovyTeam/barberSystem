@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Black &amp; Blade Barbershop - Gestión de Clientes</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800;900&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #131313;
+            color: #E5E2E1;
+        }
+        .font-headline {
+            font-family: 'Epilogue', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for premium feel */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #131313;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #353534;
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "tertiary-container": "#67655f",
+                "inverse-surface": "#e5e2e1",
+                "surface-container": "#201f1f",
+                "primary-container": "#8b5a2b",
+                "on-primary-container": "#ffddc2",
+                "secondary-container": "#5c4214",
+                "on-primary": "#4c2700",
+                "error": "#ffb4ab",
+                "surface-container-lowest": "#0e0e0e",
+                "on-secondary": "#432c01",
+                "surface": "#131313",
+                "secondary": "#e7c187",
+                "on-tertiary-container": "#e7e3db",
+                "on-tertiary": "#32302b",
+                "outline-variant": "#51443a",
+                "inverse-on-surface": "#313030",
+                "surface-container-highest": "#353534",
+                "on-tertiary-fixed": "#1d1c17",
+                "surface-bright": "#3a3939",
+                "on-background": "#e5e2e1",
+                "on-surface": "#e5e2e1",
+                "surface-tint": "#f9ba82",
+                "surface-dim": "#131313",
+                "on-secondary-container": "#d4af77",
+                "outline": "#9e8e82",
+                "on-primary-fixed-variant": "#683d0f",
+                "tertiary-fixed-dim": "#cac6be",
+                "secondary-fixed": "#ffdeae",
+                "on-surface-variant": "#d5c3b6",
+                "secondary-fixed-dim": "#e7c187",
+                "primary-fixed-dim": "#f9ba82",
+                "on-error-container": "#ffdad6",
+                "surface-container-low": "#1c1b1b",
+                "on-primary-fixed": "#2e1500",
+                "surface-variant": "#353534",
+                "tertiary-fixed": "#e7e2da",
+                "on-secondary-fixed-variant": "#5c4214",
+                "tertiary": "#cac6be",
+                "surface-container-high": "#2a2a2a",
+                "primary-fixed": "#ffdcc1",
+                "on-tertiary-fixed-variant": "#494741",
+                "on-secondary-fixed": "#281900",
+                "inverse-primary": "#835425",
+                "on-error": "#690005",
+                "background": "#131313",
+                "primary": "#f9ba82",
+                "error-container": "#93000a"
+              },
+              fontFamily: {
+                "headline": ["Epilogue"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+              },
+              borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-surface text-on-surface font-body antialiased overflow-hidden">
+<!-- SideNavBar (Shared Component) -->
+<aside class="flex flex-col fixed left-0 top-0 h-full z-40 h-screen w-64 border-r border-[#353534]/20 bg-[#131313] dark:bg-[#131313] font-['Epilogue'] antialiased text-[#E5E2E1] shadow-2xl shadow-black/50">
+<div class="p-8">
+<h1 class="text-2xl font-black tracking-tighter text-[#F9BA82] uppercase">Black &amp; Blade</h1>
+<p class="text-[10px] tracking-[0.2em] text-outline uppercase mt-1">Master Admin</p>
+</div>
+<nav class="flex-1 px-4 space-y-2">
+<!-- Dashboard -->
+<a class="flex items-center px-4 py-3 text-[#9E8E82] hover:text-[#E7C187] transition-colors duration-300 hover:bg-[#201F1F]" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
+<span class="font-medium text-sm">Dashboard</span>
+</a>
+<!-- Calendar -->
+<a class="flex items-center px-4 py-3 text-[#9E8E82] hover:text-[#E7C187] transition-colors duration-300 hover:bg-[#201F1F]" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="calendar_today">calendar_today</span>
+<span class="font-medium text-sm">Calendar</span>
+</a>
+<!-- Barbers -->
+<a class="flex items-center px-4 py-3 text-[#9E8E82] hover:text-[#E7C187] transition-colors duration-300 hover:bg-[#201F1F]" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="content_cut">content_cut</span>
+<span class="font-medium text-sm">Barbers</span>
+</a>
+<!-- Clients (ACTIVE) -->
+<a class="flex items-center px-4 py-3 bg-gradient-to-r from-[#8B5A2B] to-[#F9BA82] text-[#FFDDC2] rounded-r-full font-bold shadow-lg shadow-[#8B5A2B]/20" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="group">group</span>
+<span class="font-medium text-sm">Clients</span>
+</a>
+<!-- Reports -->
+<a class="flex items-center px-4 py-3 text-[#9E8E82] hover:text-[#E7C187] transition-colors duration-300 hover:bg-[#201F1F]" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="assessment">assessment</span>
+<span class="font-medium text-sm">Reports</span>
+</a>
+<!-- Settings -->
+<a class="flex items-center px-4 py-3 text-[#9E8E82] hover:text-[#E7C187] transition-colors duration-300 hover:bg-[#201F1F]" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="settings">settings</span>
+<span class="font-medium text-sm">Settings</span>
+</a>
+</nav>
+<div class="p-6 bg-[#1C1B1B] space-y-4">
+<div class="flex items-center gap-3">
+<img alt="Admin Profile Avatar" class="w-10 h-10 rounded-full border border-primary-container" data-alt="professional portrait of a master barber with a groomed beard wearing a black leather apron in a vintage barbershop" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBl86vLO8W7CqIz5C71V5ZHMuFShY5Hfb3qZuTVBkb7DRgHbde3kj_9RDxxkttBCmip_CWSCqr9GpcqURqsKLJaiVStxsPfdTniOvTryhmXb8lyD7Si9SobkmAqw1lvcdxgI-8J3DSVpIx3qJJO3CtNEZvjWym9kUIFWhsxr77gBKx_LDiReF0YHGMD2MBH71uzPI3lsDGVHoD6FSc_D5NUKBfaapemcMk_zZL5NTKJ3CC02DGOYskIOubSb1FYj6x16P44t51nS0wn"/>
+<div>
+<p class="text-xs font-bold text-on-surface">Admin User</p>
+<p class="text-[10px] text-outline">Premium Access</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen relative flex flex-col">
+<!-- TopAppBar (Shared Component) -->
+<header class="fixed top-0 right-0 left-64 z-30 flex justify-between items-center px-8 w-full h-20 bg-[#131313]/70 backdrop-blur-xl border-b border-[#353534]/15 font-['Epilogue'] tracking-tight">
+<div class="flex items-center gap-8 flex-1">
+<div class="relative w-full max-w-md group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors" data-icon="search">search</span>
+<input class="w-full bg-surface-container-low border-none focus:ring-1 focus:ring-primary-container rounded-lg py-2.5 pl-12 pr-4 text-sm text-on-surface placeholder:text-outline/50 transition-all" placeholder="Buscar clientes, servicios o citas..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative p-2 text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-surface"></span>
+</button>
+<button class="p-2 text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant/30 mx-2"></div>
+<div class="flex items-center gap-3 cursor-pointer group">
+<span class="text-sm font-semibold text-outline group-hover:text-primary transition-colors">Admin User</span>
+<img alt="Admin User" class="w-8 h-8 rounded-full object-cover ring-2 ring-transparent group-hover:ring-primary transition-all" data-alt="close-up headshot of a stylish man in a dark environment with moody golden lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnP_KdTEuIhIXKxkEUrG4Na3kMrESv56l4ENxGcdN3UvtkpzSATUCtOj3CfhTb-1UziquCH7EoQrC9TP2_pYQMhnouiAg30VocTtff6lLKUqq2LspesIkvDZd6R0KN8JB0Dsfd6lgoz-duBjyDjG-6pvTwu-RYv-bN4CQ3EnPwayecNNgFc7b9tcBbhVSWkJ_q1-ZQjMFlKut6jtSN0sKBrfANcTdffid9F7c6js3MAdlYvZW9qnVeQ8Eth01BmB93MpmmdWyydZd3"/>
+</div>
+</div>
+</header>
+<!-- Canvas Content -->
+<section class="pt-28 px-10 pb-12 flex-1 overflow-y-auto">
+<!-- Header Section with Button -->
+<div class="flex justify-between items-end mb-12">
+<div class="space-y-2">
+<h2 class="text-4xl font-black font-headline tracking-tighter text-on-surface">Gestión de Clientes</h2>
+<p class="text-secondary max-w-md font-medium">Administra la base de datos de tus clientes más exclusivos y su historial de servicios.</p>
+</div>
+<button class="flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-primary-container to-primary text-on-primary-container rounded-md font-bold shadow-lg shadow-primary-container/20 active:scale-95 transition-all">
+<span class="material-symbols-outlined" data-icon="person_add">person_add</span>
+<span>Agregar Cliente</span>
+</button>
+</div>
+<!-- Bento Statistics (Non-standard layout enhancement) -->
+<div class="grid grid-cols-12 gap-6 mb-12">
+<div class="col-span-12 md:col-span-4 bg-surface-container rounded-xl p-6 relative overflow-hidden group">
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-secondary/5 text-8xl" data-icon="group">group</span>
+<p class="text-outline text-xs uppercase tracking-widest font-bold mb-1">Total Clientes</p>
+<h3 class="text-3xl font-black font-headline text-primary">1,284</h3>
+<p class="text-[10px] text-secondary mt-4 flex items-center gap-1">
+<span class="material-symbols-outlined text-xs" data-icon="trending_up">trending_up</span>
+                        +12% desde el último mes
+                    </p>
+</div>
+<div class="col-span-12 md:col-span-4 bg-surface-container rounded-xl p-6 relative overflow-hidden group">
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-secondary/5 text-8xl" data-icon="star">star</span>
+<p class="text-outline text-xs uppercase tracking-widest font-bold mb-1">Clientes VIP</p>
+<h3 class="text-3xl font-black font-headline text-primary">86</h3>
+<p class="text-[10px] text-secondary mt-4 flex items-center gap-1">
+                        Fidelidad premium activa
+                    </p>
+</div>
+<div class="col-span-12 md:col-span-4 bg-surface-container-high rounded-xl p-6 relative overflow-hidden group border border-outline-variant/10">
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-secondary/5 text-8xl" data-icon="payments">payments</span>
+<p class="text-outline text-xs uppercase tracking-widest font-bold mb-1">Ticket Promedio</p>
+<h3 class="text-3xl font-black font-headline text-primary">45.50€</h3>
+<p class="text-[10px] text-secondary mt-4 flex items-center gap-1">
+                        Basado en últimos 30 días
+                    </p>
+</div>
+</div>
+<!-- Custom Data Table -->
+<div class="bg-surface-container rounded-xl overflow-hidden shadow-2xl">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high/50 text-outline text-[11px] uppercase tracking-[0.2em] font-bold">
+<th class="px-8 py-5">Nombre</th>
+<th class="px-8 py-5">Última Cita</th>
+<th class="px-8 py-5">Servicio Frecuente</th>
+<th class="px-8 py-5">Total Gastado</th>
+<th class="px-8 py-5 text-right">Acciones</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-bright/30 transition-colors group">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<img alt="Alejandro Sanz" class="w-10 h-10 rounded-full object-cover" data-alt="portrait of a man with short styled hair and a sharp jawline against a neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5SLT4c09-q3Z_-aOvH-R1bw__Afk8OaZslkRhH7Ima1TRRruHOD_ps0TPdPAXThK0YA37fqxGToNEL7VN_4VD6t3pakhOTqRiW2-t0ivsik-JRbRpnk_bwynHPTHQrk8imsY3l3BVqajn8QjYk1KA00T0a-BP5efLs5fUhXpdtLNp_sf3ftgwjvBPPadzLmmpNcsJ2geIdEwibgv_L3v0kbHkhiHMAt-NxqAjMNOS6xamJIIWiq3oROaFcZYqzVPyw5GpY8jrCejs"/>
+<div>
+<p class="text-sm font-bold text-on-surface">Alejandro Sanz</p>
+<p class="text-[11px] text-outline">alejandro.s@email.com</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5 text-sm text-on-surface-variant">12 Oct, 2023</td>
+<td class="px-8 py-5">
+<span class="px-3 py-1 bg-surface-container-highest text-secondary text-[10px] font-bold uppercase rounded-full">Corte Imperial</span>
+</td>
+<td class="px-8 py-5 font-headline font-bold text-primary">842.00€</td>
+<td class="px-8 py-5 text-right">
+<button class="p-2 text-secondary hover:bg-secondary/10 rounded-lg transition-all group-hover:scale-110">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-bright/30 transition-colors group">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<img alt="Mateo Rodriguez" class="w-10 h-10 rounded-full object-cover" data-alt="man with a thick well-groomed beard and slicked back hair in a warm lit environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCX_62bTZE6qClALW-Zev20pVHByg8yKAFRXnRjyjf4JGi3ItAN58kmt4K-9xlB22oC3tMTeCYIsVBnlu1xlfkilsCxhtdWssbTeUGqvsdr9HIT32N4hWTf5IRTYCKx9attBiTBlLxfeV0sb0nsCmu3U8p--xAj2LENafHT2nWRH61hbU2qDwmRsYarVq2kEXgHwwIF_vmR1KJUrvR7EM3dzS9lnrwdN6dIZUZpt6tfeD-d9_bw8FVZZHCZUedQu-wFhmS4AuAdJKQI"/>
+<div>
+<p class="text-sm font-bold text-on-surface">Mateo Rodriguez</p>
+<p class="text-[11px] text-outline">m.rodriguez@domain.es</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5 text-sm text-on-surface-variant">05 Oct, 2023</td>
+<td class="px-8 py-5">
+<span class="px-3 py-1 bg-surface-container-highest text-secondary text-[10px] font-bold uppercase rounded-full">Barba &amp; Toalla</span>
+</td>
+<td class="px-8 py-5 font-headline font-bold text-primary">1,120.50€</td>
+<td class="px-8 py-5 text-right">
+<button class="p-2 text-secondary hover:bg-secondary/10 rounded-lg transition-all group-hover:scale-110">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-bright/30 transition-colors group">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<img alt="Carlos Méndez" class="w-10 h-10 rounded-full object-cover" data-alt="young man with fade haircut and trendy glasses looking at camera with a confident smile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEIT8m1LTrGxn8ls0gM1bTNzuT4CmyFEzbzvPhcuWhyZoXpo3Qw4XnOb85CZ3dFhyC8FxOIrC544bh6QHvhHqWa2rdk02hvG1T276KGmAfuZfujq4bCuU2AfEh0D_aUVN9ROMyB5mG9fgfXncJoG35CVKTEyFer24BsVeoBOIlYjQeVGH6v8LgPmUWtnbyjP2eEsFj6GKptCUdXBboCmmUTTedjUY7I9btVucEFPHc8tlPK_3GPPTZUetHnBvD9NgiwYGkA3IpcKuU"/>
+<div>
+<p class="text-sm font-bold text-on-surface">Carlos Méndez</p>
+<p class="text-[11px] text-outline">carlos_m@provider.com</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5 text-sm text-on-surface-variant">28 Sep, 2023</td>
+<td class="px-8 py-5">
+<span class="px-3 py-1 bg-surface-container-highest text-secondary text-[10px] font-bold uppercase rounded-full">Corte Clásico</span>
+</td>
+<td class="px-8 py-5 font-headline font-bold text-primary">320.00€</td>
+<td class="px-8 py-5 text-right">
+<button class="p-2 text-secondary hover:bg-secondary/10 rounded-lg transition-all group-hover:scale-110">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-bright/30 transition-colors group">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<img alt="Javier López" class="w-10 h-10 rounded-full object-cover" data-alt="middle aged man with grey salt and pepper hair and a refined sophisticated look" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4ayfm6SInCaC0c6iGZP-TTqNvG6Jop7NoiB6KL3GVj75lKwf7VEzD18DQKXKAV0lzlL--floWlqrmD5_ZD_akUBMj8AWAG8HT6wOdP1sqbuL4yOa70CzAyuuigSxCWCVfP_DcWE-v0_lFmMkRngsBSCwa9gFq124zHF4XrJKY58r5uADhaMnzQ3Tzy4E2twld0lt7D5ulJqQ_6OeMoX8qS3hvJjzsL8K9q-trLqkb6n6K7aF2pEgHZpEDsvzpN6VGWprV2n7iyHIa"/>
+<div>
+<p class="text-sm font-bold text-on-surface">Javier López</p>
+<p class="text-[11px] text-outline">javier.lo@business.com</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5 text-sm text-on-surface-variant">22 Sep, 2023</td>
+<td class="px-8 py-5">
+<span class="px-3 py-1 bg-surface-container-highest text-secondary text-[10px] font-bold uppercase rounded-full">Full Service</span>
+</td>
+<td class="px-8 py-5 font-headline font-bold text-primary">2,450.00€</td>
+<td class="px-8 py-5 text-right">
+<button class="p-2 text-secondary hover:bg-secondary/10 rounded-lg transition-all group-hover:scale-110">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-bright/30 transition-colors group">
+<td class="px-8 py-5">
+<div class="flex items-center gap-3">
+<img alt="Hugo Torres" class="w-10 h-10 rounded-full object-cover" data-alt="stylish young man with a man-bun hairstyle and athletic build in a professional photo studio" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvg7EFEOtyLg74XVLAA4A1sQeZrnOePjilLwi333O8OF2A0-3Toor13JgBYuejbuZZVEvkSE_0Z6y2DXZF6z_HN_2tcWjuMRoV_X1AoFsVfUHZCBRvxicTEWscmcb7vckpOgWiR5506sm1uLzyZILKRIDWagVzB0sjsyjJBndr-VWuLeA8F6ewtMboT4P1kvEDiuzYoRsw5iTjPu8O7hJO0tAdDgrHnsYRHDKUDG4lwF7tFpH6c0x56kygJ56oOV35602DV7ZegZOu"/>
+<div>
+<p class="text-sm font-bold text-on-surface">Hugo Torres</p>
+<p class="text-[11px] text-outline">hugo.torres@mail.com</p>
+</div>
+</div>
+</td>
+<td class="px-8 py-5 text-sm text-on-surface-variant">15 Sep, 2023</td>
+<td class="px-8 py-5">
+<span class="px-3 py-1 bg-surface-container-highest text-secondary text-[10px] font-bold uppercase rounded-full">Coloración</span>
+</td>
+<td class="px-8 py-5 font-headline font-bold text-primary">560.25€</td>
+<td class="px-8 py-5 text-right">
+<button class="p-2 text-secondary hover:bg-secondary/10 rounded-lg transition-all group-hover:scale-110">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Pagination -->
+<div class="px-8 py-4 bg-surface-container-low flex justify-between items-center border-t border-outline-variant/5">
+<p class="text-[11px] text-outline font-medium">Mostrando 5 de 1,284 clientes</p>
+<div class="flex gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded bg-surface-container-high text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-primary text-on-primary font-bold text-xs">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-surface-container-high text-outline hover:text-primary transition-colors font-bold text-xs">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-surface-container-high text-outline hover:text-primary transition-colors font-bold text-xs">3</button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-surface-container-high text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Contextual Footer Message -->
+<div class="mt-8 flex items-center justify-center gap-2 text-outline/30 select-none">
+<span class="material-symbols-outlined text-lg" data-icon="verified_user">verified_user</span>
+<span class="text-[10px] uppercase tracking-[0.3em] font-bold">Black &amp; Blade Secure Database v2.4</span>
+</div>
+</section>
+</main>
+<!-- Contextual FAB (Only for main screens) -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-on-primary-fixed rounded-full shadow-2xl shadow-primary/40 flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50">
+<span class="material-symbols-outlined text-3xl font-bold" data-icon="add">add</span>
+</button>
+</body></html>
