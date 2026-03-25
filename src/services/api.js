@@ -33,13 +33,27 @@ export const getServices = async () => {
   }
 }
 
-export const getBarbers = async () => {
+export const getBarbers = async (showAll = false) => {
   try {
-    const res = await fetch(`${API_URL}/barbers`)
+    const res = await fetch(`${API_URL}/barbers${showAll ? '?all=true' : ''}`)
     return await res.json()
   } catch (error) {
     console.error(error)
     return []
+  }
+}
+
+export const updateBarberAvailability = async (id, isAvailable) => {
+  try {
+    const res = await fetch(`${API_URL}/barbers/${id}/availability`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ isAvailable })
+    })
+    return await res.json()
+  } catch (error) {
+    console.error(error)
+    return { error: true }
   }
 }
 

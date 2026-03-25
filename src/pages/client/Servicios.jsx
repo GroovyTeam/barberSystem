@@ -87,6 +87,7 @@ export default function Servicios() {
                   </div>
                   <Link
                     to="/reservar"
+                    state={{ serviceId: service.id }}
                     className="bg-primary-container hover:bg-primary text-on-primary-container px-5 py-2 rounded-md font-headline font-bold text-sm transition-colors"
                   >
                     Reservar

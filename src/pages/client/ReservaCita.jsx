@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { getServices, getBarbers, bookAppointment, getCurrentUser } from '../../services/api'
 
 const STEPS = ['Servicio', 'Barbero', 'Fecha', 'Pago']
@@ -22,6 +22,7 @@ const dayNames = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
 
 export default function ReservaCita() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [step, setStep] = useState(0)
   
   // Data de la API
@@ -45,10 +46,22 @@ export default function ReservaCita() {
   const unavailableSlots = ['10:00', '14:00', '19:30'] // Fake unavailable
 
   useEffect(() => {
-    getServices().then(setServices)
-    getBarbers().then(setBarbers)
-    getCurrentUser().then(setUser)
-  }, [])
+    Promise.all([getServices(), getBarbers(), getCurrentUser()]).then(([servs, barbs, u]) => {
+      setServices(servs)
+      setBarbers(barbs)
+      setUser(u)
+
+      // Manejar deep-linking si venimos de la página de Servicios
+      const stateServiceId = location.state?.serviceId
+      if (stateServiceId) {
+        const found = servs.find(s => s.id === stateServiceId)
+        if (found) {
+          setSelectedService(found)
+          setStep(1) // Saltar al paso de Barberos
+        }
+      }
+    })
+  }, [location.state])
 
   const { days, year, month } = getCalendarDays()
   const today = new Date().getDate()
@@ -119,72 +132,105 @@ export default function ReservaCita() {
 
       {/* Step 0: Select Service */}
       {step === 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {services.map(service => (
-            <button
-              key={service.id}
-              onClick={() => setSelectedService(service)}
-              className={`p-5 rounded-xl text-left transition-all duration-200 border group ${
-                selectedService?.id === service.id
-                  ? 'bg-primary-container/30 border-primary shadow-lg shadow-primary/10'
-                  : 'bg-surface-container border-outline-variant/10 hover:border-primary/30'
-              }`}
-            >
-              <div className="flex items-start gap-4">
-                <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${selectedService?.id === service.id ? 'bg-primary-container' : 'bg-surface-container-high'}`}>
-                  <span className={`material-symbols-outlined text-xl ${selectedService?.id === service.id ? 'text-on-primary-container' : 'text-secondary'}`}>{service.icon}</span>
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-headline font-bold text-on-surface">{service.name}</h3>
-                  <p className="text-xs text-on-surface-variant mt-1">{service.description}</p>
-                  <div className="flex gap-3 mt-2">
-                    <span className="text-primary text-sm font-bold">${service.price}</span>
-                    <span className="text-outline text-xs">{service.duration} min</span>
+        <div className="space-y-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {services.map(service => (
+              <button
+                key={service.id}
+                onClick={() => setSelectedService(service)}
+                className={`p-5 rounded-xl text-left transition-all duration-300 border relative group ${
+                  selectedService?.id === service.id
+                    ? 'bg-primary-container/20 border-primary shadow-[0_0_20px_rgba(249,186,130,0.1)]'
+                    : 'bg-surface-container border-transparent hover:border-outline-variant/30'
+                }`}
+              >
+                <div className="flex items-start gap-4">
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${selectedService?.id === service.id ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-secondary'}`}>
+                    <span className="material-symbols-outlined text-xl">{service.icon}</span>
                   </div>
+                  <div className="flex-1 pr-10">
+                    <h3 className="font-headline font-bold text-on-surface">{service.name}</h3>
+                    <p className="text-[10px] text-on-surface-variant line-clamp-1 mt-0.5">{service.description}</p>
+                    <div className="flex gap-3 mt-2 items-center">
+                      <span className="text-primary text-sm font-black">${service.price}</span>
+                      <span className="w-1 h-1 bg-outline/30 rounded-full" />
+                      <span className="text-outline text-[10px] font-bold uppercase tracking-wider">{service.duration} min</span>
+                    </div>
+                  </div>
+
+                  {/* Botón Siguiente Mini (solo si está seleccionado) */}
+                  {selectedService?.id === service.id && (
+                    <div 
+                      onClick={(e) => { e.stopPropagation(); handleNext(); }}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-secondary text-on-secondary rounded-full flex items-center justify-center shadow-lg hover:scale-110 active:scale-90 transition-all animate-in zoom-in duration-300"
+                    >
+                      <span className="material-symbols-outlined text-xl">arrow_forward</span>
+                    </div>
+                  )}
                 </div>
-                {selectedService?.id === service.id && (
-                  <span className="material-symbols-outlined text-primary text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-                )}
-              </div>
-            </button>
-          ))}
+              </button>
+            ))}
+          </div>
+          
+
         </div>
       )}
 
       {/* Step 1: Select Barber */}
       {step === 1 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {barbers.map(barber => (
-            <button
-              key={barber.id}
-              onClick={() => barber.available && setSelectedBarber(barber)}
-              disabled={!barber.available}
-              className={`p-5 rounded-xl text-left transition-all duration-200 border ${
-                !barber.available ? 'opacity-40 cursor-not-allowed bg-surface-container border-outline-variant/10' :
-                selectedBarber?.id === barber.id
-                  ? 'bg-primary-container/30 border-primary shadow-lg shadow-primary/10'
-                  : 'bg-surface-container border-outline-variant/10 hover:border-primary/30'
-              }`}
-            >
-              <div className="flex items-center gap-4">
-                <img src={barber.avatar} alt={barber.name} className="w-14 h-14 rounded-xl object-cover grayscale" />
-                <div className="flex-1">
-                  <h3 className="font-headline font-bold text-on-surface">{barber.name}</h3>
-                  <p className="text-[10px] text-on-surface-variant uppercase tracking-widest">{barber.specialty}</p>
-                  <div className="flex items-center gap-1 mt-2">
-                    <span className="material-symbols-outlined text-secondary text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                    <span className="text-xs font-bold text-on-surface">{barber.rating}</span>
-                    <span className="text-xs text-outline">({barber.reviews})</span>
+        <div className="space-y-6">
+          <button 
+            onClick={handleBack}
+            className="flex items-center gap-2 text-outline hover:text-secondary transition-colors text-sm font-bold group mb-2"
+          >
+            <span className="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">arrow_back</span>
+            Volver a Servicios
+          </button>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {barbers.map(barber => (
+              <button
+                key={barber.id}
+                onClick={() => barber.isAvailable && setSelectedBarber(barber)}
+                disabled={!barber.isAvailable}
+                className={`p-5 rounded-xl text-left transition-all duration-300 border relative group ${
+                  !barber.isAvailable ? 'opacity-40 cursor-not-allowed bg-surface-container border-transparent' :
+                  selectedBarber?.id === barber.id
+                    ? 'bg-primary-container/20 border-primary shadow-[0_0_20px_rgba(249,186,130,0.1)]'
+                    : 'bg-surface-container border-transparent hover:border-outline-variant/30'
+                }`}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    <img src={barber.avatar} alt={barber.name} className={`w-14 h-14 rounded-xl object-cover grayscale group-hover:grayscale-0 transition-all ${selectedBarber?.id === barber.id && 'grayscale-0 border-2 border-primary'}`} />
+                    {barber.isAvailable && <span className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-surface-container rounded-full" />}
                   </div>
+                  <div className="flex-1 pr-10">
+                    <h3 className="font-headline font-bold text-on-surface">{barber.name}</h3>
+                    <p className="text-[10px] text-on-surface-variant uppercase tracking-widest">{barber.specialty}</p>
+                    <div className="flex items-center gap-1 mt-2">
+                      <span className="material-symbols-outlined text-secondary text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                      <span className="text-xs font-bold text-on-surface">{barber.rating}</span>
+                    </div>
+                  </div>
+                  
+                  {/* Botón Siguiente Mini */}
+                  {selectedBarber?.id === barber.id && (
+                    <div 
+                      onClick={(e) => { e.stopPropagation(); handleNext(); }}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-secondary text-on-secondary rounded-full flex items-center justify-center shadow-lg hover:scale-110 active:scale-90 transition-all animate-in zoom-in duration-300"
+                    >
+                      <span className="material-symbols-outlined text-xl">arrow_forward</span>
+                    </div>
+                  )}
+
+                  {!barber.isAvailable && (
+                    <span className="text-[10px] text-outline uppercase font-black tracking-tighter">No Disponible</span>
+                  )}
                 </div>
-                {barber.available ? (
-                  <span className="w-2 h-2 bg-green-500 rounded-full" />
-                ) : (
-                  <span className="text-[10px] text-outline uppercase font-bold">Ocupado</span>
-                )}
-              </div>
-            </button>
-          ))}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
@@ -392,7 +438,7 @@ export default function ReservaCita() {
             >
               {isDeploying ? (
                  <span className="material-symbols-outlined animate-spin text-base">sync</span>
-              ) : step < 3 ? 'Continuar' : 'Confirmar Reserva'}
+              ) : step === 2 ? 'Registrar' : step < 3 ? 'Continuar' : 'Confirmar Reserva'}
               {canContinue && !isDeploying && <span className="material-symbols-outlined align-middle ml-1 text-base">arrow_forward</span>}
             </button>
           </div>

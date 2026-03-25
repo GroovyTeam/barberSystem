@@ -20,12 +20,28 @@ app.get('/api/health', (req, res) => {
 // === BARBEROS ===
 app.get('/api/barbers', async (req, res) => {
   try {
+    const { all } = req.query
     const barbers = await prisma.barber.findMany({
-      where: { isAvailable: true }
+      where: all === 'true' ? {} : { isAvailable: true }
     })
     res.json(barbers)
   } catch (error) {
     res.status(500).json({ error: 'Error fetching barbers' })
+  }
+})
+
+// Alternar disponibilidad
+app.patch('/api/barbers/:id/availability', async (req, res) => {
+  try {
+    const { id } = req.params
+    const { isAvailable } = req.body
+    const updated = await prisma.barber.update({
+      where: { id },
+      data: { isAvailable }
+    })
+    res.json(updated)
+  } catch (error) {
+    res.status(500).json({ error: 'Error updating availability' })
   }
 })
 
