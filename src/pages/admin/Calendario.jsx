@@ -1,16 +1,33 @@
 import { useState, useEffect } from 'react'
+import * as Popover from '@radix-ui/react-popover'
 import { getBarbers, getAppointments } from '../../services/api'
 
 const hours = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00']
-const days = [
-  { abbr: 'LUN', num: 18 },
-  { abbr: 'MAR', num: 19 },
-  { abbr: 'MIÉ', num: 20, current: true },
-  { abbr: 'JUE', num: 21 },
-  { abbr: 'VIE', num: 22 },
-  { abbr: 'SÁB', num: 23 },
-  { abbr: 'DOM', num: 24 },
-]
+
+function getWeekDates() {
+  const now = new Date()
+  const day = now.getDay() // 0 (Sun) to 6 (Sat)
+  const diff = now.getDate() - day + (day === 0 ? -6 : 1) // Adjust to get Monday
+  const monday = new Date(now.setDate(diff))
+  
+  const daysArr = []
+  const names = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM']
+  
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday)
+    d.setDate(monday.getDate() + i)
+    daysArr.push({
+      abbr: names[i],
+      num: d.getDate(),
+      fullDate: d.toISOString().split('T')[0],
+      current: d.toDateString() === new Date().toDateString()
+    })
+  }
+  return daysArr
+}
+
+const days = getWeekDates()
+const currentMonthYear = new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }).toUpperCase()
 
 
 
@@ -20,7 +37,7 @@ export default function Calendario() {
   const [barberList, setBarberList] = useState([])
   const [appointments, setAppointments] = useState([])
   const [loading, setLoading] = useState(true)
-  const [hoveredAppt, setHoveredAppt] = useState(null)
+  const [openPopoverId, setOpenPopoverId] = useState(null)
 
   useEffect(() => {
     Promise.all([getBarbers(true), getAppointments()]).then(([barbs, appts]) => {
@@ -34,9 +51,9 @@ export default function Calendario() {
   // In a real app we'd use date-fns to get the current week.
   const getApptsForSlot = (hour, dayIndex) => {
     return appointments.filter(a => {
-      const aDate = new Date(a.date)
-      const dayNum = aDate.getDate()
-      const matchesDay = days[dayIndex].num === dayNum
+      const aDate = a.date.split('T')[0]
+      const targetDate = days[dayIndex].fullDate
+      const matchesDay = aDate === targetDate
       const matchesHour = a.time === hour
       const matchesBarber = selectedBarberId === 'all' || a.barberId === selectedBarberId
       return matchesDay && matchesHour && matchesBarber
@@ -55,16 +72,11 @@ export default function Calendario() {
             <span className="text-secondary">Agenda {view}</span>
           </nav>
         </div>
-        <div className="flex items-center gap-2 bg-surface-container p-1 rounded-xl">
-          {['Semana', 'Día', 'Mes'].map(v => (
-            <button
-              key={v}
-              onClick={() => setView(v)}
-              className={`px-5 py-2 text-sm font-bold rounded-lg transition-all ${view === v ? 'bg-primary-container text-on-primary-container shadow-lg' : 'text-outline hover:text-on-surface'}`}
-            >
-              {v}
-            </button>
-          ))}
+        <div className="flex items-center gap-4 bg-surface-container px-6 py-3 rounded-2xl border border-outline-variant/10 shadow-lg">
+           <span className="material-symbols-outlined text-primary">calendar_today</span>
+           <span className="text-sm font-black font-headline tracking-widest text-on-surface">
+             {currentMonthYear}
+           </span>
         </div>
       </div>
 
@@ -148,43 +160,73 @@ export default function Calendario() {
                           className={`h-20 border-b border-outline-variant/10 relative p-1 ${day.current ? 'bg-primary/5' : ''}`}
                         >
                           {apptsInSlot.map((appt, ai) => (
-                            <div
-                              key={appt.id}
-                              onMouseEnter={() => setHoveredAppt(appt)}
-                              onMouseLeave={() => setHoveredAppt(null)}
-                              className="absolute inset-x-1 bg-gradient-to-br from-[#8B5A2B] to-[#F9BA82] rounded p-1.5 shadow-lg z-10 cursor-pointer hover:brightness-110 transition-all overflow-hidden"
-                              style={{ 
-                                top: `${ai * 2}px`, // Slight offset if multiple appts
-                                height: '72px' 
-                              }}
+                            <Popover.Root 
+                              key={appt.id} 
+                              open={openPopoverId === appt.id} 
+                              onOpenChange={(open) => setOpenPopoverId(open ? appt.id : null)}
                             >
-                              <p className="text-[9px] font-black text-on-primary-container leading-tight mb-0.5 truncate">{appt.service.name}</p>
-                              <p className="text-[10px] font-medium text-on-primary-container/90 truncate">{appt.client.name}</p>
-                              
-                              {/* HOVER TOOLTIP */}
-                              {hoveredAppt?.id === appt.id && (
-                                <div className="fixed z-[100] w-52 bg-surface-container-highest border border-primary/20 p-4 rounded-xl shadow-2xl pointer-events-none animate-in fade-in zoom-in-95 duration-200"
-                                     style={{ left: '50%', transform: 'translateX(-50%)', top: '20px' }}>
-                                  <h4 className="text-primary font-black text-[10px] uppercase tracking-widest mb-2">Resumen de Cita</h4>
-                                  <div className="space-y-2">
-                                    <div className="flex items-center gap-2">
-                                      <span className="material-symbols-outlined text-sm text-outline">calendar_month</span>
-                                      <span className="text-xs text-on-surface font-bold">{new Date(appt.date).toLocaleDateString()}</span>
+                                <Popover.Trigger asChild>
+                                    <div
+                                      onMouseEnter={() => setOpenPopoverId(appt.id)}
+                                      onMouseLeave={() => setOpenPopoverId(null)}
+                                      className="absolute inset-x-1 bg-gradient-to-br from-[#8B5A2B] to-[#F9BA82] rounded p-1.5 shadow-lg z-10 cursor-pointer hover:brightness-110 transition-all overflow-hidden"
+                                      style={{ 
+                                        top: `${ai * 2}px`, 
+                                        height: '72px' 
+                                      }}
+                                    >
+                                      <p className="text-[9px] font-black text-on-primary-container leading-tight mb-0.5 truncate">{appt.service.name}</p>
+                                      <p className="text-[10px] font-medium text-on-primary-container/90 truncate">{appt.client.name}</p>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                      <span className="material-symbols-outlined text-sm text-outline">schedule</span>
-                                      <span className="text-xs text-on-surface font-bold">{appt.time} HS</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      <span className="material-symbols-outlined text-sm text-outline">payments</span>
-                                      <span className="text-xs font-black uppercase text-secondary">
-                                        {appt.paymentMethod === 'PRESENCIAL' ? 'Pago en Sucursal' : 'Pago en Línea'}
-                                      </span>
-                                    </div>
-                                  </div>
-                                </div>
-                              )}
-                            </div>
+                                </Popover.Trigger>
+
+                                <Popover.Portal>
+                                    <Popover.Content 
+                                        side="top" 
+                                        sideOffset={5}
+                                        className="z-[200] w-64 bg-surface-container-highest border-2 border-primary/30 p-5 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] outline-none animate-in fade-in zoom-in-95 duration-200 backdrop-blur-xl"
+                                    >
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h4 className="text-primary font-black text-[10px] uppercase tracking-widest">Resumen de Cita</h4>
+                                            <span className={`px-2 py-0.5 rounded-full text-[8px] font-black ${appt.paymentMethod === 'PRESENCIAL' ? 'bg-secondary/10 text-secondary' : 'bg-green-500/10 text-green-500'}`}>
+                                                {appt.paymentMethod === 'PRESENCIAL' ? 'POR PAGAR' : 'PAGADO'}
+                                            </span>
+                                        </div>
+                                        <div className="space-y-3">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center">
+                                                    <span className="material-symbols-outlined text-sm text-outline">calendar_month</span>
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] text-outline font-bold uppercase leading-none mb-1">Fecha</p>
+                                                    <p className="text-xs text-on-surface font-black">{new Date(appt.date).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center">
+                                                    <span className="material-symbols-outlined text-sm text-outline">schedule</span>
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] text-outline font-bold uppercase leading-none mb-1">Horario</p>
+                                                    <p className="text-xs text-on-surface font-black uppercase">{appt.time} HS</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center">
+                                                    <span className="material-symbols-outlined text-sm text-outline">payments</span>
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] text-outline font-bold uppercase leading-none mb-1">Método de Pago</p>
+                                                    <p className="text-xs font-black text-on-surface">
+                                                        {appt.paymentMethod === 'PRESENCIAL' ? '💳 Pago en Sucursal' : '💳 Pago en Línea'}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <Popover.Arrow className="fill-primary/30" />
+                                    </Popover.Content>
+                                </Popover.Portal>
+                            </Popover.Root>
                           ))}
                         </div>
                       )
