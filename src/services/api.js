@@ -121,3 +121,13 @@ export const getCurrentUser = async () => {
     return null
   }
 }
+
+export const getAppointments = async () => {
+  try {
+    const res = await fetch(`${API_URL}/appointments`)
+    return await res.json()
+  } catch(err) {
+    console.error(err)
+    return []
+  }
+}

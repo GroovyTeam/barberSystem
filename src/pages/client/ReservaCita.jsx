@@ -34,7 +34,8 @@ export default function ReservaCita() {
   const [selectedBarber, setSelectedBarber] = useState(null)
   const [selectedDay, setSelectedDay] = useState(null)
   const [selectedTime, setSelectedTime] = useState(null)
-  const [paymentMethod, setPaymentMethod] = useState('local') // 'local' o 'stripe'
+  const [paymentMethod, setPaymentMethod] = useState('sucursal') // 'sucursal' o 'linea'
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [isDeploying, setIsDeploying] = useState(false)
 
   // Tiempos fijos para la grid
@@ -67,31 +68,36 @@ export default function ReservaCita() {
   const today = new Date().getDate()
 
   const handleNext = async () => {
-    if (step < STEPS.length - 1) {
+    if (step < 3) {
       setStep(s => s + 1)
     } else {
-      // Finalizar: Guardar en base de datos
-      setIsDeploying(true)
-      
-      const userId = user?.id || 'fail'
-      const apptDate = new Date(year, month, selectedDay)
-      
-      const payload = {
-        clientId: userId,
-        barberId: selectedBarber.id,
-        serviceId: selectedService.id,
-        date: apptDate.toISOString(),
-        time: selectedTime,
-        price: selectedService.price
-      }
-      
-      const res = await bookAppointment(payload)
-      setIsDeploying(false)
-      if(paymentMethod === 'stripe') {
-         // Aquí habría una integración checkout Stripe
-         alert("Redirigiendo a Stripe Checkout...")
-      }
-      navigate('/mis-citas')
+      handleConfirmBooking()
+    }
+  }
+
+  const handleConfirmBooking = async () => {
+    setIsDeploying(true)
+    
+    // Preparar fecha correcta (día seleccionado + mes/año actual)
+    const apptDate = new Date(year, month, selectedDay)
+    
+    const payload = {
+      clientId: user?.id || 'fail',
+      barberId: selectedBarber.id,
+      serviceId: selectedService.id,
+      date: apptDate.toISOString(),
+      time: selectedTime,
+      price: selectedService.price,
+      paymentMethod: paymentMethod === 'sucursal' ? 'PRESENCIAL' : 'LINEA'
+    }
+    
+    const res = await bookAppointment(payload)
+    setIsDeploying(false)
+    
+    if (res.success) {
+      setShowSuccessModal(true)
+    } else {
+      alert("Hubo un error al procesar tu cita. Por favor intentalo de nuevo.")
     }
   }
   const handleBack = () => setStep(s => s - 1)
@@ -329,6 +335,18 @@ export default function ReservaCita() {
                     </div>
                   </div>
                 ))}
+                {/* Botón Agendar (dentro del flujo) */}
+                {selectedDay && selectedTime && (
+                  <div className="pt-8 flex justify-end animate-in fade-in slide-in-from-top-4 duration-500">
+                    <button 
+                      onClick={handleNext}
+                      className="bg-secondary text-on-secondary px-8 py-4 rounded-xl font-headline font-black text-sm shadow-xl shadow-secondary/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-3 group"
+                    >
+                      AGENDAR CITA
+                      <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                    </button>
+                  </div>
+                )}
               </>
             ) : (
               <div className="flex flex-col items-center justify-center h-48 text-center">
@@ -345,53 +363,69 @@ export default function ReservaCita() {
         <div className="max-w-md mx-auto space-y-6">
           <div className="text-center mb-8">
             <h3 className="text-xl font-headline font-bold text-on-surface">¿Cómo deseas pagar?</h3>
-            <p className="text-sm text-on-surface-variant mt-2">Puedes pagar por adelantado con tarjeta de crédito/débito o pagar el día de tu cita en nuestra barbería.</p>
+            <p className="text-sm text-on-surface-variant mt-2 tracking-tight">Selecciona tu método de preferencia para finalizar la reserva.</p>
           </div>
           
           <button
-            onClick={() => setPaymentMethod('local')}
+            onClick={() => setPaymentMethod('sucursal')}
             className={`w-full p-6 rounded-2xl flex items-center gap-5 transition-all outline-none text-left border-2 ${
-              paymentMethod === 'local' 
+              paymentMethod === 'sucursal' 
                ? 'border-primary bg-primary-container/20 shadow-[0_0_30px_rgba(249,186,130,0.15)] scale-[1.02]' 
                : 'border-surface-container-high bg-surface-container hover:border-primary/40'
             }`}
           >
-            <div className={`w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 ${paymentMethod === 'local' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-secondary'}`}>
+            <div className={`w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 ${paymentMethod === 'sucursal' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-secondary'}`}>
                <span className="material-symbols-outlined text-3xl">store</span>
             </div>
             <div className="flex-1">
                <h4 className="font-headline font-black text-on-surface text-lg">Pago en Sucursal</h4>
-               <p className="text-xs text-outline mt-1 leading-relaxed">Paga en efectivo, tarjeta o transferencia al finalizar tu corte en la barbería.</p>
+               <p className="text-xs text-outline mt-1 leading-relaxed">Paga físicamente el día de tu cita.</p>
             </div>
-            {paymentMethod === 'local' && <span className="material-symbols-outlined text-primary">check_circle</span>}
+            {paymentMethod === 'sucursal' && <span className="material-symbols-outlined text-primary">check_circle</span>}
           </button>
 
           <button
-            onClick={() => setPaymentMethod('stripe')}
+            onClick={() => setPaymentMethod('linea')}
             className={`w-full p-6 rounded-2xl flex items-center gap-5 transition-all outline-none text-left border-2 flex-col xs:flex-row relative overflow-hidden ${
-              paymentMethod === 'stripe' 
+              paymentMethod === 'linea' 
                ? 'border-primary bg-primary-container/20 shadow-[0_0_30px_rgba(249,186,130,0.15)] scale-[1.02]' 
                : 'border-surface-container-high bg-surface-container hover:border-primary/40'
             }`}
           >
-            {/* Stripe background glow mockup */}
-            {paymentMethod === 'stripe' && <div className="absolute top-0 right-0 w-32 h-32 bg-[#635BFF]/10 blur-3xl rounded-full" />}
-            <div className={`w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 ${paymentMethod === 'stripe' ? 'bg-[#635BFF] text-white' : 'bg-surface-container-high text-secondary'}`}>
+            {paymentMethod === 'linea' && <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-3xl rounded-full" />}
+            <div className={`w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 ${paymentMethod === 'linea' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-secondary'}`}>
                <span className="material-symbols-outlined text-3xl">credit_card</span>
             </div>
             <div className="flex-1 z-10 w-full">
                <div className="flex items-center justify-between w-full">
-                  <h4 className="font-headline font-black text-on-surface text-lg">Pagar Ahora (Online)</h4>
-                  <div className="flex gap-1 opacity-60">
-                     {/* Fake standard card brand icons via text block */}
-                     <span className="bg-surface px-1.5 py-0.5 rounded text-[8px] font-bold text-white uppercase tracking-widest border border-outline/20">Visa</span>
-                     <span className="bg-surface px-1.5 py-0.5 rounded text-[8px] font-bold text-white uppercase tracking-widest border border-outline/20">MC</span>
-                  </div>
+                  <h4 className="font-headline font-black text-on-surface text-lg">Pago en Línea</h4>
+                  <span className="bg-primary/10 text-primary text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest">Próximamente</span>
                </div>
-               <p className="text-xs text-outline mt-1 leading-relaxed">Usa nuestra pasarela de pagos ultra segura respaldada por Stripe.</p>
+               <p className="text-xs text-outline mt-1 leading-relaxed">Paga de forma segura con tarjeta (Stripe).</p>
             </div>
-            {paymentMethod === 'stripe' && <span className="material-symbols-outlined text-primary absolute top-6 right-6">check_circle</span>}
+            {paymentMethod === 'linea' && <span className="material-symbols-outlined text-primary">check_circle</span>}
           </button>
+        </div>
+      )}
+
+      {/* MODAL DE ÉXITO */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
+          <div className="bg-surface-container max-w-sm w-full rounded-3xl p-8 text-center shadow-2xl border border-outline-variant/10 animate-in zoom-in-95 duration-500">
+            <div className="w-20 h-20 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="material-symbols-outlined text-5xl">check_circle</span>
+            </div>
+            <h2 className="text-2xl font-black font-headline text-on-surface mb-2 tracking-tighter">¡Cita Agendada!</h2>
+            <p className="text-sm text-outline mb-8 leading-relaxed">
+              Tu reserva se registró correctamente para el <span className="text-on-surface font-bold">{selectedDay}/{month + 1}/{year}</span> a las <span className="text-on-surface font-bold">{selectedTime}</span>.
+            </p>
+            <button 
+              onClick={() => navigate('/mis-citas')}
+              className="w-full bg-primary text-on-primary py-4 rounded-xl font-headline font-black text-sm shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
+            >
+              VER MIS CITAS
+            </button>
+          </div>
         </div>
       )}
 
@@ -438,7 +472,7 @@ export default function ReservaCita() {
             >
               {isDeploying ? (
                  <span className="material-symbols-outlined animate-spin text-base">sync</span>
-              ) : step === 2 ? 'Registrar' : step < 3 ? 'Continuar' : 'Confirmar Reserva'}
+              ) : step === 2 ? 'Agendar' : step === 3 ? 'Confirmar Reserva' : 'Continuar'}
               {canContinue && !isDeploying && <span className="material-symbols-outlined align-middle ml-1 text-base">arrow_forward</span>}
             </button>
           </div>

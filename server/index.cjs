@@ -1,7 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const dotenv = require('dotenv')
-const { PrismaClient } = require('../prisma/generated/client2')
+const { PrismaClient } = require('../prisma/generated/client3')
 
 dotenv.config()
 
@@ -59,7 +59,7 @@ app.get('/api/services', async (req, res) => {
 // Crear una nueva cita
 app.post('/api/appointments', async (req, res) => {
   try {
-    const { clientId, barberId, serviceId, date, time, price } = req.body
+    const { clientId, barberId, serviceId, date, time, price, paymentMethod } = req.body
     
     // Aquí podrías agregar validaciones de disponibilidad del barbero en esa hora.
     
@@ -71,6 +71,7 @@ app.post('/api/appointments', async (req, res) => {
         date: new Date(date), // Formato ISO completo
         time,
         price,
+        paymentMethod: paymentMethod || 'PRESENCIAL',
         status: 'PENDING'
       }
     })
@@ -79,6 +80,19 @@ app.post('/api/appointments', async (req, res) => {
   } catch (error) {
     console.error(error)
     res.status(500).json({ error: 'Error creating appointment' })
+  }
+})
+
+// Obtener todas las citas (para admin)
+app.get('/api/appointments', async (req, res) => {
+  try {
+    const appointments = await prisma.appointment.findMany({
+      include: { client: true, barber: true, service: true },
+      orderBy: { date: 'asc' }
+    })
+    res.json(appointments)
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching all appointments' })
   }
 })
 
@@ -102,6 +116,17 @@ app.get('/api/seed', async (req, res) => {
   try {
     const count = await prisma.service.count()
     if (count > 0) return res.json({ message: 'DB ya tiene datos.' })
+
+    // Crear Usuario por defecto
+    await prisma.user.create({
+      data: {
+        name: 'Cliente Demo',
+        email: 'cliente@demo.com',
+        phone: '12345678',
+        password: 'password123', // En producción usar hash
+        role: 'CLIENT'
+      }
+    })
 
     const b1 = await prisma.barber.create({ data: { name: 'Marco Silva', specialty: 'Master Barber', rating: 4.9, reviews: 124, avatar: 'https://images.unsplash.com/photo-1618641986557-1ecd230959aa?q=80&w=200&auto=format&fit=crop' } })
     const b2 = await prisma.barber.create({ data: { name: 'Roberto V.', specialty: 'Bleach & Fade', rating: 4.8, reviews: 89, avatar: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=200&auto=format&fit=crop' } })

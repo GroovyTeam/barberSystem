@@ -4208,6 +4208,7 @@ export namespace Prisma {
     time: string | null
     status: string | null
     price: number | null
+    paymentMethod: string | null
     createdAt: Date | null
   }
 
@@ -4220,6 +4221,7 @@ export namespace Prisma {
     time: string | null
     status: string | null
     price: number | null
+    paymentMethod: string | null
     createdAt: Date | null
   }
 
@@ -4232,6 +4234,7 @@ export namespace Prisma {
     time: number
     status: number
     price: number
+    paymentMethod: number
     createdAt: number
     _all: number
   }
@@ -4254,6 +4257,7 @@ export namespace Prisma {
     time?: true
     status?: true
     price?: true
+    paymentMethod?: true
     createdAt?: true
   }
 
@@ -4266,6 +4270,7 @@ export namespace Prisma {
     time?: true
     status?: true
     price?: true
+    paymentMethod?: true
     createdAt?: true
   }
 
@@ -4278,6 +4283,7 @@ export namespace Prisma {
     time?: true
     status?: true
     price?: true
+    paymentMethod?: true
     createdAt?: true
     _all?: true
   }
@@ -4377,6 +4383,7 @@ export namespace Prisma {
     time: string
     status: string
     price: number
+    paymentMethod: string
     createdAt: Date
     _count: AppointmentCountAggregateOutputType | null
     _avg: AppointmentAvgAggregateOutputType | null
@@ -4408,6 +4415,7 @@ export namespace Prisma {
     time?: boolean
     status?: boolean
     price?: boolean
+    paymentMethod?: boolean
     createdAt?: boolean
     client?: boolean | UserDefaultArgs<ExtArgs>
     barber?: boolean | BarberDefaultArgs<ExtArgs>
@@ -4423,6 +4431,7 @@ export namespace Prisma {
     time?: boolean
     status?: boolean
     price?: boolean
+    paymentMethod?: boolean
     createdAt?: boolean
     client?: boolean | UserDefaultArgs<ExtArgs>
     barber?: boolean | BarberDefaultArgs<ExtArgs>
@@ -4438,6 +4447,7 @@ export namespace Prisma {
     time?: boolean
     status?: boolean
     price?: boolean
+    paymentMethod?: boolean
     createdAt?: boolean
   }
 
@@ -4468,6 +4478,7 @@ export namespace Prisma {
       time: string
       status: string
       price: number
+      paymentMethod: string
       createdAt: Date
     }, ExtArgs["result"]["appointment"]>
     composites: {}
@@ -4873,6 +4884,7 @@ export namespace Prisma {
     readonly time: FieldRef<"Appointment", 'String'>
     readonly status: FieldRef<"Appointment", 'String'>
     readonly price: FieldRef<"Appointment", 'Float'>
+    readonly paymentMethod: FieldRef<"Appointment", 'String'>
     readonly createdAt: FieldRef<"Appointment", 'DateTime'>
   }
     
@@ -5263,6 +5275,7 @@ export namespace Prisma {
     time: 'time',
     status: 'status',
     price: 'price',
+    paymentMethod: 'paymentMethod',
     createdAt: 'createdAt'
   };
 
@@ -5539,6 +5552,7 @@ export namespace Prisma {
     time?: StringFilter<"Appointment"> | string
     status?: StringFilter<"Appointment"> | string
     price?: FloatFilter<"Appointment"> | number
+    paymentMethod?: StringFilter<"Appointment"> | string
     createdAt?: DateTimeFilter<"Appointment"> | Date | string
     client?: XOR<UserRelationFilter, UserWhereInput>
     barber?: XOR<BarberRelationFilter, BarberWhereInput>
@@ -5554,6 +5568,7 @@ export namespace Prisma {
     time?: SortOrder
     status?: SortOrder
     price?: SortOrder
+    paymentMethod?: SortOrder
     createdAt?: SortOrder
     client?: UserOrderByWithRelationInput
     barber?: BarberOrderByWithRelationInput
@@ -5572,6 +5587,7 @@ export namespace Prisma {
     time?: StringFilter<"Appointment"> | string
     status?: StringFilter<"Appointment"> | string
     price?: FloatFilter<"Appointment"> | number
+    paymentMethod?: StringFilter<"Appointment"> | string
     createdAt?: DateTimeFilter<"Appointment"> | Date | string
     client?: XOR<UserRelationFilter, UserWhereInput>
     barber?: XOR<BarberRelationFilter, BarberWhereInput>
@@ -5587,6 +5603,7 @@ export namespace Prisma {
     time?: SortOrder
     status?: SortOrder
     price?: SortOrder
+    paymentMethod?: SortOrder
     createdAt?: SortOrder
     _count?: AppointmentCountOrderByAggregateInput
     _avg?: AppointmentAvgOrderByAggregateInput
@@ -5607,6 +5624,7 @@ export namespace Prisma {
     time?: StringWithAggregatesFilter<"Appointment"> | string
     status?: StringWithAggregatesFilter<"Appointment"> | string
     price?: FloatWithAggregatesFilter<"Appointment"> | number
+    paymentMethod?: StringWithAggregatesFilter<"Appointment"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Appointment"> | Date | string
   }
 
@@ -5838,6 +5856,7 @@ export namespace Prisma {
     time: string
     status?: string
     price: number
+    paymentMethod?: string
     createdAt?: Date | string
     client: UserCreateNestedOneWithoutAppointmentsInput
     barber: BarberCreateNestedOneWithoutAppointmentsInput
@@ -5853,6 +5872,7 @@ export namespace Prisma {
     time: string
     status?: string
     price: number
+    paymentMethod?: string
     createdAt?: Date | string
   }
 
@@ -5862,6 +5882,7 @@ export namespace Prisma {
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    paymentMethod?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     client?: UserUpdateOneRequiredWithoutAppointmentsNestedInput
     barber?: BarberUpdateOneRequiredWithoutAppointmentsNestedInput
@@ -5877,6 +5898,7 @@ export namespace Prisma {
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    paymentMethod?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -5889,6 +5911,7 @@ export namespace Prisma {
     time: string
     status?: string
     price: number
+    paymentMethod?: string
     createdAt?: Date | string
   }
 
@@ -5898,6 +5921,7 @@ export namespace Prisma {
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    paymentMethod?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -5910,6 +5934,7 @@ export namespace Prisma {
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    paymentMethod?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -6216,6 +6241,7 @@ export namespace Prisma {
     time?: SortOrder
     status?: SortOrder
     price?: SortOrder
+    paymentMethod?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -6232,6 +6258,7 @@ export namespace Prisma {
     time?: SortOrder
     status?: SortOrder
     price?: SortOrder
+    paymentMethod?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -6244,6 +6271,7 @@ export namespace Prisma {
     time?: SortOrder
     status?: SortOrder
     price?: SortOrder
+    paymentMethod?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -6622,6 +6650,7 @@ export namespace Prisma {
     time: string
     status?: string
     price: number
+    paymentMethod?: string
     createdAt?: Date | string
     barber: BarberCreateNestedOneWithoutAppointmentsInput
     service: ServiceCreateNestedOneWithoutAppointmentsInput
@@ -6635,6 +6664,7 @@ export namespace Prisma {
     time: string
     status?: string
     price: number
+    paymentMethod?: string
     createdAt?: Date | string
   }
 
@@ -6675,6 +6705,7 @@ export namespace Prisma {
     time?: StringFilter<"Appointment"> | string
     status?: StringFilter<"Appointment"> | string
     price?: FloatFilter<"Appointment"> | number
+    paymentMethod?: StringFilter<"Appointment"> | string
     createdAt?: DateTimeFilter<"Appointment"> | Date | string
   }
 
@@ -6684,6 +6715,7 @@ export namespace Prisma {
     time: string
     status?: string
     price: number
+    paymentMethod?: string
     createdAt?: Date | string
     client: UserCreateNestedOneWithoutAppointmentsInput
     service: ServiceCreateNestedOneWithoutAppointmentsInput
@@ -6697,6 +6729,7 @@ export namespace Prisma {
     time: string
     status?: string
     price: number
+    paymentMethod?: string
     createdAt?: Date | string
   }
 
@@ -6731,6 +6764,7 @@ export namespace Prisma {
     time: string
     status?: string
     price: number
+    paymentMethod?: string
     createdAt?: Date | string
     client: UserCreateNestedOneWithoutAppointmentsInput
     barber: BarberCreateNestedOneWithoutAppointmentsInput
@@ -6744,6 +6778,7 @@ export namespace Prisma {
     time: string
     status?: string
     price: number
+    paymentMethod?: string
     createdAt?: Date | string
   }
 
@@ -6948,6 +6983,7 @@ export namespace Prisma {
     time: string
     status?: string
     price: number
+    paymentMethod?: string
     createdAt?: Date | string
   }
 
@@ -6957,6 +6993,7 @@ export namespace Prisma {
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    paymentMethod?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     barber?: BarberUpdateOneRequiredWithoutAppointmentsNestedInput
     service?: ServiceUpdateOneRequiredWithoutAppointmentsNestedInput
@@ -6970,6 +7007,7 @@ export namespace Prisma {
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    paymentMethod?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -6981,6 +7019,7 @@ export namespace Prisma {
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    paymentMethod?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -6992,6 +7031,7 @@ export namespace Prisma {
     time: string
     status?: string
     price: number
+    paymentMethod?: string
     createdAt?: Date | string
   }
 
@@ -7001,6 +7041,7 @@ export namespace Prisma {
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    paymentMethod?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     client?: UserUpdateOneRequiredWithoutAppointmentsNestedInput
     service?: ServiceUpdateOneRequiredWithoutAppointmentsNestedInput
@@ -7014,6 +7055,7 @@ export namespace Prisma {
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    paymentMethod?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -7025,6 +7067,7 @@ export namespace Prisma {
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    paymentMethod?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -7036,6 +7079,7 @@ export namespace Prisma {
     time: string
     status?: string
     price: number
+    paymentMethod?: string
     createdAt?: Date | string
   }
 
@@ -7045,6 +7089,7 @@ export namespace Prisma {
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    paymentMethod?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     client?: UserUpdateOneRequiredWithoutAppointmentsNestedInput
     barber?: BarberUpdateOneRequiredWithoutAppointmentsNestedInput
@@ -7058,6 +7103,7 @@ export namespace Prisma {
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    paymentMethod?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -7069,6 +7115,7 @@ export namespace Prisma {
     time?: StringFieldUpdateOperationsInput | string
     status?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
+    paymentMethod?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

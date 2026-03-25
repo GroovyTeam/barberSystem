@@ -17,8 +17,15 @@ export default function GestionBarberos() {
   }
 
   const toggleAvailability = async (id, currentStatus) => {
-    await updateBarberAvailability(id, !currentStatus)
-    loadBarbers()
+    // Optimistic update
+    setBarberList(prev => prev.map(b => b.id === id ? { ...b, isAvailable: !currentStatus } : b))
+    
+    const result = await updateBarberAvailability(id, !currentStatus)
+    
+    if (result.error) {
+      // Revert if error
+      setBarberList(prev => prev.map(b => b.id === id ? { ...b, isAvailable: currentStatus } : b))
+    }
   }
 
   return (

@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { barbers } from '../../data/mockData'
+import { useState, useEffect } from 'react'
+import { getBarbers, getAppointments } from '../../services/api'
 
 const hours = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00']
 const days = [
@@ -12,19 +12,37 @@ const days = [
   { abbr: 'DOM', num: 24 },
 ]
 
-// Sample appointments on the calendar
-const calAppts = [
-  { hour: '09:00', day: 1, label: 'CORTE CLÁSICO', client: 'Carlos Ruiz' },
-  { hour: '10:00', day: 2, label: 'BARBA & CORTE', client: 'Luis Méndez' },
-  { hour: '10:00', day: 4, label: 'LIMPIEZA FACIAL', client: 'Roberto G.' },
-  { hour: '11:00', day: 0, label: 'CORTE NIÑO', client: 'Daniel S.' },
-  { hour: '11:00', day: 3, label: 'CORTE CLÁSICO', client: 'Alejandro P.' },
-  { hour: '12:00', day: 2, label: 'VIP EXPERIENCE', client: 'Sr. Rodriguez', span: 2 },
-]
+
 
 export default function Calendario() {
   const [view, setView] = useState('Semana')
-  const [selectedBarber, setSelectedBarber] = useState('all')
+  const [selectedBarberId, setSelectedBarberId] = useState('all')
+  const [barberList, setBarberList] = useState([])
+  const [appointments, setAppointments] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [hoveredAppt, setHoveredAppt] = useState(null)
+
+  useEffect(() => {
+    Promise.all([getBarbers(true), getAppointments()]).then(([barbs, appts]) => {
+      setBarberList(barbs)
+      setAppointments(appts)
+      setLoading(false)
+    })
+  }, [])
+
+  // Helper to map index (0-6) to actual week dates starting from the 18th in mock days
+  // In a real app we'd use date-fns to get the current week.
+  const getApptsForSlot = (hour, dayIndex) => {
+    return appointments.filter(a => {
+      const aDate = new Date(a.date)
+      // Check if it's the correct day in the visible range (18-24)
+      const dayNum = aDate.getDate()
+      const matchesDay = days[dayIndex].num === dayNum
+      const matchesHour = a.time === hour
+      const matchesBarber = selectedBarberId === 'all' || a.barberId === selectedBarberId
+      return matchesDay && matchesHour && matchesBarber
+    })
+  }
 
   return (
     <div className="space-y-8 pt-8">
@@ -67,13 +85,13 @@ export default function Calendario() {
                 </div>
                 <input type="radio" name="barber" checked={selectedBarber === 'all'} onChange={() => setSelectedBarber('all')} className="text-primary" />
               </label>
-              {barbers.map(barber => (
+              {barberList.map(barber => (
                 <label key={barber.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-high cursor-pointer border border-outline-variant/10 transition-all group">
                   <div className="flex items-center gap-3">
-                    <img src={barber.avatar} alt={barber.name} className="w-8 h-8 rounded-full grayscale group-hover:grayscale-0 transition-all" />
+                    <img src={barber.avatar} alt={barber.name} className={`w-8 h-8 rounded-full transition-all ${barber.isAvailable ? 'grayscale-0' : 'grayscale opacity-40'}`} />
                     <span className="text-sm font-medium text-on-surface">{barber.name}</span>
                   </div>
-                  <input type="radio" name="barber" checked={selectedBarber === barber.id} onChange={() => setSelectedBarber(barber.id)} className="text-primary" />
+                  <input type="radio" name="barber" checked={selectedBarberId === barber.id} onChange={() => setSelectedBarberId(barber.id)} className="text-primary" />
                 </label>
               ))}
             </div>
@@ -124,24 +142,51 @@ export default function Calendario() {
                       {hour}
                     </div>
                     {days.map((day, di) => {
-                      const appt = calAppts.find(a => a.hour === hour && a.day === di)
+                      const apptsInSlot = getApptsForSlot(hour, di)
                       return (
                         <div
                           key={`${hour}-${di}`}
                           className={`h-20 border-b border-outline-variant/10 relative p-1 ${day.current ? 'bg-primary/5' : ''}`}
                         >
-                          {appt && (
+                          {apptsInSlot.map((appt, ai) => (
                             <div
-                              className="absolute inset-1 bg-gradient-to-br from-[#8B5A2B] to-[#F9BA82] rounded-lg p-2 shadow-lg z-10 cursor-pointer hover:brightness-110 transition-all"
-                              style={appt.span ? { height: `${appt.span * 80 - 8}px` } : {}}
+                              key={appt.id}
+                              onMouseEnter={() => setHoveredAppt(appt)}
+                              onMouseLeave={() => setHoveredAppt(null)}
+                              className="absolute inset-x-1 bg-gradient-to-br from-[#8B5A2B] to-[#F9BA82] rounded p-1.5 shadow-lg z-10 cursor-pointer hover:brightness-110 transition-all overflow-hidden"
+                              style={{ 
+                                top: `${ai * 2}px`, // Slight offset if multiple appts
+                                height: '72px' 
+                              }}
                             >
-                              <p className="text-[10px] font-black text-on-primary-container leading-none mb-1">{appt.label}</p>
-                              <p className="text-xs font-medium text-on-primary-container truncate">{appt.client}</p>
-                              {appt.span && (
-                                <p className="mt-2 text-[9px] text-on-primary-container/70 uppercase">{appt.span * 30} MIN</p>
+                              <p className="text-[9px] font-black text-on-primary-container leading-tight mb-0.5 truncate">{appt.service.name}</p>
+                              <p className="text-[10px] font-medium text-on-primary-container/90 truncate">{appt.client.name}</p>
+                              
+                              {/* HOVER TOOLTIP */}
+                              {hoveredAppt?.id === appt.id && (
+                                <div className="fixed z-[100] w-52 bg-surface-container-highest border border-primary/20 p-4 rounded-xl shadow-2xl pointer-events-none animate-in fade-in zoom-in-95 duration-200"
+                                     style={{ left: '50%', transform: 'translateX(-50%)', top: '20px' }}>
+                                  <h4 className="text-primary font-black text-[10px] uppercase tracking-widest mb-2">Resumen de Cita</h4>
+                                  <div className="space-y-2">
+                                    <div className="flex items-center gap-2">
+                                      <span className="material-symbols-outlined text-sm text-outline">calendar_month</span>
+                                      <span className="text-xs text-on-surface font-bold">{new Date(appt.date).toLocaleDateString()}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <span className="material-symbols-outlined text-sm text-outline">schedule</span>
+                                      <span className="text-xs text-on-surface font-bold">{appt.time} HS</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <span className="material-symbols-outlined text-sm text-outline">payments</span>
+                                      <span className="text-xs font-black uppercase text-secondary">
+                                        {appt.paymentMethod === 'PRESENCIAL' ? 'Pago en Sucursal' : 'Pago en Línea'}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
                               )}
                             </div>
-                          )}
+                          ))}
                         </div>
                       )
                     })}
