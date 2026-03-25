@@ -18,6 +18,7 @@ import Clientes from './pages/admin/Clientes'
 import Reportes from './pages/admin/Reportes'
 import GestionServicios from './pages/admin/GestionServicios'
 import GestionBarberos from './pages/admin/GestionBarberos'
+import Configuracion from './pages/admin/Configuracion'
 
 // Auth
 import Login from './pages/auth/Login'
@@ -46,7 +47,7 @@ export default function App() {
           <Route path="reportes" element={<Reportes />} />
           <Route path="servicios" element={<GestionServicios />} />
           <Route path="barberos" element={<GestionBarberos />} />
-          <Route path="configuracion" element={<Dashboard />} />
+          <Route path="configuracion" element={<Configuracion />} />
         </Route>
 
         {/* Fallback */}

@@ -1,7 +1,37 @@
-import { pastAppointments, barbers } from '../../data/mockData'
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { pastAppointments } from '../../data/mockData'
+import { updateUserProfile } from '../../../services/api' // Simulando conexión API
 
 export default function Perfil() {
+  const [isEditing, setIsEditing] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  
+  const [profileData, setProfileData] = useState({
+    name: 'Carlos Méndez',
+    phone: '+52 55 1234 5678',
+    email: 'carlos.mendez@email.com'
+  })
+
   const totalSpent = pastAppointments.filter(a => a.status === 'completed').reduce((sum, a) => sum + a.price, 0)
+
+  // Handle form save
+  const handleSave = async () => {
+    setIsSaving(true)
+    try {
+      // LLAMADA SIMULADA A LA API
+      await updateUserProfile('user-id-123', profileData)
+      setIsEditing(false)
+    } catch (error) {
+      console.error("Error updating profile", error)
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const handleChange = (e) => {
+    setProfileData(prev => ({ ...prev, [e.target.name]: e.target.value }))
+  }
 
   return (
     <div className="px-6 max-w-2xl mx-auto py-6 space-y-8">
@@ -9,18 +39,41 @@ export default function Perfil() {
       <div className="bg-surface-container rounded-2xl p-6 relative overflow-hidden">
         <span className="material-symbols-outlined absolute -right-6 -bottom-6 text-[100px] text-secondary opacity-5 pointer-events-none">person</span>
         <div className="flex items-center gap-5">
-          <div className="w-20 h-20 rounded-xl overflow-hidden bg-surface-container-high flex items-center justify-center flex-shrink-0">
+          <div className="w-20 h-20 rounded-xl overflow-hidden bg-surface-container-high flex items-center justify-center flex-shrink-0 relative group">
             <span className="material-symbols-outlined text-4xl text-secondary">person</span>
+            {isEditing && (
+              <div className="absolute inset-0 bg-black/60 flex items-center justify-center cursor-pointer hover:bg-black/80 transition-colors">
+                 <span className="material-symbols-outlined text-white text-sm">photo_camera</span>
+              </div>
+            )}
           </div>
           <div className="flex-1">
-            <h2 className="font-headline font-black text-2xl text-on-surface">Carlos Méndez</h2>
-            <p className="text-outline text-sm">carlos.mendez@email.com</p>
+            {isEditing ? (
+              <input 
+                name="name"
+                value={profileData.name}
+                onChange={handleChange}
+                className="font-headline font-black text-xl text-on-surface bg-transparent border-b border-primary focus:outline-none w-full mb-1 pb-1"
+              />
+            ) : (
+              <h2 className="font-headline font-black text-2xl text-on-surface truncate">{profileData.name}</h2>
+            )}
+            <p className="text-outline text-sm truncate">{profileData.email}</p>
             <div className="flex items-center gap-2 mt-2">
               <span className="bg-primary/10 text-primary text-[10px] font-black uppercase px-2.5 py-1 rounded-full">Cliente Frecuente</span>
             </div>
           </div>
-          <button className="text-secondary hover:text-on-surface transition-colors">
-            <span className="material-symbols-outlined">edit</span>
+          
+          <button 
+            onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+            disabled={isSaving}
+            className={`transition-colors p-2 rounded-full ${isEditing ? 'bg-primary-container text-on-primary-container hover:bg-primary' : 'text-secondary hover:text-on-surface hover:bg-surface-container-high'}`}
+          >
+            {isSaving ? (
+               <span className="material-symbols-outlined animate-spin">sync</span>
+            ) : (
+               <span className="material-symbols-outlined">{isEditing ? 'check' : 'edit'}</span>
+            )}
           </button>
         </div>
       </div>
@@ -29,8 +82,8 @@ export default function Perfil() {
       <div className="grid grid-cols-3 gap-4">
         {[
           { label: 'Visitas', value: pastAppointments.filter(a => a.status === 'completed').length + 2, icon: 'content_cut' },
-          { label: 'Total Gastado', value: `$${totalSpent + 500}`, icon: 'payments' },
-          { label: 'Barbero Fav.', value: 'Marco', icon: 'star' },
+          { label: 'Gastado', value: `$${totalSpent + 500}`, icon: 'payments' },
+          { label: 'Barbero', value: 'Marco', icon: 'star' },
         ].map((stat) => (
           <div key={stat.label} className="bg-surface-container rounded-xl p-4 text-center">
             <span className="material-symbols-outlined text-secondary text-xl mb-2 block">{stat.icon}</span>
@@ -41,24 +94,56 @@ export default function Perfil() {
       </div>
 
       {/* Info Sections */}
-      <div className="space-y-3">
+      <div className="space-y-3 relative">
         <h3 className="font-headline font-bold text-secondary text-xs uppercase tracking-[0.2em]">Información Personal</h3>
-        {[
-          { icon: 'person', label: 'Nombre', value: 'Carlos Méndez' },
-          { icon: 'phone', label: 'Teléfono', value: '+52 55 1234 5678' },
-          { icon: 'email', label: 'Correo', value: 'carlos.mendez@email.com' },
-        ].map(field => (
-          <div key={field.label} className="bg-surface-container rounded-xl p-4 flex items-center gap-4">
-            <span className="material-symbols-outlined text-secondary">{field.icon}</span>
-            <div className="flex-1">
-              <p className="text-[10px] text-outline uppercase tracking-widest">{field.label}</p>
-              <p className="text-on-surface font-medium text-sm">{field.value}</p>
-            </div>
-            <button className="text-outline hover:text-secondary transition-colors">
-              <span className="material-symbols-outlined text-sm">edit</span>
+        
+        {/* Name Field */}
+        <div className="bg-surface-container rounded-xl p-4 flex items-center gap-4">
+          <span className="material-symbols-outlined text-secondary">person</span>
+          <div className="flex-1">
+            <p className="text-[10px] text-outline uppercase tracking-widest">Nombre</p>
+            {isEditing ? (
+              <input type="text" name="name" value={profileData.name} onChange={handleChange} className="text-on-surface font-medium text-sm bg-surface-container-low border-b-2 border-primary focus:outline-none w-full px-2 py-1 mt-1 rounded-t" />
+            ) : (
+              <p className="text-on-surface font-medium text-sm">{profileData.name}</p>
+            )}
+          </div>
+        </div>
+
+        {/* Phone Field */}
+        <div className="bg-surface-container rounded-xl p-4 flex items-center gap-4">
+          <span className="material-symbols-outlined text-secondary">phone</span>
+          <div className="flex-1">
+            <p className="text-[10px] text-outline uppercase tracking-widest">Teléfono</p>
+            {isEditing ? (
+              <input type="tel" name="phone" value={profileData.phone} onChange={handleChange} className="text-on-surface font-medium text-sm bg-surface-container-low border-b-2 border-primary focus:outline-none w-full px-2 py-1 mt-1 rounded-t" />
+            ) : (
+              <p className="text-on-surface font-medium text-sm">{profileData.phone}</p>
+            )}
+          </div>
+        </div>
+
+        {/* Email Field */}
+        <div className="bg-surface-container rounded-xl p-4 flex items-center gap-4">
+          <span className="material-symbols-outlined text-secondary">email</span>
+          <div className="flex-1">
+            <p className="text-[10px] text-outline uppercase tracking-widest">Correo</p>
+            {isEditing ? (
+              <input type="email" name="email" value={profileData.email} onChange={handleChange} className="text-on-surface font-medium text-sm bg-surface-container-low border-b-2 border-primary focus:outline-none w-full px-2 py-1 mt-1 rounded-t" />
+            ) : (
+              <p className="text-on-surface font-medium text-sm">{profileData.email}</p>
+            )}
+          </div>
+        </div>
+
+        {isEditing && (
+          <div className="flex gap-3 justify-end pt-2">
+            <button onClick={() => setIsEditing(false)} className="text-outline font-bold text-sm px-4 py-2 hover:text-on-surface">Cancelar</button>
+            <button onClick={handleSave} className="bg-primary-container text-on-primary-container font-bold text-sm px-6 py-2 rounded-lg hover:bg-primary transition-colors flex items-center gap-2">
+                {isSaving ? <span className="material-symbols-outlined text-sm animate-spin">refresh</span> : 'Guardar Cambios'}
             </button>
           </div>
-        ))}
+        )}
       </div>
 
       {/* Actions */}

@@ -43,12 +43,21 @@
 /* Base */
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; font-family: 'Inter', sans-serif; background-color: #131313; color: #E5E2E1; }
+body { 
+  margin: 0; 
+  font-family: 'Inter', sans-serif; 
+  background-color: var(--color-surface, #131313); 
+  background-image: var(--bg-image, none);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: #E5E2E1; 
+}
 h1, h2, h3, h4, h5, h6 { font-family: 'Epilogue', sans-serif; }
 
 /* Gold gradient for primary CTAs */
 .btn-gold {
-  background: linear-gradient(135deg, #f9ba82, #8b5a2b);
+  background: linear-gradient(135deg, var(--color-primary, #f9ba82), #8b5a2b);
 }
 
 /* Selection */
