@@ -19,9 +19,9 @@ export default function GestionBarberos() {
   const toggleAvailability = async (id, currentStatus) => {
     // Optimistic update
     setBarberList(prev => prev.map(b => b.id === id ? { ...b, isAvailable: !currentStatus } : b))
-    
+
     const result = await updateBarberAvailability(id, !currentStatus)
-    
+
     if (result.error) {
       // Revert if error
       setBarberList(prev => prev.map(b => b.id === id ? { ...b, isAvailable: currentStatus } : b))
@@ -60,7 +60,7 @@ export default function GestionBarberos() {
                   <h3 className={`font-headline font-bold text-on-surface text-lg ${!barber.isAvailable && 'opacity-50'}`}>{barber.name}</h3>
                   <p className="text-[10px] text-on-surface-variant uppercase tracking-widest">{barber.specialty}</p>
                 </div>
-                <button 
+                <button
                   onClick={() => toggleAvailability(barber.id, barber.isAvailable)}
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase transition-all active:scale-90 ${barber.isAvailable ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-red-500/10 text-red-500 border border-red-500/20'}`}
                 >
