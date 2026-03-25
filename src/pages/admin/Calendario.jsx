@@ -35,7 +35,6 @@ export default function Calendario() {
   const getApptsForSlot = (hour, dayIndex) => {
     return appointments.filter(a => {
       const aDate = new Date(a.date)
-      // Check if it's the correct day in the visible range (18-24)
       const dayNum = aDate.getDate()
       const matchesDay = days[dayIndex].num === dayNum
       const matchesHour = a.time === hour
@@ -83,7 +82,7 @@ export default function Calendario() {
                   </div>
                   <span className="text-sm font-medium text-on-surface">Todos los Barberos</span>
                 </div>
-                <input type="radio" name="barber" checked={selectedBarber === 'all'} onChange={() => setSelectedBarber('all')} className="text-primary" />
+                <input type="radio" name="barber" checked={selectedBarberId === 'all'} onChange={() => setSelectedBarberId('all')} className="text-primary" />
               </label>
               {barberList.map(barber => (
                 <label key={barber.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-high cursor-pointer border border-outline-variant/10 transition-all group">

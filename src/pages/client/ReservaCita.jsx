@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import * as Dialog from '@radix-ui/react-dialog'
 import { getServices, getBarbers, bookAppointment, getCurrentUser } from '../../services/api'
 
 const STEPS = ['Servicio', 'Barbero', 'Fecha', 'Pago']
@@ -368,7 +369,7 @@ export default function ReservaCita() {
           
           <button
             onClick={() => setPaymentMethod('sucursal')}
-            className={`w-full p-6 rounded-2xl flex items-center gap-5 transition-all outline-none text-left border-2 ${
+            className={`w-full p-6 rounded-2xl flex items-center gap-5 transition-all outline-none text-left border-2 group relative ${
               paymentMethod === 'sucursal' 
                ? 'border-primary bg-primary-container/20 shadow-[0_0_30px_rgba(249,186,130,0.15)] scale-[1.02]' 
                : 'border-surface-container-high bg-surface-container hover:border-primary/40'
@@ -381,12 +382,17 @@ export default function ReservaCita() {
                <h4 className="font-headline font-black text-on-surface text-lg">Pago en Sucursal</h4>
                <p className="text-xs text-outline mt-1 leading-relaxed">Paga físicamente el día de tu cita.</p>
             </div>
-            {paymentMethod === 'sucursal' && <span className="material-symbols-outlined text-primary">check_circle</span>}
+            <div 
+              onClick={(e) => { e.stopPropagation(); handleConfirmBooking(); }}
+              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${paymentMethod === 'sucursal' ? 'bg-primary text-on-primary scale-110 shadow-lg shadow-primary/20' : 'bg-surface-container-highest text-outline group-hover:bg-primary/10 group-hover:text-primary'}`}
+            >
+               <span className="material-symbols-outlined text-xl">arrow_forward</span>
+            </div>
           </button>
 
           <button
             onClick={() => setPaymentMethod('linea')}
-            className={`w-full p-6 rounded-2xl flex items-center gap-5 transition-all outline-none text-left border-2 flex-col xs:flex-row relative overflow-hidden ${
+            className={`w-full p-6 rounded-2xl flex items-center gap-5 transition-all outline-none text-left border-2 group relative overflow-hidden ${
               paymentMethod === 'linea' 
                ? 'border-primary bg-primary-container/20 shadow-[0_0_30px_rgba(249,186,130,0.15)] scale-[1.02]' 
                : 'border-surface-container-high bg-surface-container hover:border-primary/40'
@@ -403,31 +409,41 @@ export default function ReservaCita() {
                </div>
                <p className="text-xs text-outline mt-1 leading-relaxed">Paga de forma segura con tarjeta (Stripe).</p>
             </div>
-            {paymentMethod === 'linea' && <span className="material-symbols-outlined text-primary">check_circle</span>}
+            <div 
+              onClick={(e) => { e.stopPropagation(); handleConfirmBooking(); }}
+              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${paymentMethod === 'linea' ? 'bg-primary text-on-primary scale-110 shadow-lg shadow-primary/20' : 'bg-surface-container-highest text-outline group-hover:bg-primary/10 group-hover:text-primary'}`}
+            >
+               <span className="material-symbols-outlined text-xl">arrow_forward</span>
+            </div>
           </button>
         </div>
       )}
 
-      {/* MODAL DE ÉXITO */}
-      {showSuccessModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="bg-surface-container max-w-sm w-full rounded-3xl p-8 text-center shadow-2xl border border-outline-variant/10 animate-in zoom-in-95 duration-500">
-            <div className="w-20 h-20 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="material-symbols-outlined text-5xl">check_circle</span>
-            </div>
-            <h2 className="text-2xl font-black font-headline text-on-surface mb-2 tracking-tighter">¡Cita Agendada!</h2>
-            <p className="text-sm text-outline mb-8 leading-relaxed">
-              Tu reserva se registró correctamente para el <span className="text-on-surface font-bold">{selectedDay}/{month + 1}/{year}</span> a las <span className="text-on-surface font-bold">{selectedTime}</span>.
-            </p>
-            <button 
-              onClick={() => navigate('/mis-citas')}
-              className="w-full bg-primary text-on-primary py-4 rounded-xl font-headline font-black text-sm shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
-            >
-              VER MIS CITAS
-            </button>
-          </div>
-        </div>
-      )}
+      {/* MODAL DE ÉXITO CON RADIX UI */}
+      <Dialog.Root open={showSuccessModal} onOpenChange={setShowSuccessModal}>
+        <Dialog.Portal>
+            <Dialog.Overlay className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md animate-in fade-in duration-300" />
+            <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[101] max-w-sm w-full outline-none animate-in zoom-in-95 duration-500">
+                <div className="bg-surface-container rounded-3xl p-8 text-center shadow-2xl border border-outline-variant/10">
+                    <div className="w-20 h-20 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span className="material-symbols-outlined text-5xl">check_circle</span>
+                    </div>
+                    <Dialog.Title className="text-2xl font-black font-headline text-on-surface mb-2 tracking-tighter">
+                        ¡Cita Agendada!
+                    </Dialog.Title>
+                    <Dialog.Description className="text-sm text-outline mb-8 leading-relaxed">
+                        Tu reserva se registró correctamente para el <span className="text-on-surface font-bold">{selectedDay}/{month + 1}/{year}</span> a las <span className="text-on-surface font-bold">{selectedTime}</span>.
+                    </Dialog.Description>
+                    <button 
+                        onClick={() => navigate('/mis-citas')}
+                        className="w-full bg-primary text-on-primary py-4 rounded-xl font-headline font-black text-sm shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
+                    >
+                        VER MIS CITAS
+                    </button>
+                </div>
+            </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
 
       {/* Bottom Navigation */}
       <div className={`fixed bottom-0 left-0 right-0 z-40 bg-[#131313]/90 backdrop-blur-xl border-t border-[#353534]/20 shadow-[0_-8px_32px_rgba(0,0,0,0.5)]`}>
