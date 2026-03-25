@@ -1,31 +1,43 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { pastAppointments } from '../../data/mockData'
-import { updateUserProfile } from '../../services/api' // Simulando conexión API
+import { updateUserProfile, getCurrentUser } from '../../services/api' 
 
 export default function Perfil() {
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   
   const [profileData, setProfileData] = useState({
-    name: 'Carlos Méndez',
-    phone: '+52 55 1234 5678',
-    email: 'carlos.mendez@email.com'
+    name: 'Cargando...',
+    email: 'cargando@email.com',
+    phone: '',
+    memberSince: '2024'
   })
 
-  const totalSpent = pastAppointments.filter(a => a.status === 'completed').reduce((sum, a) => sum + a.price, 0)
+  useEffect(() => {
+    getCurrentUser().then(u => {
+      if(u) {
+         setProfileData({
+           name: u.name,
+           email: u.email,
+           phone: u.phone || '',
+           id: u.id,
+           memberSince: new Date(u.createdAt).getFullYear().toString()
+         })
+      }
+    })
+  }, [])
+
+  const totalSpent = 0 // En una versión futura se calculará sumando el historial de citas obtenido del API.
 
   // Handle form save
   const handleSave = async () => {
     setIsSaving(true)
-    try {
-      // LLAMADA SIMULADA A LA API
-      await updateUserProfile('user-id-123', profileData)
+    const { success } = await updateUserProfile(profileData.id, profileData)
+    setIsSaving(false)
+    if (success) {
       setIsEditing(false)
-    } catch (error) {
-      console.error("Error updating profile", error)
-    } finally {
-      setIsSaving(false)
+    } else {
+      alert("Error al guardar perfil")
     }
   }
 
@@ -81,7 +93,7 @@ export default function Perfil() {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: 'Visitas', value: pastAppointments.filter(a => a.status === 'completed').length + 2, icon: 'content_cut' },
+          { label: 'Visitas', value: 2, icon: 'content_cut' },
           { label: 'Gastado', value: `$${totalSpent + 500}`, icon: 'payments' },
           { label: 'Barbero', value: 'Marco', icon: 'star' },
         ].map((stat) => (

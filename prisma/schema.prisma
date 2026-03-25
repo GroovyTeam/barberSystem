@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "./generated/client2"
 }
 
 datasource db {
@@ -13,16 +14,10 @@ model User {
   email     String   @unique
   phone     String?
   password  String
-  role      Role     @default(CLIENT)
+  role      String   @default("CLIENT")
   createdAt DateTime @default(now())
   
   appointments Appointment[]
-}
-
-enum Role {
-  CLIENT
-  ADMIN
-  BARBER
 }
 
 model Barber {
@@ -56,18 +51,11 @@ model Appointment {
   serviceId String
   date      DateTime   // Día de la cita
   time      String     // Hora (ej. "10:30")
-  status    ApptStatus @default(PENDING)
+  status    String     @default("PENDING")
   price     Float
   
   client    User       @relation(fields: [clientId], references: [id])
   barber    Barber     @relation(fields: [barberId], references: [id])
   service   Service    @relation(fields: [serviceId], references: [id])
   createdAt DateTime   @default(now())
-}
-
-enum ApptStatus {
-  PENDING
-  CONFIRMED
-  COMPLETED
-  CANCELLED
 }

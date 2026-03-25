@@ -58,7 +58,52 @@ export const bookAppointment = async (appointmentData) => {
 }
 
 export const updateUserProfile = async (userId, profileData) => {
-  // Pending Express endpoint for PUT /api/users/:id
-  await new Promise(r => setTimeout(r, 800))
-  return { success: true, data: profileData }
+  try {
+    const res = await fetch(`${API_URL}/users/${userId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(profileData)
+    })
+    return await res.json()
+  } catch (error) {
+    console.error(error)
+    return { error: true }
+  }
+}
+
+export const getClientAppointments = async (clientId) => {
+  try {
+    // Para simplificar, obtenemos al usuario 'current' si no se pasa ID específico
+    let actualId = clientId
+    if(clientId === 'current') {
+      const userRes = await fetch(`${API_URL}/users/current`)
+      const user = await userRes.json()
+      actualId = user.id
+    }
+    const res = await fetch(`${API_URL}/appointments/client/${actualId}`)
+    return await res.json()
+  } catch(err) {
+    console.error(err)
+    return []
+  }
+}
+
+export const cancelAppointment = async (apptId) => {
+  try {
+    const res = await fetch(`${API_URL}/appointments/${apptId}/cancel`, { method: 'PUT' })
+    return await res.json()
+  } catch(err) {
+    console.error(err)
+    return { error: true }
+  }
+}
+
+export const getCurrentUser = async () => {
+  try {
+    const res = await fetch(`${API_URL}/users/current`)
+    return await res.json()
+  } catch(err) {
+    console.error(err)
+    return null
+  }
 }
