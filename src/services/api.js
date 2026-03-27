@@ -131,3 +131,13 @@ export const getAppointments = async () => {
     return []
   }
 }
+
+export const getDashboardStats = async () => {
+  try {
+    const res = await fetch(`${API_URL}/dashboard/stats`)
+    return await res.json()
+  } catch (error) {
+    console.error(error)
+    return null
+  }
+}

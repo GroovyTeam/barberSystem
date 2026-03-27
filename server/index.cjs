@@ -158,6 +158,94 @@ app.put('/api/appointments/:id/cancel', async (req, res) => {
   }
 })
 
+// === DASHBOARD STATS ===
+app.get('/api/dashboard/stats', async (req, res) => {
+  try {
+    const now = new Date()
+    const startOfDay = new Date(now.setHours(0, 0, 0, 0))
+    const endOfDay = new Date(now.setHours(23, 59, 59, 999))
+
+    const [
+      appointmentsToday,
+      activeBarbers,
+      newClientsToday,
+      revenueTodayResult,
+      recentAppointments,
+      performanceData
+    ] = await Promise.all([
+      prisma.appointment.count({
+        where: { 
+          date: { gte: startOfDay, lte: endOfDay },
+          status: { not: 'CANCELLED' } 
+        }
+      }),
+      prisma.barber.count({
+        where: { isAvailable: true }
+      }),
+      prisma.user.count({
+        where: { 
+          role: 'CLIENT', 
+          createdAt: { gte: startOfDay, lte: endOfDay } 
+        }
+      }),
+      prisma.appointment.aggregate({
+        where: { 
+          date: { gte: startOfDay, lte: endOfDay },
+          status: { not: 'CANCELLED' } 
+        },
+        _sum: { price: true }
+      }),
+      prisma.appointment.findMany({
+        where: { 
+          date: { gte: startOfDay }, 
+          status: 'PENDING' 
+        },
+        take: 5,
+        orderBy: [{ date: 'asc' }, { time: 'asc' }],
+        include: { client: true, service: true, barber: true }
+      }),
+      prisma.appointment.groupBy({
+        by: ['barberId'],
+        _count: { id: true },
+        _sum: { price: true },
+        orderBy: { _count: { id: 'desc' } },
+        take: 3
+      })
+    ])
+
+    // Enriquecer datos de desempeño
+    const enrichedPerformance = await Promise.all(performanceData.map(async (p) => {
+      const barber = await prisma.barber.findUnique({ where: { id: p.barberId } })
+      return { 
+        name: barber?.name || 'Unknown',
+        appointments: p._count.id,
+        revenue: p._sum.price || 0
+      }
+    }))
+
+    res.json({
+      appointmentsToday,
+      activeBarbers,
+      newClientsToday,
+      revenueToday: revenueTodayResult._sum.price || 0,
+      recentAppointments: recentAppointments.map(a => ({
+        id: a.id,
+        client: a.client.name,
+        initials: a.client.name.split(' ').map(n => n[0]).join(''),
+        clientType: 'Cliente Regular',
+        service: a.service.name,
+        barber: a.barber.name,
+        time: a.time,
+        status: a.status
+      })),
+      performance: enrichedPerformance
+    })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Error calculating dashboard stats' })
+  }
+})
+
 // === Usuarios: Actualizar Perfil ===
 app.put('/api/users/:id', async (req, res) => {
   try {

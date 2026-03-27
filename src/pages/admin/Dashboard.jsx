@@ -1,5 +1,7 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { adminAppointments, financialData } from '../../data/mockData'
+import * as Dialog from '@radix-ui/react-dialog'
+import { getDashboardStats } from '../../services/api'
 
 const STATUS_STYLES = {
   en_curso: { label: 'En curso', cls: 'bg-primary/10 text-primary', pulse: true },
@@ -7,14 +9,31 @@ const STATUS_STYLES = {
   cancelled: { label: 'Cancelada', cls: 'bg-error/10 text-error' },
 }
 
-const kpiCards = [
-  { label: 'Citas del Día', value: '24', icon: 'calendar_month', badge: '+12%', badgeCls: 'bg-green-500/10 text-green-500' },
-  { label: 'Ingresos Estimados', value: '$1,450', icon: 'payments', badge: 'Hoy', badgeCls: 'text-outline' },
-  { label: 'Barberos Activos', value: '06', icon: 'content_cut', badge: 'En turno', badgeCls: 'text-green-500 flex items-center gap-1', pulse: true },
-  { label: 'Nuevos Clientes', value: '08', icon: 'person_add', badge: '+3 hoy', badgeCls: 'text-primary' },
-]
-
 export default function Dashboard() {
+  const [stats, setStats] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [showNewApptModal, setShowNewApptModal] = useState(false)
+
+  useEffect(() => {
+    getDashboardStats().then(data => {
+      setStats(data)
+      setLoading(false)
+    })
+  }, [])
+
+  if (loading) return (
+    <div className="flex items-center justify-center h-screen">
+      <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+    </div>
+  )
+
+  const kpiCards = [
+    { label: 'Citas del Día', value: stats?.appointmentsToday || 0, icon: 'calendar_month', badge: 'Hoy', badgeCls: 'bg-primary/10 text-primary' },
+    { label: 'Ingresos Estimados', value: `$${stats?.revenueToday || 0}`, icon: 'payments', badge: 'Hoy', badgeCls: 'text-outline' },
+    { label: 'Barberos Activos', value: stats?.activeBarbers || 0, icon: 'content_cut', badge: 'En turno', badgeCls: 'text-green-500 flex items-center gap-1', pulse: true },
+    { label: 'Nuevos Clientes', value: stats?.newClientsToday || 0, icon: 'person_add', badge: 'Hoy', badgeCls: 'text-primary' },
+  ]
+
   return (
     <div className="space-y-10 pt-8">
       {/* Header */}
@@ -28,13 +47,13 @@ export default function Dashboard() {
             </span>
           </p>
         </div>
-        <Link
-          to="/admin/calendario"
+        <button
+          onClick={() => setShowNewApptModal(true)}
           className="bg-primary-container text-on-primary-container px-6 py-3 rounded-md font-bold text-sm flex items-center gap-2 hover:bg-primary transition-colors shadow-lg shadow-primary-container/20"
         >
           <span className="material-symbols-outlined text-lg">add</span>
           Nueva Cita
-        </Link>
+        </button>
       </div>
 
       {/* KPI Cards Bento Grid */}
@@ -65,7 +84,7 @@ export default function Dashboard() {
           </h3>
           <div className="flex gap-2">
             <button className="text-outline hover:text-secondary text-sm font-bold px-4 py-2 transition-colors underline decoration-outline-variant/50 underline-offset-8">Hoy</button>
-            <button className="text-outline/50 hover:text-secondary text-sm px-4 py-2 transition-colors">Mañana</button>
+            <Link to="/admin/calendario" className="text-outline/50 hover:text-secondary text-sm px-4 py-2 transition-colors">Ver Calendario</Link>
           </div>
         </div>
         <div className="overflow-x-auto">
@@ -78,7 +97,7 @@ export default function Dashboard() {
               </tr>
             </thead>
             <tbody className="divide-y divide-outline-variant/5">
-              {adminAppointments.map((appt) => {
+              {stats?.recentAppointments.map((appt) => {
                 const st = STATUS_STYLES[appt.status] || STATUS_STYLES.confirmed
                 return (
                   <tr key={appt.id} className="hover:bg-surface-bright/20 transition-colors group">
@@ -116,15 +135,20 @@ export default function Dashboard() {
                   </tr>
                 )
               })}
+              {stats?.recentAppointments.length === 0 && (
+                <tr>
+                   <td colSpan="6" className="px-8 py-10 text-center text-outline text-sm">No hay citas próximas para hoy.</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
         <div className="p-6 bg-surface-container-low flex justify-between items-center text-outline text-xs border-t border-outline-variant/5">
-          <p>Mostrando {adminAppointments.length} de 24 citas programadas para hoy</p>
-          <button className="flex items-center gap-1 hover:text-secondary transition-colors">
-            Ver historial completo
+          <p>Mostrando {stats?.recentAppointments.length || 0} citas pendientes</p>
+          <Link to="/admin/calendario" className="flex items-center gap-1 hover:text-secondary transition-colors font-bold uppercase tracking-tight">
+            Ir al Calendario Completo
             <span className="material-symbols-outlined text-xs">arrow_forward</span>
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -134,17 +158,28 @@ export default function Dashboard() {
           <span className="material-symbols-outlined absolute right-[-20px] top-[-20px] text-[200px] text-primary/5 -rotate-12">brush</span>
           <div className="relative z-10">
             <h4 className="text-2xl font-bold text-on-surface font-headline mb-2">Reporte de Desempeño</h4>
-            <p className="text-outline-variant max-w-sm text-sm">
-              {financialData.byBarber[0]?.name} lidera las ventas con {financialData.byBarber[0]?.appointments} servicios completados y calificación perfecta.
-            </p>
+            <div className="space-y-4 mt-6">
+               {stats?.performance.map((p, i) => (
+                 <div key={p.name} className="flex items-center justify-between max-w-sm">
+                    <div className="flex items-center gap-3">
+                       <span className="text-outline font-black text-xs">0{i+1}</span>
+                       <span className="text-on-surface font-bold text-sm">{p.name}</span>
+                    </div>
+                    <div className="flex items-center gap-6">
+                       <span className="text-outline text-[10px] uppercase font-bold">{p.appointments} CITAS</span>
+                       <span className="text-primary font-black text-sm">${p.revenue}</span>
+                    </div>
+                 </div>
+               ))}
+            </div>
           </div>
           <div className="relative z-10 flex gap-4 items-center">
             <div className="flex -space-x-2">
-              {[8, 11, 15].map(n => (
-                <img key={n} src={`https://i.pravatar.cc/40?img=${n}`} alt="Barber" className="w-8 h-8 rounded-full border-2 border-surface grayscale" />
+              {stats?.performance.map((p, i) => (
+                <img key={p.name} src={`https://i.pravatar.cc/40?img=${10+i}`} alt="Barber" className="w-8 h-8 rounded-full border-2 border-surface grayscale" />
               ))}
             </div>
-            <span className="text-xs text-secondary font-bold">+3 barberos más</span>
+            <span className="text-xs text-secondary font-bold">Líderes de la semana</span>
           </div>
         </div>
 
@@ -162,6 +197,45 @@ export default function Dashboard() {
           </button>
         </div>
       </div>
+
+      {/* QUICK NEW APPOINTMENT MODAL */}
+      <Dialog.Root open={showNewApptModal} onOpenChange={setShowNewApptModal}>
+        <Dialog.Portal>
+            <Dialog.Overlay className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm animate-in fade-in duration-300" />
+            <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[101] max-w-md w-full animate-in zoom-in-95 duration-200 outline-none">
+                <div className="bg-surface-container rounded-3xl p-8 border border-outline-variant/10 shadow-2xl">
+                    <div className="flex justify-between items-center mb-6">
+                        <Dialog.Title className="text-2xl font-black font-headline text-on-surface tracking-tighter">
+                            Nueva Cita Rápida
+                        </Dialog.Title>
+                        <Dialog.Close asChild>
+                            <button className="text-outline hover:text-on-surface transition-colors">
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </Dialog.Close>
+                    </div>
+                    
+                    <div className="space-y-6">
+                        <p className="text-sm text-outline leading-relaxed">
+                            Para agendar una cita completa con selección de barbero y servicio detallado, te recomendamos usar el calendario interactivo.
+                        </p>
+                        
+                        <div className="p-4 bg-primary/5 rounded-xl border border-primary/10">
+                            <p className="text-xs text-primary font-bold uppercase tracking-widest mb-1">Acceso Directo</p>
+                            <p className="text-[10px] text-outline mb-4">Serás redirigido al editor de agenda profesional.</p>
+                            <Link 
+                                to="/admin/calendario" 
+                                onClick={() => setShowNewApptModal(false)}
+                                className="w-full bg-primary text-on-primary py-4 rounded-xl font-headline font-black text-xs text-center block tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-primary/20"
+                            >
+                                IR AL CALENDARIO
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </div>
   )
 }
