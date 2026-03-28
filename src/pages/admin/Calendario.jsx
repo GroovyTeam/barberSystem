@@ -16,10 +16,17 @@ function getWeekDates() {
   for (let i = 0; i < 7; i++) {
     const d = new Date(monday)
     d.setDate(monday.getDate() + i)
+    
+    // Formato YYYY-MM-DD local manual para evitar desfases de toISOString
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, '0')
+    const dayNum = String(d.getDate()).padStart(2, '0')
+    const localYMD = `${y}-${m}-${dayNum}`
+
     daysArr.push({
       abbr: names[i],
       num: d.getDate(),
-      fullDate: d.toISOString().split('T')[0],
+      fullDate: localYMD,
       current: d.toDateString() === new Date().toDateString()
     })
   }
@@ -51,12 +58,20 @@ export default function Calendario() {
   // In a real app we'd use date-fns to get the current week.
   const getApptsForSlot = (hour, dayIndex) => {
     return appointments.filter(a => {
-      const aDate = a.date.split('T')[0]
-      const targetDate = days[dayIndex].fullDate
-      const matchesDay = aDate === targetDate
+      const d = new Date(a.date)
+      // Normalizar a YYYY-MM-DD local exacto para comparar con el grid
+      const y = d.getFullYear()
+      const m = String(d.getMonth() + 1).padStart(2, '0')
+      const dayNum = String(d.getDate()).padStart(2, '0')
+      const apptYMD = `${y}-${m}-${dayNum}`
+      
+      const targetYMD = days[dayIndex].fullDate
+      
+      const matchesDate = apptYMD === targetYMD
       const matchesHour = a.time === hour
       const matchesBarber = selectedBarberId === 'all' || a.barberId === selectedBarberId
-      return matchesDay && matchesHour && matchesBarber
+      
+      return matchesDate && matchesHour && matchesBarber
     })
   }
 

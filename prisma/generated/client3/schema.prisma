@@ -46,7 +46,8 @@ model Service {
 
 model Appointment {
   id            String   @id @default(uuid())
-  clientId      String
+  clientId      String?
+  clientName    String? // Para clientes de mostrador (walk-ins)
   barberId      String
   serviceId     String
   date          DateTime // Día de la cita
@@ -55,7 +56,7 @@ model Appointment {
   price         Float
   paymentMethod String   @default("PRESENCIAL")
 
-  client    User     @relation(fields: [clientId], references: [id])
+  client    User?    @relation(fields: [clientId], references: [id])
   barber    Barber   @relation(fields: [barberId], references: [id])
   service   Service  @relation(fields: [serviceId], references: [id])
   createdAt DateTime @default(now())

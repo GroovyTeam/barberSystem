@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import * as Dialog from '@radix-ui/react-dialog'
-import { getDashboardStats } from '../../services/api'
+import { getDashboardStats, getServices, getBarbers, bookAppointment } from '../../services/api'
 
 const STATUS_STYLES = {
   en_curso: { label: 'En curso', cls: 'bg-primary/10 text-primary', pulse: true },
@@ -9,17 +9,63 @@ const STATUS_STYLES = {
   cancelled: { label: 'Cancelada', cls: 'bg-error/10 text-error' },
 }
 
+
 export default function Dashboard() {
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
   const [showNewApptModal, setShowNewApptModal] = useState(false)
+  const [services, setServices] = useState([])
+  const [barberList, setBarberList] = useState([])
+  const [formLoading, setFormLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    clientName: '',
+    serviceId: '',
+    barberId: '',
+    time: '12:00',
+  })
 
   useEffect(() => {
-    getDashboardStats().then(data => {
-      setStats(data)
+    Promise.all([
+      getDashboardStats(),
+      getServices(),
+      getBarbers(true)
+    ]).then(([statsData, servicesData, barbersData]) => {
+      setStats(statsData)
+      setServices(servicesData)
+      setBarberList(barbersData)
       setLoading(false)
     })
   }, [])
+
+  const handleQuickSubmit = async (e) => {
+    e.preventDefault()
+    setFormLoading(true)
+    
+    // Normalizar fecha al mediodía local de hoy
+    const now = new Date()
+    const safeDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0, 0)
+    
+    const selectedService = services.find(s => s.id === formData.serviceId)
+    
+    const payload = {
+      clientName: formData.clientName,
+      barberId: formData.barberId,
+      serviceId: formData.serviceId,
+      date: safeDate.toISOString(),
+      time: formData.time,
+      price: selectedService?.price || 0,
+    }
+
+    const res = await bookAppointment(payload)
+    if (res.success) {
+      // Recargar stats y cerrar
+      const newData = await getDashboardStats()
+      setStats(newData)
+      setShowNewApptModal(false)
+      setFormData({ clientName: '', serviceId: '', barberId: '', time: '12:00' })
+    }
+    setFormLoading(false)
+  }
 
   if (loading) return (
     <div className="flex items-center justify-center h-screen">
@@ -203,36 +249,85 @@ export default function Dashboard() {
         <Dialog.Portal>
             <Dialog.Overlay className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm animate-in fade-in duration-300" />
             <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[101] max-w-md w-full animate-in zoom-in-95 duration-200 outline-none">
-                <div className="bg-surface-container rounded-3xl p-8 border border-outline-variant/10 shadow-2xl">
+                <form onSubmit={handleQuickSubmit} className="bg-surface-container rounded-3xl p-8 border border-outline-variant/10 shadow-2xl overflow-hidden relative">
+                    <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-primary to-secondary" />
+                    
                     <div className="flex justify-between items-center mb-6">
                         <Dialog.Title className="text-2xl font-black font-headline text-on-surface tracking-tighter">
-                            Nueva Cita Rápida
+                            Nueva Cita <span className="text-secondary italic">Rápida</span>
                         </Dialog.Title>
                         <Dialog.Close asChild>
-                            <button className="text-outline hover:text-on-surface transition-colors">
+                            <button type="button" className="text-outline hover:text-on-surface transition-colors">
                                 <span className="material-symbols-outlined">close</span>
                             </button>
                         </Dialog.Close>
                     </div>
                     
-                    <div className="space-y-6">
-                        <p className="text-sm text-outline leading-relaxed">
-                            Para agendar una cita completa con selección de barbero y servicio detallado, te recomendamos usar el calendario interactivo.
-                        </p>
-                        
-                        <div className="p-4 bg-primary/5 rounded-xl border border-primary/10">
-                            <p className="text-xs text-primary font-bold uppercase tracking-widest mb-1">Acceso Directo</p>
-                            <p className="text-[10px] text-outline mb-4">Serás redirigido al editor de agenda profesional.</p>
-                            <Link 
-                                to="/admin/calendario" 
-                                onClick={() => setShowNewApptModal(false)}
-                                className="w-full bg-primary text-on-primary py-4 rounded-xl font-headline font-black text-xs text-center block tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-primary/20"
+                    <div className="space-y-5">
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-outline">Nombre del Cliente</label>
+                          <input 
+                            required
+                            value={formData.clientName}
+                            onChange={(e) => setFormData({...formData, clientName: e.target.value})}
+                            className="w-full bg-surface-container-high border border-outline-variant/20 rounded-xl px-4 py-3 text-sm text-on-surface focus:border-primary outline-none transition-all"
+                            placeholder="Ej. Juan Pérez"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-outline">Servicio</label>
+                            <select 
+                              required
+                              value={formData.serviceId}
+                              onChange={(e) => setFormData({...formData, serviceId: e.target.value})}
+                              className="w-full bg-surface-container-high border border-outline-variant/20 rounded-xl px-4 py-3 text-sm text-on-surface focus:border-primary outline-none transition-all appearance-none"
                             >
-                                IR AL CALENDARIO
-                            </Link>
+                              <option value="">Seleccionar...</option>
+                              {services.map(s => <option key={s.id} value={s.id}>{s.name} - ${s.price}</option>)}
+                            </select>
+                          </div>
+                          <div className="space-y-2">
+                             <label className="text-[10px] font-black uppercase tracking-widest text-outline">Horario</label>
+                             <input 
+                              type="time"
+                              required
+                              value={formData.time}
+                              onChange={(e) => setFormData({...formData, time: e.target.value})}
+                              className="w-full bg-surface-container-high border border-outline-variant/20 rounded-xl px-4 py-3 text-sm text-on-surface focus:border-primary outline-none transition-all"
+                             />
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-outline">Seleccionar Barbero</label>
+                          <div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto custom-scrollbar p-1">
+                            {barberList.map(barber => (
+                              <button
+                                key={barber.id}
+                                type="button"
+                                onClick={() => setFormData({...formData, barberId: barber.id})}
+                                className={`flex items-center gap-3 p-2 rounded-lg border text-left transition-all ${formData.barberId === barber.id ? 'border-primary bg-primary/10' : 'border-outline-variant/10 bg-surface-container-high hover:border-primary/40'}`}
+                              >
+                                <img src={barber.avatar} className="w-6 h-6 rounded-full" />
+                                <span className="text-xs font-bold text-on-surface uppercase">{barber.name.split(' ')[0]}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        <div className="pt-4">
+                            <button 
+                                type="submit"
+                                disabled={formLoading}
+                                className="w-full bg-primary text-on-primary py-4 rounded-xl font-headline font-black text-xs text-center block tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {formLoading ? 'GUARDANDO...' : 'REGISTRAR CITA'}
+                            </button>
                         </div>
                     </div>
-                </div>
+                </form>
             </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>

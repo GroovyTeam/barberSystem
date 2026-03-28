@@ -59,16 +59,33 @@ app.get('/api/services', async (req, res) => {
 // Crear una nueva cita
 app.post('/api/appointments', async (req, res) => {
   try {
-    const { clientId, barberId, serviceId, date, time, price, paymentMethod } = req.body
+    const { clientId, clientName, barberId, serviceId, date, time, price, paymentMethod } = req.body
     
-    // Aquí podrías agregar validaciones de disponibilidad del barbero en esa hora.
+    let finalClientId = clientId
+
+    // Si no hay clientId pero hay un nombre, creamos un usuario de un solo uso o 'walk-in'
+    if (!finalClientId && clientName) {
+      const newUser = await prisma.user.create({
+        data: {
+          name: clientName,
+          email: `walkin_${Date.now()}@blackblade.com`, // Email único temporal
+          password: 'nopassword',
+          role: 'CLIENT'
+        }
+      })
+      finalClientId = newUser.id
+    }
+
+    if (!finalClientId) {
+      return res.status(400).json({ error: 'Faltan datos del cliente' })
+    }
     
     const appointment = await prisma.appointment.create({
       data: {
-        clientId,
+        clientId: finalClientId,
         barberId,
         serviceId,
-        date: new Date(date), // Formato ISO completo
+        date: new Date(date),
         time,
         price,
         paymentMethod: paymentMethod || 'PRESENCIAL',
@@ -161,9 +178,10 @@ app.put('/api/appointments/:id/cancel', async (req, res) => {
 // === DASHBOARD STATS ===
 app.get('/api/dashboard/stats', async (req, res) => {
   try {
-    const now = new Date()
-    const startOfDay = new Date(now.setHours(0, 0, 0, 0))
-    const endOfDay = new Date(now.setHours(23, 59, 59, 999))
+    const startOfDay = new Date()
+    startOfDay.setHours(0, 0, 0, 0)
+    const endOfDay = new Date()
+    endOfDay.setHours(23, 59, 59, 999)
 
     const [
       appointmentsToday,
@@ -197,7 +215,7 @@ app.get('/api/dashboard/stats', async (req, res) => {
       }),
       prisma.appointment.findMany({
         where: { 
-          date: { gte: startOfDay }, 
+          date: { gte: startOfDay, lte: endOfDay }, 
           status: 'PENDING' 
         },
         take: 5,

@@ -79,14 +79,14 @@ export default function ReservaCita() {
   const handleConfirmBooking = async () => {
     setIsDeploying(true)
     
-    // Preparar fecha correcta (día seleccionado + mes/año actual)
-    const apptDate = new Date(year, month, selectedDay)
+    // Normalizar a MEDIODÍA del día seleccionado en la zona del cliente para evitar desplazamientos por zona horaria al convertir a ISO en el server.
+    const apptDate = new Date(year, month, selectedDay, 12, 0, 0, 0)
     
     const payload = {
       clientId: user?.id || 'fail',
       barberId: selectedBarber.id,
       serviceId: selectedService.id,
-      date: apptDate.toISOString(),
+      date: apptDate.toISOString(), // Enviar ISO completo pero con hora segura
       time: selectedTime,
       price: selectedService.price,
       paymentMethod: paymentMethod === 'sucursal' ? 'PRESENCIAL' : 'LINEA'
@@ -369,51 +369,51 @@ export default function ReservaCita() {
           
           <button
             onClick={() => setPaymentMethod('sucursal')}
-            className={`w-full p-6 rounded-2xl flex items-center gap-5 transition-all outline-none text-left border-2 group relative ${
+            className={`w-full p-6 rounded-2xl flex items-center gap-5 transition-all outline-none text-left border-2 group relative transition-all duration-300 ${
               paymentMethod === 'sucursal' 
-               ? 'border-primary bg-primary-container/20 shadow-[0_0_30px_rgba(249,186,130,0.15)] scale-[1.02]' 
-               : 'border-surface-container-high bg-surface-container hover:border-primary/40'
+               ? 'border-primary bg-primary/20 shadow-[0_10px_40px_rgba(249,186,130,0.25)] scale-[1.02]' 
+               : 'border-outline/10 bg-surface-container hover:border-primary/40'
             }`}
           >
-            <div className={`w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 ${paymentMethod === 'sucursal' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-secondary'}`}>
+            <div className={`w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${paymentMethod === 'sucursal' ? 'bg-primary text-on-primary shadow-lg' : 'bg-surface-container-high text-secondary'}`}>
                <span className="material-symbols-outlined text-3xl">store</span>
             </div>
             <div className="flex-1">
-               <h4 className="font-headline font-black text-on-surface text-lg">Pago en Sucursal</h4>
-               <p className="text-xs text-outline mt-1 leading-relaxed">Paga físicamente el día de tu cita.</p>
+               <h4 className={`font-headline font-black text-lg transition-colors ${paymentMethod === 'sucursal' ? 'text-primary' : 'text-white'}`}>Pago en Sucursal</h4>
+               <p className={`text-xs mt-1 leading-relaxed ${paymentMethod === 'sucursal' ? 'text-white/80' : 'text-outline-variant'}`}>Paga físicamente el día de tu cita.</p>
             </div>
             <div 
               onClick={(e) => { e.stopPropagation(); handleConfirmBooking(); }}
-              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${paymentMethod === 'sucursal' ? 'bg-primary text-on-primary scale-110 shadow-lg shadow-primary/20' : 'bg-surface-container-highest text-outline group-hover:bg-primary/10 group-hover:text-primary'}`}
+              className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${paymentMethod === 'sucursal' ? 'bg-secondary text-on-secondary scale-110 shadow-xl' : 'bg-surface-container-highest text-outline group-hover:bg-primary/10 group-hover:text-primary'}`}
             >
-               <span className="material-symbols-outlined text-xl">arrow_forward</span>
+               <span className="material-symbols-outlined text-2xl font-black">arrow_forward</span>
             </div>
           </button>
 
           <button
             onClick={() => setPaymentMethod('linea')}
-            className={`w-full p-6 rounded-2xl flex items-center gap-5 transition-all outline-none text-left border-2 group relative overflow-hidden ${
+            className={`w-full p-6 rounded-2xl flex items-center gap-5 transition-all outline-none text-left border-2 group relative overflow-hidden transition-all duration-300 ${
               paymentMethod === 'linea' 
-               ? 'border-primary bg-primary-container/20 shadow-[0_0_30px_rgba(249,186,130,0.15)] scale-[1.02]' 
-               : 'border-surface-container-high bg-surface-container hover:border-primary/40'
+               ? 'border-primary bg-primary/20 shadow-[0_10px_40px_rgba(249,186,130,0.25)] scale-[1.02]' 
+               : 'border-outline/10 bg-surface-container hover:border-primary/40'
             }`}
           >
             {paymentMethod === 'linea' && <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-3xl rounded-full" />}
-            <div className={`w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 ${paymentMethod === 'linea' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-secondary'}`}>
+            <div className={`w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${paymentMethod === 'linea' ? 'bg-primary text-on-primary shadow-lg' : 'bg-surface-container-high text-secondary'}`}>
                <span className="material-symbols-outlined text-3xl">credit_card</span>
             </div>
             <div className="flex-1 z-10 w-full">
                <div className="flex items-center justify-between w-full">
-                  <h4 className="font-headline font-black text-on-surface text-lg">Pago en Línea</h4>
-                  <span className="bg-primary/10 text-primary text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest">Próximamente</span>
+                  <h4 className={`font-headline font-black text-lg transition-colors ${paymentMethod === 'linea' ? 'text-primary' : 'text-white'}`}>Pago en Línea</h4>
+                  <span className="bg-primary/20 text-primary text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-widest border border-primary/30">Próximamente</span>
                </div>
-               <p className="text-xs text-outline mt-1 leading-relaxed">Paga de forma segura con tarjeta (Stripe).</p>
+               <p className={`text-xs mt-1 leading-relaxed ${paymentMethod === 'linea' ? 'text-white/80' : 'text-outline-variant'}`}>Paga de forma segura con tarjeta (Stripe).</p>
             </div>
             <div 
               onClick={(e) => { e.stopPropagation(); handleConfirmBooking(); }}
-              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${paymentMethod === 'linea' ? 'bg-primary text-on-primary scale-110 shadow-lg shadow-primary/20' : 'bg-surface-container-highest text-outline group-hover:bg-primary/10 group-hover:text-primary'}`}
+              className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${paymentMethod === 'linea' ? 'bg-secondary text-on-secondary scale-110 shadow-xl' : 'bg-surface-container-highest text-outline group-hover:bg-primary/10 group-hover:text-primary'}`}
             >
-               <span className="material-symbols-outlined text-xl">arrow_forward</span>
+               <span className="material-symbols-outlined text-2xl font-black">arrow_forward</span>
             </div>
           </button>
         </div>
@@ -424,22 +424,24 @@ export default function ReservaCita() {
         <Dialog.Portal>
             <Dialog.Overlay className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md animate-in fade-in duration-300" />
             <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[101] max-w-sm w-full outline-none animate-in zoom-in-95 duration-500">
-                <div className="bg-surface-container rounded-3xl p-8 text-center shadow-2xl border border-outline-variant/10">
-                    <div className="w-20 h-20 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <span className="material-symbols-outlined text-5xl">check_circle</span>
+                <div className="bg-gradient-to-b from-surface-container-highest to-surface-container rounded-3xl p-10 text-center shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] border-2 border-primary/20 relative overflow-hidden">
+                    <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-primary via-secondary to-primary" />
+                    <div className="w-24 h-24 bg-primary/20 text-primary rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-primary/20 animate-bounce">
+                        <span className="material-symbols-outlined text-6xl">verified</span>
                     </div>
-                    <Dialog.Title className="text-2xl font-black font-headline text-on-surface mb-2 tracking-tighter">
-                        ¡Cita Agendada!
+                    <Dialog.Title className="text-3xl font-black font-headline text-on-surface mb-3 tracking-tighter">
+                        ¡Cita <span className="text-secondary italic">Confirmada!</span>
                     </Dialog.Title>
-                    <Dialog.Description className="text-sm text-outline mb-8 leading-relaxed">
-                        Tu reserva se registró correctamente para el <span className="text-on-surface font-bold">{selectedDay}/{month + 1}/{year}</span> a las <span className="text-on-surface font-bold">{selectedTime}</span>.
+                    <Dialog.Description className="text-base text-white/90 mb-10 leading-relaxed font-bold">
+                        Tu reserva fue exitosa para el <span className="text-on-surface">{selectedDay}/{month + 1}/{year}</span> a las <span className="text-secondary">{selectedTime} HS</span>.
                     </Dialog.Description>
                     <button 
                         onClick={() => navigate('/mis-citas')}
-                        className="w-full bg-primary text-on-primary py-4 rounded-xl font-headline font-black text-sm shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
+                        className="w-full bg-secondary text-on-secondary py-5 rounded-2xl font-headline font-black text-sm shadow-2xl shadow-secondary/40 hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-widest"
                     >
-                        VER MIS CITAS
+                        VER MI AGENDA
                     </button>
+                    <p className="mt-6 text-[10px] text-outline-variant font-black uppercase tracking-[0.3em]">Black & Blade Barbershop</p>
                 </div>
             </Dialog.Content>
         </Dialog.Portal>
