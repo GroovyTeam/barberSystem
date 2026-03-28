@@ -20,7 +20,7 @@ export default function BottomNavBar() {
             className={({ isActive }) =>
               `flex flex-col items-center justify-center transition-all duration-200 ${
                 isActive
-                  ? 'text-[#F9BA82] scale-110'
+                  ? 'text-[#D4AF77] scale-110'
                   : 'text-[#9E8E82] opacity-60 hover:opacity-100 active:scale-90'
               }`
             }
@@ -33,7 +33,7 @@ export default function BottomNavBar() {
                 >
                   {item.icon}
                 </span>
-                <span className="text-[10px] font-medium uppercase tracking-widest mt-1">
+                <span className={`text-[10px] font-bold uppercase tracking-widest mt-1 ${isActive ? 'text-[#D4AF77]' : 'text-[#9E8E82]'}`}>
                   {item.label}
                 </span>
               </>

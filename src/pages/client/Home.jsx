@@ -1,21 +1,46 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { upcomingAppointments } from '../../data/mockData'
-import { getBarbers, getServices } from '../../services/api'
+import { getBarbers, getServices, getClientAppointments } from '../../services/api'
 
 export default function Home() {
-  const nextAppt = upcomingAppointments[0]
+  const [activeSlide, setActiveSlide] = useState(0)
   const [barbers, setBarbers] = useState([])
   const [services, setServices] = useState([])
+  const [nextAppt, setNextAppt] = useState(null)
   
+  const promos = [
+    { title: "Corte & Barba Premium", tag: "Promoción Exclusiva", benefit: "15% Off", icon: "content_cut", color: "from-[#0e0e0e] via-[#201f1f] to-[#131313]" },
+    { title: "Color & Estilo Nuevo", tag: "Trend Alert", benefit: "Atrévete", icon: "brush", color: "from-[#1a1a1a] via-[#2a2a2a] to-[#1a1a1a]" },
+    { title: "Club de Fidelidad", tag: "Gana Puntos", benefit: "Regalo", icon: "military_tech", color: "from-[#131313] via-[#353534] to-[#131313]" }
+  ]
+
   useEffect(() => {
     async function loadData() {
-      const bData = await getBarbers()
-      const sData = await getServices()
+      const [bData, sData, appts] = await Promise.all([
+        getBarbers(),
+        getServices(),
+        getClientAppointments('current')
+      ])
+      
       if(bData.length > 0) setBarbers(bData)
       if(sData.length > 0) setServices(sData)
+      
+      // Obtener la cita más próxima (futura)
+      if (appts && appts.length > 0) {
+        const now = new Date()
+        const sorted = appts
+          .filter(a => new Date(a.date) >= now || (new Date(a.date).toDateString() === now.toDateString()))
+          .sort((a, b) => new Date(a.date) - new Date(b.date))
+        setNextAppt(sorted[0])
+      }
     }
     loadData()
+
+    const interval = setInterval(() => {
+      setActiveSlide(s => (s + 1) % promos.length)
+    }, 3500)
+
+    return () => clearInterval(interval)
   }, [])
 
   return (
@@ -24,59 +49,98 @@ export default function Home() {
       {/* Next Appointment Card */}
       {nextAppt && (
         <section>
-          <div className="bg-surface-container rounded-xl p-5 relative overflow-hidden group">
-            <span className="material-symbols-outlined absolute -right-4 -bottom-4 text-8xl text-secondary opacity-5 pointer-events-none">event_available</span>
-            <div className="flex justify-between items-start mb-4">
+          <div className="bg-gradient-to-br from-surface-container to-surface-container-high rounded-2xl p-6 relative overflow-hidden group shadow-xl border border-outline-variant/5">
+            <span className="material-symbols-outlined absolute -right-6 -bottom-6 text-[140px] text-secondary opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-700">event_available</span>
+            <div className="flex justify-between items-start mb-6 relative z-10">
               <div>
-                <p className="text-secondary font-headline text-xs font-semibold tracking-widest uppercase mb-1">Próxima Cita</p>
-                <h3 className="text-on-surface font-headline text-lg font-bold">{nextAppt.service}</h3>
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                  <p className="text-secondary font-headline text-[10px] font-black tracking-[0.2em] uppercase">Confirmada</p>
+                </div>
+                <h3 className="text-on-surface font-headline text-xl font-black tracking-tight">{nextAppt.service?.name || nextAppt.service}</h3>
               </div>
-              <div className="bg-primary-container/20 px-3 py-1 rounded-full">
-                <span className="text-primary text-xs font-bold">Mañana</span>
+              <div className="bg-primary/20 backdrop-blur-md px-4 py-1.5 rounded-full border border-primary/20">
+                <span className="text-primary text-[10px] font-black uppercase tracking-widest">Próxima</span>
               </div>
             </div>
-            <div className="flex items-center gap-4 text-on-surface-variant text-sm">
-              <div className="flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-secondary text-base">schedule</span>
-                <span>{nextAppt.time}</span>
+            <div className="grid grid-cols-2 gap-4 relative z-10">
+              <div className="bg-surface-container-highest/30 p-3 rounded-xl flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center">
+                   <span className="material-symbols-outlined text-secondary text-lg">calendar_month</span>
+                </div>
+                <div>
+                  <p className="text-[8px] text-outline font-black uppercase mb-0.5">Fecha</p>
+                  <p className="text-xs text-on-surface font-bold">{new Date(nextAppt.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}</p>
+                </div>
               </div>
-              <div className="flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-secondary text-base">person</span>
-                <span>{nextAppt.barber}</span>
+              <div className="bg-surface-container-highest/30 p-3 rounded-xl flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center">
+                   <span className="material-symbols-outlined text-secondary text-lg">schedule</span>
+                </div>
+                <div>
+                  <p className="text-[8px] text-outline font-black uppercase mb-0.5">Hora</p>
+                  <p className="text-xs text-on-surface font-bold">{nextAppt.time} HS</p>
+                </div>
+              </div>
+              <div className="col-span-2 bg-surface-container-highest/30 p-3 rounded-xl flex items-center gap-3">
+                 <img src={nextAppt.barber?.avatar || `https://i.pravatar.cc/150?u=${nextAppt.barber}`} className="w-8 h-8 rounded-full border border-primary/20" />
+                 <div>
+                    <p className="text-[8px] text-outline font-black uppercase mb-0.5">Barbero</p>
+                    <p className="text-xs text-on-surface font-bold">{nextAppt.barber?.name || nextAppt.barber}</p>
+                 </div>
               </div>
             </div>
           </div>
         </section>
       )}
 
-      {/* Hero Promo Banner */}
+      {/* Hero Promo Banner Carousel */}
       <section className="relative">
-        <div className="relative h-[220px] rounded-xl overflow-hidden bg-surface-container-lowest">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#0e0e0e] via-[#201f1f] to-[#131313]" />
-          <div className="absolute inset-0 bg-gradient-to-r from-surface-container-lowest via-transparent to-transparent" />
-          <div className="relative h-full flex flex-col justify-center px-8">
-            <span className="text-secondary font-headline text-xs font-bold tracking-[0.2em] uppercase mb-2">Promoción Exclusiva</span>
-            <h2 className="text-3xl font-headline font-extrabold text-on-surface leading-tight mb-4 max-w-[200px]">
-              Corte &amp; Barba Premium
-            </h2>
-            <div className="flex items-center gap-4">
-              <span className="text-primary font-headline text-2xl font-black">15% Off</span>
-              <Link
-                to="/reservar"
-                className="bg-primary-container hover:bg-primary text-on-primary-container px-5 py-2 rounded-md font-headline font-semibold text-sm transition-colors active:scale-95 duration-200 shadow-lg shadow-primary-container/20"
-              >
-                Reservar
-              </Link>
+        <div className="relative h-[240px] rounded-2xl overflow-hidden bg-surface-container-lowest shadow-2xl border border-outline-variant/10">
+          {promos.map((promo, idx) => (
+            <div 
+              key={idx}
+              className={`absolute inset-0 transition-all duration-700 ease-in-out transform ${
+                idx === activeSlide ? 'opacity-100 translate-x-0 scale-100' : 'opacity-0 translate-x-full scale-110'
+              }`}
+            >
+              <div className={`absolute inset-0 bg-gradient-to-br ${promo.color}`} />
+              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/leather.png')] opacity-10" />
+              <div className="relative h-full flex flex-col justify-center px-10">
+                <span className="text-secondary font-headline text-[10px] font-black tracking-[0.3em] uppercase mb-3 animate-in fade-in slide-in-from-bottom duration-500">{promo.tag}</span>
+                <h2 className="text-3xl font-headline font-black text-on-surface leading-none mb-6 max-w-[220px] tracking-tighter">
+                  {promo.title}
+                </h2>
+                <div className="flex items-center gap-6">
+                  <div className="flex flex-col">
+                    <span className="text-primary font-headline text-[10px] font-black uppercase tracking-widest opacity-60">Beneficio</span>
+                    <span className="text-primary font-headline text-2xl font-black tracking-tight">{promo.benefit}</span>
+                  </div>
+                  <Link
+                    to="/reservar"
+                    className="bg-primary text-on-primary px-8 py-3 rounded-xl font-headline font-black text-xs transition-all active:scale-95 hover:shadow-[0_0_30px_rgba(249,186,130,0.3)] uppercase tracking-widest"
+                  >
+                    Reserva Ya
+                  </Link>
+                </div>
+              </div>
+              {/* Promotion Icon Watermark */}
+              <span className="absolute -right-8 -bottom-8 material-symbols-outlined text-[160px] text-secondary opacity-5 pointer-events-none rotate-12">{promo.icon}</span>
             </div>
-          </div>
-          {/* Watermark scissors */}
-          <span className="absolute -right-4 -bottom-4 material-symbols-outlined text-[120px] text-secondary opacity-5 pointer-events-none">content_cut</span>
+          ))}
         </div>
-        {/* Carousel dots */}
-        <div className="flex justify-center gap-2 mt-4">
-          <div className="w-8 h-1 rounded-full bg-primary" />
-          <div className="w-2 h-1 rounded-full bg-outline-variant" />
-          <div className="w-2 h-1 rounded-full bg-outline-variant" />
+
+        {/* Carousel indicators */}
+        <div className="flex justify-center gap-3 mt-6">
+          {promos.map((_, idx) => (
+            <button 
+              key={idx}
+              onClick={() => setActiveSlide(idx)}
+              className={`h-1.5 transition-all duration-500 rounded-full ${
+                idx === activeSlide ? 'w-10 bg-primary' : 'w-4 bg-outline-variant/20'
+              }`}
+            />
+          ))}
         </div>
       </section>
 
@@ -114,27 +178,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Services Grid */}
-      <section>
-        <h2 className="font-headline text-2xl font-bold text-on-surface tracking-tight mb-6">Nuestros Servicios</h2>
-        <div className="grid grid-cols-2 gap-4">
-          {services.slice(0, 4).map((service) => (
-            <Link
-              key={service.id}
-              to="/servicios"
-              className="bg-surface-container-low p-6 rounded-lg flex flex-col gap-4 hover:bg-surface-container-high transition-colors cursor-pointer group"
-            >
-              <span className="material-symbols-outlined text-secondary text-3xl group-hover:scale-110 transition-transform">
-                {service.icon}
-              </span>
-              <div>
-                <p className="font-headline font-bold text-on-surface">{service.name}</p>
-                <p className="text-xs text-on-surface-variant mt-1">${service.price} MXN</p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
+
 
       {/* FAB */}
       <div className="fixed bottom-24 right-6 z-40">

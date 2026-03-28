@@ -8,7 +8,7 @@ export function ThemeProvider({ children }) {
     const saved = localStorage.getItem('bb_theme')
     return saved ? JSON.parse(saved) : {
       surface: '#131313',
-      primary: '#F9BA82',
+      primary: '#D4AF77',
       bgImage: '',
     }
   })

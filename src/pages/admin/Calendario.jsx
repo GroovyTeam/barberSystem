@@ -184,7 +184,7 @@ export default function Calendario() {
                                     <div
                                       onMouseEnter={() => setOpenPopoverId(appt.id)}
                                       onMouseLeave={() => setOpenPopoverId(null)}
-                                      className="absolute inset-x-1 bg-gradient-to-br from-[#8B5A2B] to-[#F9BA82] rounded p-1.5 shadow-lg z-10 cursor-pointer hover:brightness-110 transition-all overflow-hidden"
+                                      className="absolute inset-x-1 bg-gradient-to-br from-[#8B5A2B] to-[#D4AF77] rounded p-1.5 shadow-lg z-10 cursor-pointer hover:brightness-110 transition-all overflow-hidden"
                                       style={{ 
                                         top: `${ai * 2}px`, 
                                         height: '72px' 

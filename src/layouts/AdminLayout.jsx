@@ -17,9 +17,9 @@ export default function AdminLayout() {
             />
           </div>
           <div className="flex items-center gap-6">
-            <button className="text-[#9E8E82] hover:text-[#F9BA82] transition-colors relative">
+            <button className="text-[#9E8E82] hover:text-[#D4AF77] transition-colors relative">
               <span className="material-symbols-outlined">notifications</span>
-              <span className="absolute top-0 right-0 w-2 h-2 bg-[#f9ba82] rounded-full" />
+              <span className="absolute top-0 right-0 w-2 h-2 bg-[#D4AF77] rounded-full" />
             </button>
             <div className="h-8 w-px bg-[#51443a]/20 mx-2" />
             <span className="text-sm font-bold text-[#e7c187] tracking-tight">BLACK &amp; BLADE</span>
