@@ -455,7 +455,7 @@ app.get('/api/appointments/client/:clientId',
   }
 )
 
-// Cancelar cita
+// Cancelar cita (Regla de 2 horas)
 app.put('/api/appointments/:id/cancel',
   authenticateToken,
   [param('id').isUUID().withMessage('ID de cita inválido')],
@@ -464,12 +464,24 @@ app.put('/api/appointments/:id/cancel',
     try {
       const { id } = req.params
 
-      // OWASP A01: Verificar que la cita pertenece al usuario (o es admin)
       const appointment = await prisma.appointment.findUnique({ where: { id } })
       if (!appointment) return res.status(404).json({ error: 'Cita no encontrada' })
 
       if (appointment.clientId !== req.user.id && req.user.role !== 'ADMIN') {
         return res.status(403).json({ error: 'No puedes cancelar citas de otro usuario.' })
+      }
+
+      // Lógica de 2 horas
+      const now = new Date()
+      const apptDate = new Date(appointment.date)
+      const [hours, minutes] = appointment.time.split(':')
+      apptDate.setHours(parseInt(hours), parseInt(minutes), 0, 0)
+
+      const diffMs = apptDate - now
+      const diffHours = diffMs / (1000 * 60 * 60)
+
+      if (diffHours < 2 && req.user.role !== 'ADMIN') {
+        return res.status(400).json({ error: 'Debes cancelar con al menos 2 horas de anticipación.' })
       }
 
       const updated = await prisma.appointment.update({

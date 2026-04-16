@@ -148,5 +148,10 @@ Este archivo es una bitácora de aprendizaje autoescrita por **Claude** para doc
 - **Entrada Cliente**: Botón "Soy Cliente" -> `/home`.
 - **Entrada Admin**: Botón "Soy Admin" -> `/admin`.
 
+#### Incidente 10: Navegación Circular (Bucle al Welcome)
+- **Causa**: Al mover el portal cliente a `/home`, los componentes `Login`, `TopAppBar` y `BottomNavBar` seguían usando `navigate('/')` o `to='/'`, lo que expulsaba al usuario logueado de vuelta al selector de roles.
+- **Corrección**: Se actualizaron todos los punteros de navegación del cliente para usar `/home` como su nueva ruta raíz operativa.
+- **Lección**: Al refactorizar la ruta base de un portal, se deben auditar todos los componentes de navegación (Header, Footer, Navbars) y los manejadores de eventos (Redirects post-auth).
+
 ---
 *Este log debe actualizarse después de cada sesión de corrección importante. Cada entrada debe incluir: Incidente, Causa, Corrección y Lección.*

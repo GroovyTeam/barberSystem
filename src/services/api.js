@@ -132,7 +132,7 @@ export const bookAppointment = async (appointmentData) => {
   }
 }
 
-export const getClientAppointments = async () => {
+export const getMyAppointments = async () => {
   try {
     return await apiFetch('/appointments/mine')
   } catch (err) {
@@ -162,15 +162,15 @@ export const getAppointments = async () => {
 // ═══════════════════════════════════════════════════════════════
 // USUARIOS
 // ═══════════════════════════════════════════════════════════════
-export const updateUserProfile = async (profileData) => {
+export const updateProfile = async (profileData) => {
   try {
-    return await apiFetch('/users/profile', {
-      method: 'PUT',
+    return await apiFetch('/profile', {
+      method: 'PATCH',
       body: JSON.stringify(profileData)
     })
   } catch (error) {
     console.error(error)
-    return { error: true }
+    throw error
   }
 }
 

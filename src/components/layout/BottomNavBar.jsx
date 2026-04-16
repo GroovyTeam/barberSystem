@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom'
 
 const navItems = [
-  { to: '/', icon: 'home', label: 'Inicio', exact: true },
+  { to: '/home', icon: 'home', label: 'Inicio', exact: true },
   { to: '/servicios', icon: 'content_cut', label: 'Servicios' },
   { to: '/reservar', icon: 'event_note', label: 'Reservar' },
   { to: '/mis-citas', icon: 'calendar_month', label: 'Mis Citas' },

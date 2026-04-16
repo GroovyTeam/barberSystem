@@ -72,7 +72,9 @@ export default function MisCitas() {
   const [tab, setTab] = useState('upcoming')
   const [appointments, setAppointments] = useState([])
   const [isLoading, setIsLoading] = useState(true)
-  const [receiptMode, setReceiptMode] = useState(null) // Para el popup
+  const [receiptMode, setReceiptMode] = useState(null)
+  const [cancelTarget, setCancelTarget] = useState(null) // Cita que se quiere cancelar
+  const [error, setError] = useState('')
 
   useEffect(() => {
     loadCitas()
@@ -85,10 +87,15 @@ export default function MisCitas() {
     setIsLoading(false)
   }
 
-  const handleCancel = async (id) => {
-    if(window.confirm('¿Seguro que deseas cancelar esta cita?')) {
-      await cancelAppointment(id)
+  const handleCancel = async () => {
+    if(!cancelTarget) return
+    setError('')
+    try {
+      await cancelAppointment(cancelTarget.id)
+      setCancelTarget(null)
       loadCitas()
+    } catch (err) {
+      setError(err.message)
     }
   }
 
@@ -130,7 +137,7 @@ export default function MisCitas() {
         ) : tab === 'upcoming' && (
           upcomingAppointments.length > 0 ? (
             upcomingAppointments.map(appt => (
-              <AppointmentCard key={appt.id} appt={appt} isPast={false} onCancel={handleCancel} />
+              <AppointmentCard key={appt.id} appt={appt} isPast={false} onCancel={() => setCancelTarget(appt)} />
             ))
           ) : (
             <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -195,6 +202,43 @@ export default function MisCitas() {
                 <span className="material-symbols-outlined text-sm">download</span>
                 Descargar PDF
              </button>
+          </div>
+        </div>
+      )}
+      {/* MODAL DE CANCELACIÓN */}
+      {cancelTarget && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-surface-container rounded-3xl w-full max-w-sm p-8 relative shadow-2xl border border-outline-variant/10 animate-in zoom-in-95">
+             <div className="text-center">
+                <div className="w-16 h-16 bg-error/10 text-error rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="material-symbols-outlined text-4xl">cancel</span>
+                </div>
+                <h2 className="font-headline font-bold text-on-surface text-2xl uppercase tracking-tighter">¿Cancelar Cita?</h2>
+                <p className="text-outline text-sm mt-2">
+                  Esta acción no se puede deshacer. Se liberará tu espacio en el calendario de {cancelTarget.barber?.name}.
+                </p>
+                
+                {error && (
+                  <div className="mt-4 bg-error/10 border border-error/20 text-error text-[10px] font-bold uppercase p-2 rounded">
+                    {error}
+                  </div>
+                )}
+             </div>
+
+             <div className="grid grid-cols-2 gap-4 mt-8">
+                <button 
+                  onClick={() => { setCancelTarget(null); setError('') }}
+                  className="py-3 px-4 rounded-xl border border-outline-variant/30 text-on-surface font-bold text-xs uppercase tracking-widest hover:bg-surface-container-high transition-all"
+                >
+                  Regresar
+                </button>
+                <button 
+                  onClick={handleCancel}
+                  className="py-3 px-4 rounded-xl bg-error text-on-error font-headline font-black text-xs uppercase tracking-widest shadow-lg shadow-error/20 hover:scale-[1.02] active:scale-95 transition-all"
+                >
+                  Confirmar
+                </button>
+             </div>
           </div>
         </div>
       )}

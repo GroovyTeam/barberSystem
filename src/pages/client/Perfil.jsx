@@ -7,7 +7,8 @@ export default function Perfil() {
   const [isSaving, setIsSaving] = useState(false)
   
   const [profileData, setProfileData] = useState({
-    name: 'Cargando...',
+    firstName: 'Cargando...',
+    lastName: '',
     email: 'cargando@email.com',
     phone: '',
     memberSince: '2024'
@@ -17,7 +18,8 @@ export default function Perfil() {
     getCurrentUser().then(u => {
       if(u) {
          setProfileData({
-           name: u.name,
+           firstName: u.firstName,
+           lastName: u.lastName,
            email: u.email,
            phone: u.phone || '',
            id: u.id,
@@ -32,12 +34,20 @@ export default function Perfil() {
   // Handle form save
   const handleSave = async () => {
     setIsSaving(true)
-    const { success } = await updateUserProfile(profileData.id, profileData)
-    setIsSaving(false)
-    if (success) {
-      setIsEditing(false)
-    } else {
-      alert("Error al guardar perfil")
+    try {
+      const response = await updateProfile({
+        firstName: profileData.firstName,
+        lastName: profileData.lastName,
+        phone: profileData.phone,
+        email: profileData.email
+      })
+      if (response.success) {
+        setIsEditing(false)
+      }
+    } catch (error) {
+      alert("Error al guardar perfil: " + error.message)
+    } finally {
+      setIsSaving(false)
     }
   }
 
@@ -59,16 +69,28 @@ export default function Perfil() {
               </div>
             )}
           </div>
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             {isEditing ? (
-              <input 
-                name="name"
-                value={profileData.name}
-                onChange={handleChange}
-                className="font-headline font-black text-xl text-on-surface bg-transparent border-b border-primary focus:outline-none w-full mb-1 pb-1"
-              />
+              <div className="flex gap-2 mb-1">
+                <input 
+                  name="firstName"
+                  value={profileData.firstName}
+                  onChange={handleChange}
+                  placeholder="Nombre"
+                  className="font-headline font-bold text-lg text-on-surface bg-transparent border-b border-primary focus:outline-none w-1/2"
+                />
+                <input 
+                  name="lastName"
+                  value={profileData.lastName}
+                  onChange={handleChange}
+                  placeholder="Apellidos"
+                  className="font-headline font-bold text-lg text-on-surface bg-transparent border-b border-primary focus:outline-none w-1/2"
+                />
+              </div>
             ) : (
-              <h2 className="font-headline font-black text-2xl text-on-surface truncate">{profileData.name}</h2>
+              <h2 className="font-headline font-black text-2xl text-on-surface truncate">
+                {profileData.firstName} {profileData.lastName}
+              </h2>
             )}
             <p className="text-outline text-sm truncate">{profileData.email}</p>
             <div className="flex items-center gap-2 mt-2">
@@ -113,11 +135,14 @@ export default function Perfil() {
         <div className="bg-surface-container rounded-xl p-4 flex items-center gap-4">
           <span className="material-symbols-outlined text-secondary">person</span>
           <div className="flex-1">
-            <p className="text-[10px] text-outline uppercase tracking-widest">Nombre</p>
+            <p className="text-[10px] text-outline uppercase tracking-widest">Nombre Completo</p>
             {isEditing ? (
-              <input type="text" name="name" value={profileData.name} onChange={handleChange} className="text-on-surface font-medium text-sm bg-surface-container-low border-b-2 border-primary focus:outline-none w-full px-2 py-1 mt-1 rounded-t" />
+              <div className="flex gap-2 mt-1">
+                <input type="text" name="firstName" value={profileData.firstName} onChange={handleChange} className="text-on-surface font-medium text-sm bg-surface-container-low border-b-2 border-primary focus:outline-none w-1/2 px-2 py-1 rounded-t" />
+                <input type="text" name="lastName" value={profileData.lastName} onChange={handleChange} className="text-on-surface font-medium text-sm bg-surface-container-low border-b-2 border-primary focus:outline-none w-1/2 px-2 py-1 rounded-t" />
+              </div>
             ) : (
-              <p className="text-on-surface font-medium text-sm">{profileData.name}</p>
+              <p className="text-on-surface font-medium text-sm">{profileData.firstName} {profileData.lastName}</p>
             )}
           </div>
         </div>

@@ -8,6 +8,8 @@ export default function Home() {
   const [services, setServices] = useState([])
   const [nextAppt, setNextAppt] = useState(null)
   
+  const [quickForm, setQuickForm] = useState({ barberId: '', serviceId: '' })
+  
   const promos = [
     { title: "Corte & Barba Premium", tag: "Promoción Exclusiva", benefit: "15% Off", icon: "content_cut", color: "from-[#0e0e0e] via-[#201f1f] to-[#131313]" },
     { title: "Color & Estilo Nuevo", tag: "Trend Alert", benefit: "Atrévete", icon: "brush", color: "from-[#1a1a1a] via-[#2a2a2a] to-[#1a1a1a]" },
@@ -92,7 +94,54 @@ export default function Home() {
             </div>
           </div>
         </section>
-      )}
+      {/* Quick Booking Widget */}
+      <section className="bg-surface-container rounded-3xl p-6 border border-outline-variant/10 relative overflow-hidden group shadow-2xl">
+        <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+          <span className="material-symbols-outlined text-6xl">bolt</span>
+        </div>
+        <div className="flex flex-col gap-6">
+          <div>
+            <h3 className="text-on-surface font-headline text-lg font-black uppercase tracking-tight">Cita Express</h3>
+            <p className="text-outline text-xs mt-1">Elige y agenda en segundos</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-1">
+              <label className="text-[10px] font-black uppercase tracking-widest text-secondary ml-1">¿Quién te atiende?</label>
+              <select 
+                value={quickForm.barberId}
+                onChange={(e) => setQuickForm({...quickForm, barberId: e.target.value})}
+                className="w-full bg-surface-container-high border border-outline-variant/20 rounded-xl px-4 py-3 text-sm text-on-surface focus:border-primary outline-none transition-all appearance-none"
+              >
+                <option value="">Cualquier Barbero</option>
+                {barbers.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+              </select>
+            </div>
+            
+            <div className="space-y-1">
+              <label className="text-[10px] font-black uppercase tracking-widest text-secondary ml-1">¿Qué necesitas?</label>
+              <select 
+                value={quickForm.serviceId}
+                onChange={(e) => setQuickForm({...quickForm, serviceId: e.target.value})}
+                className="w-full bg-surface-container-high border border-outline-variant/20 rounded-xl px-4 py-3 text-sm text-on-surface focus:border-primary outline-none transition-all appearance-none"
+              >
+                <option value="">Seleccionar Servicio</option>
+                {services.map(s => <option key={s.id} value={s.id}>{s.name} - ${s.price}</option>)}
+              </select>
+            </div>
+
+            <div className="flex items-end">
+              <Link 
+                to={quickForm.serviceId ? `/reservar?service=${quickForm.serviceId}&barber=${quickForm.barberId}` : '/reservar'}
+                className="w-full bg-primary text-on-primary py-3.5 rounded-xl font-headline font-black text-xs text-center uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-primary/20"
+              >
+                Continuar
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
 
       {/* Hero Promo Banner Carousel */}
       <section className="relative">

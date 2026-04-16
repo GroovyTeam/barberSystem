@@ -36,7 +36,7 @@ export default function Login() {
 
       const response = await socialLogin(mockSocialData)
       if (response.success) {
-        navigate('/')
+        navigate('/home')
       }
     } catch (err) {
       setError(`Error con ${provider}: ${err.message}`)
@@ -59,7 +59,7 @@ export default function Login() {
           if (response.user.role === 'ADMIN') {
             navigate('/admin')
           } else {
-            navigate('/')
+            navigate('/home')
           }
         }
       } else {
@@ -76,7 +76,7 @@ export default function Login() {
         )
         
         if (response.success) {
-          navigate('/') // Al registrarse, va al inicio
+          navigate('/home') // Al registrarse, va al inicio del cliente
         }
       }
     } catch (err) {
