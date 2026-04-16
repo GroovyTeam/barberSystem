@@ -104,6 +104,49 @@ Este archivo es una bitácora de aprendizaje autoescrita por **Claude** para doc
 3. **Autenticación**: JWT implementado con `httpOnly` cookies (OWASP A07).
 4. **Hashing**: Bcrypt activo para todas las contraseñas en la base de datos (OWASP A02).
 
+### 2026-04-16 — Sesión 4 (Gemini) — Sincronización de Esquema y Datos
+
+#### Incidente 6: Error al añadir columnas obligatorias (firstName/lastName)
+- **Causa**: Al añadir campos obligatorios a una tabla con datos existentes, Prisma falla porque no tiene valores para las filas viejas.
+- **Corrección**: Se utilizó `npx prisma migrate reset --force` para limpiar la base de datos y aplicar el esquema desde cero.
+- **Lección**: En etapas tempranas de desarrollo, el `reset` es la vía más rápida para cambios estructurales profundos.
+
+#### Incidente 7: Prisma Client desactualizado
+- **Causa**: El seed fallaba indicando que faltaba el campo `name`, a pesar de que ya había sido borrado del esquema.
+- **Corrección**: Se ejecutó `npx prisma generate` para reconstruir los tipos de TypeScript/JavaScript del cliente.
+- **Lección**: **Siempre** correr `generate` después de cualquier cambio en `schema.prisma` antes de intentar usar la base de datos.
+
+#### Incidente 8: Conflictos de ESM en Scripts de Herramientas
+- **Causa**: `seed.js` fallaba con `require is not defined` debido a `"type": "module"` en `package.json`.
+- **Corrección**: Se renombró el archivo a `seed.cjs` para forzar el modo CommonJS y permitir el uso de `require` para dependencias como `bcrypt` y `pg`.
+- **Lección**: Usar la extensión `.cjs` para scripts de utilidad que dependan de librerías CommonJS en proyectos ESM.
+
+---
+
+### 🔌 Información de Acceso
+- **Frontend**: Port 5173 (`npm run dev`)
+- **Backend**: Port 3000 (`node server/index.cjs`)
+- **Acceso Directo**: http://localhost:5173
+
+#### Incidente 9: Iconos no visibles en Admin
+- **Causa**: Algunos navegadores requieren explícitamente `font-feature-settings: 'liga'` para renderizar los Material Symbols correctamente como iconos en lugar de texto plano.
+- **Corrección**: Se añadió la propiedad al archivo `index.css` global.
+- **Lección**: Asegurar siempre las ligaduras de fuente cuando se usen iconos basados en texto (ligatures).
+
+#### Mejora de Experiencia de Usuario: Welcome Page (Gatekeeper)
+- **Cambio**: Se implementó una página raíz (`/`) que permite al usuario seleccionar su rol antes de entrar.
+- **Motivo**: Para despliegue en producción, se requiere un punto de entrada unificado que distinga entre la experiencia de negocio (Admin) y la de usuario (Cliente).
+- **Rutas Actualizadas**:
+  *   `/` -> Selector de Rol (Welcome).
+  *   `/home` -> Inicio Cliente.
+  *   `/admin` -> Panel Administrador.
+
+---
+
+### 🔑 Acceso al Proyecto (Actualizado)
+- **Frontend**: http://localhost:5173 (Página de bienvenida).
+- **Entrada Cliente**: Botón "Soy Cliente" -> `/home`.
+- **Entrada Admin**: Botón "Soy Admin" -> `/admin`.
+
 ---
 *Este log debe actualizarse después de cada sesión de corrección importante. Cada entrada debe incluir: Incidente, Causa, Corrección y Lección.*
-

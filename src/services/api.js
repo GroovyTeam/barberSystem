@@ -53,10 +53,17 @@ export const login = async (email, password) => {
   })
 }
 
-export const register = async (name, email, password, phone) => {
+export const register = async (firstName, lastName, email, password, phone) => {
   return apiFetch('/auth/register', {
     method: 'POST',
-    body: JSON.stringify({ name, email, password, phone })
+    body: JSON.stringify({ firstName, lastName, email, password, phone })
+  })
+}
+
+export const socialLogin = async (userData) => {
+  return apiFetch('/auth/social-login', {
+    method: 'POST',
+    body: JSON.stringify(userData)
   })
 }
 

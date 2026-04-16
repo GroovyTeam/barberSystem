@@ -14,13 +14,11 @@ const prisma = new PrismaClient({ adapter })
 async function main() {
   console.log('💈 Iniciando carga de datos (Gemini Seed)...')
 
-  // Limpiar base de datos
   await prisma.appointment.deleteMany()
   await prisma.service.deleteMany()
   await prisma.barber.deleteMany()
   await prisma.user.deleteMany()
 
-  // 1. Crear ADMIN
   const adminPassword = await bcrypt.hash('Admin123!', 12)
   await prisma.user.create({
     data: {
@@ -33,7 +31,6 @@ async function main() {
     }
   })
 
-  // 2. Crear CLIENTE DEMO
   const clientPassword = await bcrypt.hash('Cliente123!', 12)
   const user = await prisma.user.create({
     data: {
@@ -46,7 +43,6 @@ async function main() {
     }
   })
 
-  // 3. Crear BARBEROS
   const barber1 = await prisma.barber.create({
     data: {
       name: 'Marco Silva',
@@ -67,7 +63,6 @@ async function main() {
     }
   })
 
-  // 4. Crear SERVICIOS
   const service1 = await prisma.service.create({
     data: {
       name: 'Corte Black & Blade',
@@ -90,13 +85,12 @@ async function main() {
     }
   })
 
-  // 5. Crear una CITA DE PRUEBA
   await prisma.appointment.create({
     data: {
       clientId: user.id,
       barberId: barber1.id,
       serviceId: service1.id,
-      date: new Date(new Date().setDate(new Date().getDate() + 1)), // Mañana
+      date: new Date(new Date().setDate(new Date().getDate() + 1)),
       time: '14:00',
       price: 350,
       status: 'PENDING'

@@ -22,6 +22,7 @@ import Configuracion from './pages/admin/Configuracion'
 
 // Auth
 import Login from './pages/auth/Login'
+import Welcome from './pages/Welcome'
 
 export default function App() {
   return (
@@ -30,9 +31,12 @@ export default function App() {
         {/* Auth */}
         <Route path="/login" element={<Login />} />
 
+        {/* Main Selection */}
+        <Route path="/" element={<Welcome />} />
+
         {/* Client Routes */}
         <Route element={<ClientLayout />}>
-          <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/servicios" element={<Servicios />} />
           <Route path="/reservar" element={<ReservaCita />} />
           <Route path="/mis-citas" element={<MisCitas />} />
