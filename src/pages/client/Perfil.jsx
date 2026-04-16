@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { updateUserProfile, getCurrentUser } from '../../services/api' 
+import { updateProfile, getCurrentUser } from '../../services/api' 
 
 export default function Perfil() {
   const [isEditing, setIsEditing] = useState(false)

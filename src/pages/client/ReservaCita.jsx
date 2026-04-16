@@ -53,17 +53,41 @@ export default function ReservaCita() {
       setBarbers(barbs)
       setUser(u)
 
-      // Manejar deep-linking si venimos de la página de Servicios
+      // 1. Manejar Cita Express desde URL Query Params (Home)
+      const params = new URLSearchParams(location.search)
+      const qServiceId = params.get('service')
+      const qBarberId = params.get('barber')
+
+      if (qServiceId) {
+        const foundServ = servs.find(s => s.id === qServiceId)
+        if (foundServ) {
+          setSelectedService(foundServ)
+          
+          if (qBarberId) {
+            const foundBarb = barbs.find(b => b.id === qBarberId)
+            if (foundBarb) {
+              setSelectedBarber(foundBarb)
+              setStep(2) // Saltar directamente a FECHA (Paso 2)
+            } else {
+              setStep(1) // Si el barbero no existe, ir a elegir barbero
+            }
+          } else {
+            setStep(1) // Solo servicio, ir a elegir barbero
+          }
+        }
+      }
+
+      // 2. Manejar deep-linking heredado (location state)
       const stateServiceId = location.state?.serviceId
-      if (stateServiceId) {
+      if (stateServiceId && !qServiceId) {
         const found = servs.find(s => s.id === stateServiceId)
         if (found) {
           setSelectedService(found)
-          setStep(1) // Saltar al paso de Barberos
+          setStep(1)
         }
       }
     })
-  }, [location.state])
+  }, [location.search, location.state])
 
   const { days, year, month } = getCalendarDays()
   const today = new Date().getDate()

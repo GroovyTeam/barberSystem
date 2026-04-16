@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { getBarbers, getServices, getClientAppointments } from '../../services/api'
+import { getBarbers, getServices, getMyAppointments } from '../../services/api'
 
 export default function Home() {
   const [activeSlide, setActiveSlide] = useState(0)
@@ -18,22 +18,25 @@ export default function Home() {
 
   useEffect(() => {
     async function loadData() {
-      const [bData, sData, appts] = await Promise.all([
-        getBarbers(),
-        getServices(),
-        getClientAppointments('current')
-      ])
-      
-      if(bData.length > 0) setBarbers(bData)
-      if(sData.length > 0) setServices(sData)
-      
-      // Obtener la cita más próxima (futura)
-      if (appts && appts.length > 0) {
-        const now = new Date()
-        const sorted = appts
-          .filter(a => new Date(a.date) >= now || (new Date(a.date).toDateString() === now.toDateString()))
-          .sort((a, b) => new Date(a.date) - new Date(b.date))
-        setNextAppt(sorted[0])
+      try {
+        const [bData, sData, appts] = await Promise.all([
+          getBarbers(),
+          getServices(),
+          getMyAppointments()
+        ])
+        
+        if(Array.isArray(bData)) setBarbers(bData)
+        if(Array.isArray(sData)) setServices(sData)
+        
+        if (Array.isArray(appts) && appts.length > 0) {
+          const now = new Date()
+          const sorted = appts
+            .filter(a => a && a.date && (new Date(a.date) >= now || (new Date(a.date).toDateString() === now.toDateString())))
+            .sort((a, b) => new Date(a.date) - new Date(b.date))
+          if(sorted.length > 0) setNextAppt(sorted[0])
+        }
+      } catch (err) {
+        console.error("Home Load Error:", err)
       }
     }
     loadData()
@@ -49,7 +52,7 @@ export default function Home() {
     <div className="px-6 max-w-2xl mx-auto space-y-10 py-6">
 
       {/* Next Appointment Card */}
-      {nextAppt && (
+      {nextAppt && nextAppt.date && (
         <section>
           <div className="bg-gradient-to-br from-surface-container to-surface-container-high rounded-2xl p-6 relative overflow-hidden group shadow-xl border border-outline-variant/5">
             <span className="material-symbols-outlined absolute -right-6 -bottom-6 text-[140px] text-secondary opacity-5 pointer-events-none group-hover:scale-110 transition-transform duration-700">event_available</span>
@@ -59,7 +62,7 @@ export default function Home() {
                   <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
                   <p className="text-secondary font-headline text-[10px] font-black tracking-[0.2em] uppercase">Confirmada</p>
                 </div>
-                <h3 className="text-on-surface font-headline text-xl font-black tracking-tight">{nextAppt.service?.name || nextAppt.service}</h3>
+                <h3 className="text-on-surface font-headline text-xl font-black tracking-tight">{nextAppt.service?.name || 'Servicio'}</h3>
               </div>
               <div className="bg-primary/20 backdrop-blur-md px-4 py-1.5 rounded-full border border-primary/20">
                 <span className="text-primary text-[10px] font-black uppercase tracking-widest">Próxima</span>
@@ -85,15 +88,17 @@ export default function Home() {
                 </div>
               </div>
               <div className="col-span-2 bg-surface-container-highest/30 p-3 rounded-xl flex items-center gap-3">
-                 <img src={nextAppt.barber?.avatar || `https://i.pravatar.cc/150?u=${nextAppt.barber}`} className="w-8 h-8 rounded-full border border-primary/20" />
+                 <img src={nextAppt.barber?.avatar || `https://i.pravatar.cc/150?u=${nextAppt.barber?.id}`} className="w-8 h-8 rounded-full border border-primary/20" />
                  <div>
                     <p className="text-[8px] text-outline font-black uppercase mb-0.5">Barbero</p>
-                    <p className="text-xs text-on-surface font-bold">{nextAppt.barber?.name || nextAppt.barber}</p>
+                    <p className="text-xs text-on-surface font-bold">{nextAppt.barber?.name || 'Barbero'}</p>
                  </div>
               </div>
             </div>
           </div>
         </section>
+      )}
+
       {/* Quick Booking Widget */}
       <section className="bg-surface-container rounded-3xl p-6 border border-outline-variant/10 relative overflow-hidden group shadow-2xl">
         <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
@@ -226,8 +231,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-
-
 
       {/* FAB */}
       <div className="fixed bottom-24 right-6 z-40">

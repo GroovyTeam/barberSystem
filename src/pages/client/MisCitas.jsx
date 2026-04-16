@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getClientAppointments, cancelAppointment } from '../../services/api'
+import { getMyAppointments, cancelAppointment } from '../../services/api'
 
 const STATUS_STYLES = {
   confirmed: { label: 'Confirmada', cls: 'bg-green-500/10 text-green-500' },
@@ -82,7 +82,7 @@ export default function MisCitas() {
 
   const loadCitas = async () => {
     setIsLoading(true)
-    const data = await getClientAppointments('current')
+    const data = await getMyAppointments()
     setAppointments(data)
     setIsLoading(false)
   }
