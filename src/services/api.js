@@ -1,28 +1,80 @@
 /**
- * API Connection Blueprint
+ * API Connection Layer — Black & Blade Barbershop
  * 
- * Este archivo centraliza la lógica de conexión al backend. 
- * Mientras no insertes las credenciales reales de Firebase, Supabase o un API REST propio,
- * estas funciones simularán llamadas asíncronas para probar el flujo de la UI de React.
+ * Todas las llamadas al backend pasan por este archivo.
+ * Configurado con credentials: 'include' para enviar cookies httpOnly (JWT).
  */
-
-// 1. Aquí podrás inicializar tu cliente de BD, por ejemplo:
-// import { initializeApp } from "firebase/app";
-// import { getFirestore, doc, updateDoc } from "firebase/firestore";
-// 
-// const firebaseConfig = {
-//   apiKey: import.meta.env.VITE_API_KEY,
-//   authDomain: import.meta.env.VITE_AUTH_DOMAIN,
-//   projectId: import.meta.env.VITE_PROJECT_ID,
-// };
-// const app = initializeApp(firebaseConfig);
-// const db = getFirestore(app);
-
-/** Simula un delay en milisegundos */
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
 const API_URL = 'http://localhost:3000/api'
 
+// ═══════════════════════════════════════════════════════════════
+// Helper: fetch con manejo de errores y credenciales
+// ═══════════════════════════════════════════════════════════════
+const apiFetch = async (endpoint, options = {}) => {
+  try {
+    const res = await fetch(`${API_URL}${endpoint}`, {
+      ...options,
+      credentials: 'include', // Enviar cookies httpOnly automáticamente
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+      }
+    })
+
+    // Si es 401 (no autorizado), redirigir al login
+    if (res.status === 401) {
+      // Solo redirigir si no estamos ya en login
+      if (!window.location.pathname.includes('/login')) {
+        window.location.href = '/login'
+      }
+      return null
+    }
+
+    const data = await res.json()
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Error en la solicitud')
+    }
+
+    return data
+  } catch (error) {
+    console.error(`API Error [${endpoint}]:`, error.message)
+    throw error
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════════════════════
+export const login = async (email, password) => {
+  return apiFetch('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password })
+  })
+}
+
+export const register = async (name, email, password, phone) => {
+  return apiFetch('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify({ name, email, password, phone })
+  })
+}
+
+export const logout = async () => {
+  return apiFetch('/auth/logout', { method: 'POST' })
+}
+
+export const getMe = async () => {
+  try {
+    return await apiFetch('/auth/me')
+  } catch {
+    return null
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SERVICIOS (público)
+// ═══════════════════════════════════════════════════════════════
 export const getServices = async () => {
   try {
     const res = await fetch(`${API_URL}/services`)
@@ -33,6 +85,9 @@ export const getServices = async () => {
   }
 }
 
+// ═══════════════════════════════════════════════════════════════
+// BARBEROS (público para lectura)
+// ═══════════════════════════════════════════════════════════════
 export const getBarbers = async (showAll = false) => {
   try {
     const res = await fetch(`${API_URL}/barbers${showAll ? '?all=true' : ''}`)
@@ -45,58 +100,35 @@ export const getBarbers = async (showAll = false) => {
 
 export const updateBarberAvailability = async (id, isAvailable) => {
   try {
-    const res = await fetch(`${API_URL}/barbers/${id}/availability`, {
+    return await apiFetch(`/barbers/${id}/availability`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ isAvailable })
     })
-    return await res.json()
   } catch (error) {
     console.error(error)
     return { error: true }
   }
 }
 
+// ═══════════════════════════════════════════════════════════════
+// CITAS
+// ═══════════════════════════════════════════════════════════════
 export const bookAppointment = async (appointmentData) => {
   try {
-    const res = await fetch(`${API_URL}/appointments`, {
+    return await apiFetch('/appointments', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(appointmentData)
     })
-    return await res.json()
   } catch (error) {
     console.error(error)
     return { error: true }
   }
 }
 
-export const updateUserProfile = async (userId, profileData) => {
+export const getClientAppointments = async () => {
   try {
-    const res = await fetch(`${API_URL}/users/${userId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(profileData)
-    })
-    return await res.json()
-  } catch (error) {
-    console.error(error)
-    return { error: true }
-  }
-}
-
-export const getClientAppointments = async (clientId) => {
-  try {
-    // Para simplificar, obtenemos al usuario 'current' si no se pasa ID específico
-    let actualId = clientId
-    if(clientId === 'current') {
-      const userRes = await fetch(`${API_URL}/users/current`)
-      const user = await userRes.json()
-      actualId = user.id
-    }
-    const res = await fetch(`${API_URL}/appointments/client/${actualId}`)
-    return await res.json()
-  } catch(err) {
+    return await apiFetch('/appointments/mine')
+  } catch (err) {
     console.error(err)
     return []
   }
@@ -104,38 +136,52 @@ export const getClientAppointments = async (clientId) => {
 
 export const cancelAppointment = async (apptId) => {
   try {
-    const res = await fetch(`${API_URL}/appointments/${apptId}/cancel`, { method: 'PUT' })
-    return await res.json()
-  } catch(err) {
+    return await apiFetch(`/appointments/${apptId}/cancel`, { method: 'PUT' })
+  } catch (err) {
     console.error(err)
+    return { error: true }
+  }
+}
+
+export const getAppointments = async () => {
+  try {
+    return await apiFetch('/appointments')
+  } catch (err) {
+    console.error(err)
+    return []
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// USUARIOS
+// ═══════════════════════════════════════════════════════════════
+export const updateUserProfile = async (profileData) => {
+  try {
+    return await apiFetch('/users/profile', {
+      method: 'PUT',
+      body: JSON.stringify(profileData)
+    })
+  } catch (error) {
+    console.error(error)
     return { error: true }
   }
 }
 
 export const getCurrentUser = async () => {
   try {
-    const res = await fetch(`${API_URL}/users/current`)
-    return await res.json()
-  } catch(err) {
+    return await apiFetch('/users/current')
+  } catch (err) {
     console.error(err)
     return null
   }
 }
 
-export const getAppointments = async () => {
-  try {
-    const res = await fetch(`${API_URL}/appointments`)
-    return await res.json()
-  } catch(err) {
-    console.error(err)
-    return []
-  }
-}
-
+// ═══════════════════════════════════════════════════════════════
+// DASHBOARD (admin)
+// ═══════════════════════════════════════════════════════════════
 export const getDashboardStats = async () => {
   try {
-    const res = await fetch(`${API_URL}/dashboard/stats`)
-    return await res.json()
+    return await apiFetch('/dashboard/stats')
   } catch (error) {
     console.error(error)
     return null

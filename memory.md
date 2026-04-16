@@ -39,11 +39,53 @@ Este archivo es una bitácora de aprendizaje autoescrita por **Claude** para doc
 - **SQLite en uso**: El schema usa `provider = "sqlite"` con `file:./dev.db`, pero la constitución manda `Neon DB (PostgreSQL)`. Migración pendiente.
 - **Contraseñas en texto plano**: El seed crea usuarios con `password: 'password123'` sin hash. Violación de OWASP A02.
 - **CORS abierto**: `app.use(cors())` sin restricciones. Aceptable en desarrollo, pero debe configurarse en producción. Violación de OWASP A05.
-- **Ruta `/api/seed` expuesta**: Cualquiera puede ejecutar el seed via GET request. Debe protegerse o eliminarse en producción. Violación de OWASP A05.
-- **Sin autenticación**: No hay middleware de auth en ninguna ruta del backend. Violación de OWASP A01.
+- **Ruta `/api/seed` expuesta**: Cualquiera puede ejecutar el seed via GET request. Debe protegerse o eliminarse en producción. Violación de OWASP A05. ✅ RESUELTO — ahora solo en `NODE_ENV !== 'production'`.
+- **Sin autenticación**: No hay middleware de auth en ninguna ruta del backend. Violación de OWASP A01. ✅ RESUELTO — JWT + role middleware implementado.
 - **Mock data duplicado**: `src/data/mockData.js` contiene datos que ya existen en la BD via seed. Posible fuente de inconsistencias.
 - **Archivo `.env`**: Contiene credenciales de BD local (prisma+postgres). No está en `.gitignore` correctamente para producción con Neon DB.
 
 ---
 
+### 2026-04-16 — Sesión 2 (Claude) — Implementación OWASP + Migración Neon DB
+
+#### Incidente 1: Prisma v5 → v7 Breaking Changes
+- **Causa**: `prisma.config.ts` fue generado por `neonctl init` para Prisma v7 (`import from 'prisma/config'`), pero el proyecto usaba Prisma v5.22 donde ese módulo no existe.
+- **Corrección**: Actualizar `prisma` y `@prisma/client` a v7.7.0 con `npm install prisma@latest @prisma/client@latest`.
+- **Lección**: Antes de correr CLI tools de Prisma, **siempre verificar** que la versión local coincida con la versión que el CLI espera. Usar `npx prisma --version` para confirmar.
+
+#### Incidente 2: Prisma v7 — `schema.prisma` ya no acepta `url` en datasource
+- **Causa**: En Prisma v7, la URL de conexión se mueve a `prisma.config.ts`, no en el schema. El schema solo declara el `provider`.
+- **Corrección**: Eliminar `url = "file:./dev.db"` del schema, cambiar provider a `"postgresql"`, y eliminar `output = "./generated/client3"` del generator.
+- **Lección**: En Prisma v7, el schema es declarativo (qué BD usar), el config es operacional (cómo conectar).
+
+#### Incidente 3: `PrismaClient` necesita options en v7
+- **Causa**: `new PrismaClient()` sin argumentos ya no funciona en v7. Requiere `adapter` o `accelerateUrl`.
+- **Intentos fallidos**:
+  1. `accelerateUrl` con `postgres://` → Error: debe empezar con `prisma://` o `prisma+postgres://`
+  2. `accelerateUrl` con `prisma+postgres://` → Error: API key inválida
+- **Corrección final**: Usar `@prisma/adapter-pg` con `pg.Pool` para conexión directa a PostgreSQL.
+- **Lección**: Para Prisma Postgres (db.prisma.io), el adapter `@prisma/adapter-pg` con pool `pg` es el enfoque más simple y confiable en Prisma v7.
+
+#### Incidente 4: `Connection terminated unexpectedly` en dashboard
+- **Causa**: El pool de `pg` sin configuración SSL ni límite de conexiones causaba drops al hacer múltiples queries concurrentes (`Promise.all`) contra Neon DB remoto.
+- **Corrección**: Configurar `ssl: { rejectUnauthorized: false }` y `max: 10` en el pool.
+- **Lección**: Conexiones a BD remotas en la nube **siempre** necesitan SSL y configuración de pool adecuada.
+
+#### OWASP Implementado ✅
+| OWASP | Medida | Paquete |
+|---|---|---|
+| A01 | JWT auth middleware + role authorization | `jsonwebtoken` |
+| A02 | Bcrypt password hashing (salt=12) | `bcrypt` |
+| A03 | Input validation/sanitization | `express-validator` |
+| A05 | Helmet + CORS restrictivo + seed solo en dev | `helmet` |
+| A07 | Rate limiting (10 req/15min en auth) + httpOnly cookies | `express-rate-limit`, `cookie-parser` |
+| A10 | Error handler centralizado (no stack traces al cliente) | Built-in |
+
+#### Credenciales de Seed
+- **Admin**: admin@blackblade.com / Admin123! (rol ADMIN)
+- **Cliente**: cliente@demo.com / Cliente123! (rol CLIENT)
+
+---
+
 *Este log debe actualizarse después de cada sesión de corrección importante. Cada entrada debe incluir: Incidente, Causa, Corrección y Lección.*
+
