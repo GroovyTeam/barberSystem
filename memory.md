@@ -85,7 +85,25 @@ Este archivo es una bitácora de aprendizaje autoescrita por **Claude** para doc
 - **Admin**: admin@blackblade.com / Admin123! (rol ADMIN)
 - **Cliente**: cliente@demo.com / Cliente123! (rol CLIENT)
 
+### 2026-04-16 — Sesión 3 (Gemini) — Blindaje de Secretos y Consolidación
+
+#### Incidente 5: Riesgo de Exposición de API Keys
+- **Causa**: Durante la migración a Neon DB, se generaron archivos de configuración (`prisma.config.ts`) y variables de entorno que contienen credenciales sensibles.
+- **Corrección**: Se verificó que `.env` esté estrictamente en `.gitignore`. Se configuró `prisma.config.ts` para que extraiga la URL de las variables de entorno y no de texto plano.
+- **Lección**: **NUNCA** hardcodear credenciales en archivos `.ts` o `.js` que sean rastreados por Git. El uso de `process.env` es obligatorio para cumplir con OWASP.
+
+#### Cambio de Identidad: De Claude a Gemini
+- **Nota**: El asistente ha transicionado a **Gemini**. Se mantiene la misma Constitución (`claude.md` se mantiene como referencia de reglas, pero el agente firma como Gemini).
+- **Compromiso**: Seguir documentando cada error técnico en este archivo para evitar redundancia y mejorar la eficiencia en la resolución de problemas.
+
 ---
 
+### Resumen de Estado de Seguridad (Post-Corrección)
+1. **Credenciales**: Ocultas en `.env` (Protegidas por `.gitignore`).
+2. **Base de Datos**: Neon DB conectada exitosamente mediante `@prisma/adapter-pg`.
+3. **Autenticación**: JWT implementado con `httpOnly` cookies (OWASP A07).
+4. **Hashing**: Bcrypt activo para todas las contraseñas en la base de datos (OWASP A02).
+
+---
 *Este log debe actualizarse después de cada sesión de corrección importante. Cada entrada debe incluir: Incidente, Causa, Corrección y Lección.*
 
