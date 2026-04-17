@@ -90,11 +90,10 @@ export const getCurrentUser = async () => {
 // ═══════════════════════════════════════════════════════════════
 export const getServices = async () => {
   try {
-    const res = await fetch(`${API_URL}/services`)
-    return await res.json()
+    const data = await apiFetch('/services')
+    return Array.isArray(data) ? data : []
   } catch (error) {
-    console.error(error)
-    return []
+    throw error
   }
 }
 
@@ -103,11 +102,10 @@ export const getServices = async () => {
 // ═══════════════════════════════════════════════════════════════
 export const getBarbers = async (showAll = false) => {
   try {
-    const res = await fetch(`${API_URL}/barbers${showAll ? '?all=true' : ''}`)
-    return await res.json()
+    const data = await apiFetch(`/barbers${showAll ? '?all=true' : ''}`)
+    return Array.isArray(data) ? data : []
   } catch (error) {
-    console.error(error)
-    return []
+    throw error
   }
 }
 

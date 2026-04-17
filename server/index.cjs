@@ -645,21 +645,21 @@ app.get('/api/dashboard/stats',
       }))
 
       res.json({
-        appointmentsToday,
-        activeBarbers,
-        newClientsToday,
-        revenueToday: revenueTodayResult._sum.price || 0,
-        recentAppointments: recentAppointments.map(a => ({
+        appointmentsToday: appointmentsToday || 0,
+        activeBarbers: activeBarbers || 0,
+        newClientsToday: newClientsToday || 0,
+        revenueToday: revenueTodayResult?._sum?.price || 0,
+        recentAppointments: (recentAppointments || []).map(a => ({
           id: a.id,
-          client: a.client.name,
-          initials: a.client.name.split(' ').map(n => n[0]).join(''),
+          client: a.client?.name || 'Cliente',
+          initials: (a.client?.name || 'C').split(' ').map(n => n[0]).join(''),
           clientType: 'Cliente Regular',
-          service: a.service.name,
-          barber: a.barber.name,
+          service: a.service?.name || 'Servicio',
+          barber: a.barber?.name || 'Barbero',
           time: a.time,
           status: a.status
         })),
-        performance: enrichedPerformance
+        performance: enrichedPerformance || []
       })
     } catch (error) {
       console.error('Dashboard stats error:', error)

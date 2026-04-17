@@ -20,13 +20,16 @@ model User {
 }
 
 model Barber {
-  id           String   @id @default(uuid())
-  name         String
-  specialty    String
-  avatar       String?
+  id          String   @id @default(cuid())
+  name        String
+  specialty   String
+  bio         String?  @db.Text
+  avatar      String?
   rating       Float    @default(5.0)
   reviews      Int      @default(0)
   isAvailable  Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   
   appointments Appointment[]
 }

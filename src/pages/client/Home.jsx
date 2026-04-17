@@ -1,8 +1,9 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { getBarbers, getServices, getMyAppointments } from '../../services/api'
 
 export default function Home() {
+  const navigate = useNavigate()
   const [activeSlide, setActiveSlide] = useState(0)
   const [barbers, setBarbers] = useState([])
   const [services, setServices] = useState([])
@@ -205,9 +206,12 @@ export default function Home() {
             <h2 className="font-headline text-2xl font-bold text-on-surface tracking-tight">Barberos Destacados</h2>
             <p className="text-on-surface-variant text-sm mt-1">Nuestros maestros artesanos</p>
           </div>
-          <Link to="/reservar" className="text-secondary text-sm font-semibold hover:underline decoration-secondary/30 transition-all">
+          <button 
+            onClick={() => navigate('/barberos')}
+            className="text-primary text-xs font-bold uppercase tracking-widest hover:opacity-70 transition-opacity"
+          >
             Ver todos
-          </Link>
+          </button>
         </div>
         <div className="flex gap-5 overflow-x-auto no-scrollbar pb-4 -mx-6 px-6">
           {barbers.map((barber) => (

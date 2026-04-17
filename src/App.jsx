@@ -36,6 +36,7 @@ const Servicios = lazy(() => import('./pages/client/Servicios'))
 const ReservaCita = lazy(() => import('./pages/client/ReservaCita'))
 const MisCitas = lazy(() => import('./pages/client/MisCitas'))
 const Perfil = lazy(() => import('./pages/client/Perfil'))
+const BarbersList = lazy(() => import('./pages/client/BarbersList'))
 
 // Admin (Lazy)
 const AdminLayout = lazy(() => import('./layouts/AdminLayout'))
@@ -56,11 +57,17 @@ export default function App() {
               <Route path="/reservar" element={<ReservaCita />} />
               <Route path="/mis-citas" element={<MisCitas />} />
               <Route path="/perfil" element={<Perfil />} />
+              <Route path="/barberos" element={<BarbersList />} />
             </Route>
 
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<Dashboard />} />
-              <Route path="*" element={<Navigate to="/admin" replace />} />
+              <Route path="calendario" element={<Dashboard />} />
+              <Route path="barberos" element={<Dashboard />} />
+              <Route path="servicios" element={<Dashboard />} />
+              <Route path="clientes" element={<Dashboard />} />
+              <Route path="reportes" element={<Dashboard />} />
+              <Route path="configuracion" element={<Dashboard />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />
