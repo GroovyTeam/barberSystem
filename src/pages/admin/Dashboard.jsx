@@ -12,6 +12,7 @@ const STATUS_STYLES = {
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('resumen')
   const [stats, setStats] = useState(null)
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0])
   const [loading, setLoading] = useState(true)
   const [showNewApptModal, setShowNewApptModal] = useState(false)
   const [services, setServices] = useState([])
@@ -38,7 +39,7 @@ export default function Dashboard() {
     else setActiveTab('resumen')
     
     Promise.all([
-      getDashboardStats(),
+      getDashboardStats(selectedDate),
       getServices(),
       getBarbers(true)
     ]).then(([statsData, servicesData, barbersData]) => {
@@ -47,7 +48,7 @@ export default function Dashboard() {
       setBarberList(barbersData)
       setLoading(false)
     })
-  }, [location.pathname])
+  }, [location.pathname, selectedDate])
 
   if (loading) return (
     <div className="flex items-center justify-center h-screen bg-surface">
@@ -144,13 +145,102 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* VIEW: CALENDARIO */}
+      {/* VIEW: CALENDARIO (Premium Gold Timeline) */}
       {activeTab === 'calendario' && (
-        <div className="animate-in slide-in-from-bottom-4 duration-500 space-y-6">
-          <h3 className="text-3xl font-black text-on-surface font-headline italic">Agenda & Calendario</h3>
-          <div className="bg-surface-container p-20 rounded-3xl border border-dashed border-outline/20 text-center">
-             <span className="material-symbols-outlined text-5xl text-outline/30 mb-4 italic">event</span>
-             <p className="text-outline text-sm italic">Cargando cronograma maestro de la barbería...</p>
+        <div className="animate-in fade-in zoom-in-95 duration-500 space-y-10 max-w-5xl mx-auto">
+          {/* Month & Year Header */}
+          <div className="flex flex-col md:flex-row justify-between items-end gap-6 bg-surface-container p-8 rounded-3xl border border-outline/5 shadow-2xl">
+            <div className="group/month cursor-pointer relative">
+               <p className="text-primary text-[10px] font-black uppercase tracking-[0.3em] mb-1">Agenda Maestra</p>
+               
+               {/* Clickable Month Selector */}
+               <div className="flex items-center gap-3">
+                  <h3 className="text-5xl font-black text-on-surface font-headline italic uppercase tracking-tighter hover:text-primary transition-colors">
+                     {new Date().toLocaleDateString('es-MX', { month: 'long' })}
+                  </h3>
+                  <span className="material-symbols-outlined text-primary text-2xl animate-bounce-subtle mt-2">expand_more</span>
+                  <span className="text-outline/30 text-2xl not-italic font-light mt-2">{new Date().getFullYear()}</span>
+               </div>
+
+               {/* Dropdown Placeholder (Simulado para UI) */}
+               <div className="absolute top-full left-0 mt-4 w-48 bg-surface-container-high rounded-2xl border border-primary/10 shadow-2xl p-2 opacity-0 group-hover/month:opacity-100 pointer-events-none group-hover/month:pointer-events-auto transition-all z-50">
+                  {['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'].map(m => (
+                    <button key={m} className="w-full text-left px-4 py-2 rounded-xl text-xs font-bold text-outline hover:bg-primary hover:text-on-primary transition-all">
+                       {m}
+                    </button>
+                  ))}
+               </div>
+            </div>
+            
+            {/* Horizontal Day Grid (More Spaced) */}
+            <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar max-w-full md:max-w-md">
+              {[...Array(14)].map((_, i) => {
+                const date = new Date()
+                date.setDate(date.getDate() + i)
+                const dateStr = date.toISOString().split('T')[0]
+                const isActive = selectedDate === dateStr
+                return (
+                  <button 
+                    key={i}
+                    onClick={() => setSelectedDate(dateStr)}
+                    className={`flex flex-col items-center justify-center min-w-[70px] h-[90px] rounded-2xl transition-all border-2 ${isActive ? 'bg-primary border-primary shadow-xl shadow-primary/20 scale-105' : 'bg-surface-container-low border-outline/5 hover:border-primary/40'}`}
+                  >
+                    <span className={`text-[9px] font-black uppercase tracking-widest mb-1 ${isToday ? 'text-on-primary' : 'text-outline'}`}>
+                      {date.toLocaleDateString('es-MX', { weekday: 'short' }).replace('.', '')}
+                    </span>
+                    <span className={`text-2xl font-headline font-black ${isToday ? 'text-on-primary' : 'text-on-surface'}`}>
+                      {date.getDate()}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          <div className="space-y-2 relative">
+            {['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'].map(hour => {
+              const appointmentsAtHour = (stats?.recentAppointments || []).filter(a => a.time.startsWith(hour.split(':')[0]))
+              
+              return (
+                <div key={hour} className="flex gap-6 group">
+                  {/* Time Label - Refined */}
+                  <div className="w-16 pt-2 text-right border-r border-outline/5 pr-4 flex flex-col">
+                    <span className="text-on-surface font-black text-sm font-headline">{hour}</span>
+                    <span className="text-[9px] text-outline uppercase font-bold tracking-tighter">am/pm</span>
+                  </div>
+
+                  {/* Appointments Container */}
+                  <div className="flex-1 pb-4">
+                    {appointmentsAtHour.length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {appointmentsAtHour.map(appt => (
+                          <div key={appt.id} className="bg-surface-container p-5 rounded-2xl border-l-4 border-primary shadow-xl hover:bg-surface-container-high transition-all flex justify-between items-center group/card">
+                            <div className="flex items-center gap-4">
+                               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center font-black text-primary text-xs">
+                                  {appt.initials}
+                               </div>
+                               <div>
+                                  <div className="flex items-center gap-2">
+                                     <h4 className="text-on-surface font-bold text-sm uppercase tracking-tight">{appt.client}</h4>
+                                     <span className="bg-surface-container-highest text-outline text-[8px] px-2 py-0.5 rounded font-black">{appt.status}</span>
+                                  </div>
+                                  <div className="flex gap-3 mt-1 text-[10px] text-outline font-medium">
+                                     <span className="flex items-center gap-1"><i className="material-symbols-outlined text-xs text-primary">content_cut</i> {appt.service}</span>
+                                     <span className="flex items-center gap-1"><i className="material-symbols-outlined text-xs text-secondary">person</i> {appt.barber}</span>
+                                  </div>
+                               </div>
+                            </div>
+                            <span className="text-primary font-black text-xs font-headline italic">{appt.time}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="h-[1px] bg-outline/5 mt-5 w-full group-hover:bg-primary/10 transition-colors" />
+                    )}
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </div>
       )}

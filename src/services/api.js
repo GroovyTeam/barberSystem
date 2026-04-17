@@ -183,9 +183,9 @@ export const updateProfile = async (profileData) => {
 // ═══════════════════════════════════════════════════════════════
 // DASHBOARD (admin)
 // ═══════════════════════════════════════════════════════════════
-export const getDashboardStats = async () => {
+export const getDashboardStats = async (date) => {
   try {
-    return await apiFetch('/dashboard/stats')
+    return await apiFetch(`/dashboard/stats${date ? `?date=${date}` : ''}`)
   } catch (error) {
     console.error(error)
     return null

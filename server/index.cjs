@@ -572,15 +572,18 @@ app.put('/api/appointments/:id/cancel',
 // ═══════════════════════════════════════════════════════════════
 // DASHBOARD STATS — Solo Admin
 // ═══════════════════════════════════════════════════════════════
-app.get('/api/dashboard/stats',
-  authenticateToken,
-  authorizeRole('ADMIN'),
-  async (req, res) => {
-    try {
-      const startOfDay = new Date()
-      startOfDay.setHours(0, 0, 0, 0)
-      const endOfDay = new Date()
-      endOfDay.setHours(23, 59, 59, 999)
+app.get('/api/dashboard/stats', authenticateToken, async (req, res) => {
+  if (req.user.role !== 'ADMIN') return res.status(403).json({ error: 'Acceso denegado' })
+
+  try {
+    const { date } = req.query
+    const targetDate = date ? new Date(date) : new Date()
+    
+    const startOfDay = new Date(targetDate)
+    startOfDay.setHours(0, 0, 0, 0)
+    
+    const endOfDay = new Date(targetDate)
+    endOfDay.setHours(23, 59, 59, 999)
 
       const [
         appointmentsToday,
