@@ -5,14 +5,14 @@
  * Configurado con credentials: 'include' para enviar cookies httpOnly (JWT).
  */
 
-const API_URL = 'http://localhost:3000/api'
+const API_URL = 'http://localhost:3000'
 
 // ═══════════════════════════════════════════════════════════════
 // Helper: fetch con manejo de errores y credenciales
 // ═══════════════════════════════════════════════════════════════
 const apiFetch = async (endpoint, options = {}) => {
   try {
-    const res = await fetch(`${API_URL}${endpoint}`, {
+    const res = await fetch(`${API_URL}/api${endpoint}`, {
       ...options,
       credentials: 'include', // Enviar cookies httpOnly automáticamente
       headers: {

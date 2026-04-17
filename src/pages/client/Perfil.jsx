@@ -138,20 +138,7 @@ export default function Perfil() {
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
-        {[
-          { label: 'Visitas', value: 2, icon: 'content_cut' },
-          { label: 'Gastado', value: `$${totalSpent + 500}`, icon: 'payments' },
-          { label: 'Barbero', value: 'Marco', icon: 'star' },
-        ].map((stat) => (
-          <div key={stat.label} className="bg-surface-container rounded-xl p-4 text-center">
-            <span className="material-symbols-outlined text-secondary text-xl mb-2 block">{stat.icon}</span>
-            <p className="font-headline font-black text-on-surface text-lg leading-none">{stat.value}</p>
-            <p className="text-outline text-[10px] uppercase tracking-widest mt-1">{stat.label}</p>
-          </div>
-        ))}
-      </div>
+
 
       {/* Info Sections */}
       <div className="space-y-3 relative">
