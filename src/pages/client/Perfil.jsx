@@ -5,7 +5,9 @@ import { updateProfile, getCurrentUser, logout } from '../../services/api'
 export default function Perfil() {
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
-  
+  const [showToast, setShowToast] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
+  const [toastType, setToastType] = useState('success') // 'success' o 'error'
   const [profileData, setProfileData] = useState({
     firstName: 'Cargando...',
     lastName: '',
@@ -48,12 +50,19 @@ export default function Perfil() {
         phone: profileData.phone,
         email: profileData.email
       })
-      if (response.success) {
-        setIsEditing(false)
-        alert("¡Perfil actualizado correctamente!")
-      }
+      
+      // Si llegamos aquí sin que arroje error, es que se guardó
+      setIsEditing(false)
+      setToastMessage("¡Información actualizada con éxito!")
+      setToastType('success')
+      setShowToast(true)
+      setTimeout(() => setShowToast(false), 3000)
     } catch (error) {
-      alert("Error al guardar perfil: " + error.message)
+      console.error("Save error:", error)
+      setToastMessage(error.message || "Hubo un problema al guardar los cambios.")
+      setToastType('error')
+      setShowToast(true)
+      setTimeout(() => setShowToast(false), 3000)
     } finally {
       setIsSaving(false)
     }
@@ -227,6 +236,22 @@ export default function Perfil() {
         <span className="material-symbols-outlined text-lg">logout</span>
         Cerrar Sesión
       </button>
+      {/* Toast Notification Premium */}
+      {showToast && (
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className={`
+            px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 border backdrop-blur-md
+            ${toastType === 'success' 
+              ? 'bg-primary-container text-on-primary-container border-primary/20' 
+              : 'bg-error-container text-on-error-container border-error/20'}
+          `}>
+            <span className="material-symbols-outlined">
+              {toastType === 'success' ? 'check_circle' : 'error'}
+            </span>
+            <span className="text-sm font-bold">{toastMessage}</span>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

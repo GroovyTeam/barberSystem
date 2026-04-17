@@ -31,18 +31,23 @@ const apiFetch = async (endpoint, options = {}) => {
       return null
     }
 
-    const data = await res.json()
-
-    if (!res.ok) {
-      throw new Error(data.error || 'Error en la solicitud')
+    // Intentar parsear JSON solo si hay contenido
+    const contentType = res.headers.get("content-type");
+    let data = null;
+    if (contentType && contentType.includes("application/json")) {
+      data = await res.json();
     }
 
-    return data
+    if (!res.ok) {
+      throw new Error(data?.error || `Error ${res.status}: ${res.statusText}`);
+    }
+
+    return data;
   } catch (error) {
-    console.error(`API Error [${endpoint}]:`, error.message)
-    throw error
+    console.error(`🔴 API Error [${endpoint}]:`, error.message);
+    throw error;
   }
-}
+};
 
 // ═══════════════════════════════════════════════════════════════
 // AUTH
@@ -72,9 +77,9 @@ export const logout = async () => {
   return apiFetch('/auth/logout', { method: 'POST' })
 }
 
-export const getMe = async () => {
+export const getCurrentUser = async () => {
   try {
-    return await apiFetch('/auth/me')
+    return await apiFetch('/users/current')
   } catch {
     return null
   }
@@ -175,14 +180,7 @@ export const updateProfile = async (profileData) => {
   }
 }
 
-export const getCurrentUser = async () => {
-  try {
-    return await apiFetch('/users/current')
-  } catch (err) {
-    console.error(err)
-    return null
-  }
-}
+
 
 // ═══════════════════════════════════════════════════════════════
 // DASHBOARD (admin)

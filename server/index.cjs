@@ -33,7 +33,10 @@ app.use(cors({
   origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
   credentials: true
 }))
-app.use(express.json({ limit: '10kb' })) // Limitar tamaño de body
+
+// PROCESAMIENTO DE DATOS (Crucial para que req.body funcione)
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 
 // ═══════════════════════════════════════════════════════════════
@@ -115,38 +118,33 @@ app.get('/api/health', (req, res) => {
 })
 
 // ACTUALIZAR PERFIL (Con validación de 10 dígitos)
+// ACTUALIZAR PERFIL (Única definición oficial)
+// ═══════════════════════════════════════════════════════════════
+// AUTH ROUTES — OWASP A02 (Cryptographic) + A07 (Auth Failures)
+// ═══════════════════════════════════════════════════════════════
+
+// ACTUALIZAR PERFIL (Única definición oficial)
 app.patch('/api/profile', authenticateToken, async (req, res) => {
   const { firstName, lastName, phone, email } = req.body
 
-  // Validación de teléfono: solo números y exactamente 10 dígitos
+  // Validación de teléfono: exactamente 10 dígitos
   const phoneRegex = /^\d{10}$/
   if (phone && !phoneRegex.test(phone)) {
     return res.status(400).json({ error: 'El teléfono debe contener exactamente 10 dígitos numéricos.' })
   }
 
   try {
-    const updatedUser = await prisma.user.update({
+    await prisma.user.update({
       where: { id: req.user.id },
-      data: {
-        firstName,
-        lastName,
-        phone,
-        email
-      }
+      data: { firstName, lastName, phone, email }
     })
-    res.json({ success: true, user: updatedUser })
+    // Respuesta inmediata y final
+    return res.status(200).send({ success: true, message: 'Actualizado' });
   } catch (err) {
     console.error('Update profile error:', err)
-    if (err.code === 'P2002') {
-      return res.status(409).json({ error: 'Este correo ya está en uso.' })
-    }
-    res.status(500).json({ error: 'Error al actualizar perfil' })
+    return res.status(500).send({ error: 'Error interno' });
   }
 })
-
-// ═══════════════════════════════════════════════════════════════
-// AUTH ROUTES — OWASP A02 (Cryptographic) + A07 (Auth Failures)
-// ═══════════════════════════════════════════════════════════════
 
 // LOGIN SOCIAL (Google/Apple)
 app.post('/api/auth/social-login', async (req, res) => {
@@ -732,35 +730,7 @@ app.get('/api/users/current', authenticateToken, async (req, res) => {
   }
 })
 
-// ACTUALIZAR PERFIL (Con validación de 10 dígitos)
-app.patch('/api/profile', authenticateToken, async (req, res) => {
-  const { firstName, lastName, phone, email } = req.body
 
-  // Validación de teléfono: solo números y exactamente 10 dígitos
-  const phoneRegex = /^\d{10}$/
-  if (phone && !phoneRegex.test(phone)) {
-    return res.status(400).json({ error: 'El teléfono debe contener exactamente 10 dígitos numéricos.' })
-  }
-
-  try {
-    const updatedUser = await prisma.user.update({
-      where: { id: req.user.id },
-      data: {
-        firstName,
-        lastName,
-        phone,
-        email
-      }
-    })
-    res.json({ success: true, user: updatedUser })
-  } catch (err) {
-    console.error('Update profile error:', err)
-    if (err.code === 'P2002') {
-      return res.status(409).json({ error: 'Este correo ya está en uso.' })
-    }
-    res.status(500).json({ error: 'Error al actualizar perfil' })
-  }
-})
 
 // ═══════════════════════════════════════════════════════════════
 // OWASP A05 — Seed route solo en desarrollo

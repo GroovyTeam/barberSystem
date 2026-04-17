@@ -165,7 +165,12 @@ Este archivo es una bitácora de aprendizaje autoescrita por **Claude** para doc
 #### Nuevas Reglas de Negocio Implementadas
 1. **Regla de las 2 Horas**: Las citas solo pueden cancelarse con al menos 2 horas de antelación. Validado en backend y reflejado en el frontend con modales premium.
 2. **Cita Express**: Acceso directo desde el Home que salta pasos de selección mediante parámetros de URL (`?service=X&barber=Y`).
-3. **Persistencia de Perfil**: Separación de `firstName` y `lastName` para una mejor experiencia de usuario y compatibilidad con Social Login.
+#### Incidente 13: Incoherencia en Notificaciones (UX Fail)
+- **Causa**: Se implementó una notificación "Toast" que usaba el mismo icono de éxito (check) tanto para mensajes de confirmación como para errores de red.
+- **Corrección**: Se introdujo el estado `toastType` para dinamizar iconos (`check_circle` vs `error`) y colores (`primary` vs `error`) según el resultado de la operación.
+- **Lección**: Nunca usar componentes estáticos para resultados dinámicos. La semántica visual (colores e iconos) debe coincidir estrictamente con el mensaje de texto para evitar desconfianza en el usuario.
 
----
-*Este log es el cerebro del proyecto. Cada error resuelto aquí es una mejora garantizada para el futuro.*
+#### Incidente 14: Fallo de Lectura en Backend (req.body vacío)
+- **Causa**: Las peticiones de actualización de perfil fallaban porque faltaba el middleware `express.json()` en el servidor, impidiendo que el backend leyera los datos del frontend.
+- **Corrección**: Se activaron `express.json()` y `express.urlencoded()` al inicio de `server/index.cjs`.
+- **Lección**: El procesamiento de JSON es la base de la comunicación moderna entre cliente y servidor. Siempre verificar su presencia antes de depurar lógica de base de datos.
