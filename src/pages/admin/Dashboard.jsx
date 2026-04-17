@@ -27,9 +27,14 @@ export default function Dashboard() {
   const location = useLocation()
 
   useEffect(() => {
-    // Sincronizar pestaña con la URL
-    if (location.pathname.includes('barberos')) setActiveTab('barberos')
-    else if (location.pathname.includes('servicios')) setActiveTab('servicios')
+    // Sincronización inteligente con la URL
+    const path = location.pathname
+    if (path.includes('barberos')) setActiveTab('barberos')
+    else if (path.includes('servicios')) setActiveTab('servicios')
+    else if (path.includes('calendario')) setActiveTab('calendario')
+    else if (path.includes('clientes')) setActiveTab('clientes')
+    else if (path.includes('reportes')) setActiveTab('reportes')
+    else if (path.includes('configuracion')) setActiveTab('configuracion')
     else setActiveTab('resumen')
     
     Promise.all([
@@ -74,18 +79,7 @@ export default function Dashboard() {
         </button>
       </div>
 
-      {/* Tabs Menu */}
-      <div className="flex gap-2 bg-surface-container-low p-1 rounded-2xl w-fit border border-outline/5">
-        {['resumen', 'servicios', 'barberos'].map(tab => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-outline hover:text-on-surface'}`}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
+
 
       {/* VIEW: RESUMEN */}
       {activeTab === 'resumen' && (
@@ -146,6 +140,56 @@ export default function Dashboard() {
                 </tbody>
               </table>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* VIEW: CALENDARIO */}
+      {activeTab === 'calendario' && (
+        <div className="animate-in slide-in-from-bottom-4 duration-500 space-y-6">
+          <h3 className="text-3xl font-black text-on-surface font-headline italic">Agenda & Calendario</h3>
+          <div className="bg-surface-container p-20 rounded-3xl border border-dashed border-outline/20 text-center">
+             <span className="material-symbols-outlined text-5xl text-outline/30 mb-4 italic">event</span>
+             <p className="text-outline text-sm italic">Cargando cronograma maestro de la barbería...</p>
+          </div>
+        </div>
+      )}
+
+      {/* VIEW: CLIENTES */}
+      {activeTab === 'clientes' && (
+        <div className="animate-in slide-in-from-bottom-4 duration-500 space-y-6">
+          <h3 className="text-3xl font-black text-on-surface font-headline italic">Base de Datos de Clientes</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+             <div className="bg-surface-container p-6 rounded-2xl border border-outline/5">
+                <p className="text-outline text-[10px] font-black uppercase tracking-widest mb-1">Total Registrados</p>
+                <h4 className="text-3xl font-black text-primary font-headline">{stats?.newClientsToday || 0}</h4>
+             </div>
+          </div>
+        </div>
+      )}
+
+      {/* VIEW: REPORTES */}
+      {activeTab === 'reportes' && (
+        <div className="animate-in slide-in-from-bottom-4 duration-500 space-y-6">
+          <h3 className="text-3xl font-black text-on-surface font-headline italic">Informes & Analítica</h3>
+          <div className="grid grid-cols-3 gap-6">
+             <div className="col-span-2 bg-surface-container p-8 rounded-3xl h-64 border border-outline/5">
+                <div className="h-full w-full bg-surface-container-low rounded-xl animate-pulse" />
+             </div>
+             <div className="bg-surface-container p-8 rounded-3xl h-64 border border-outline/5" />
+          </div>
+        </div>
+      )}
+
+      {/* VIEW: CONFIGURACIÓN */}
+      {activeTab === 'configuracion' && (
+        <div className="animate-in slide-in-from-bottom-4 duration-500 space-y-6">
+          <h3 className="text-3xl font-black text-on-surface font-headline italic">Ajustes del Sistema</h3>
+          <div className="max-w-xl space-y-4">
+             <div className="bg-surface-container p-6 rounded-2xl border border-outline/5 flex justify-between items-center">
+                <span className="font-bold text-on-surface">Horario de Apertura</span>
+                <span className="text-primary font-black">09:00 AM - 08:00 PM</span>
+             </div>
           </div>
         </div>
       )}
