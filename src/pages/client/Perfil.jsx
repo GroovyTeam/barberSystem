@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { updateProfile, getCurrentUser } from '../../services/api' 
+import { updateProfile, getCurrentUser, logout } from '../../services/api' 
 
 export default function Perfil() {
   const [isEditing, setIsEditing] = useState(false)
@@ -33,6 +33,13 @@ export default function Perfil() {
 
   // Handle form save
   const handleSave = async () => {
+    // Validar teléfono: 10 dígitos numéricos
+    const phoneRegex = /^\d{10}$/
+    if (!phoneRegex.test(profileData.phone)) {
+      alert("El teléfono debe contener exactamente 10 dígitos numéricos.")
+      return
+    }
+
     setIsSaving(true)
     try {
       const response = await updateProfile({
@@ -43,6 +50,7 @@ export default function Perfil() {
       })
       if (response.success) {
         setIsEditing(false)
+        alert("¡Perfil actualizado correctamente!")
       }
     } catch (error) {
       alert("Error al guardar perfil: " + error.message)
@@ -52,7 +60,16 @@ export default function Perfil() {
   }
 
   const handleChange = (e) => {
-    setProfileData(prev => ({ ...prev, [e.target.name]: e.target.value }))
+    const { name, value } = e.target
+    // Si es teléfono, solo permitir números y máx 10
+    if (name === 'phone') {
+      const onlyNums = value.replace(/[^0-9]/g, '')
+      if (onlyNums.length <= 10) {
+        setProfileData(prev => ({ ...prev, [name]: onlyNums }))
+      }
+      return
+    }
+    setProfileData(prev => ({ ...prev, [name]: value }))
   }
 
   return (
@@ -200,10 +217,16 @@ export default function Perfil() {
       </div>
 
       {/* Logout */}
-      <Link to="/login" className="w-full border border-error/20 hover:border-error/50 text-error py-4 rounded-xl font-headline font-bold text-sm flex items-center justify-center gap-2 transition-all">
+      <button 
+        onClick={async () => {
+          await logout();
+          window.location.href = '/login';
+        }}
+        className="w-full border border-error/20 hover:border-error/50 text-error py-4 rounded-xl font-headline font-bold text-sm flex items-center justify-center gap-2 transition-all"
+      >
         <span className="material-symbols-outlined text-lg">logout</span>
         Cerrar Sesión
-      </Link>
+      </button>
     </div>
   )
 }

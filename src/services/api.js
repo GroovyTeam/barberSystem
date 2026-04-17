@@ -23,8 +23,9 @@ const apiFetch = async (endpoint, options = {}) => {
 
     // Si es 401 (no autorizado), redirigir al login
     if (res.status === 401) {
-      // Solo redirigir si no estamos ya en login
-      if (!window.location.pathname.includes('/login')) {
+      // Solo redirigir si no estamos ya en login o welcome
+      const path = window.location.pathname;
+      if (path !== '/login' && path !== '/' && !path.includes('/auth')) {
         window.location.href = '/login'
       }
       return null

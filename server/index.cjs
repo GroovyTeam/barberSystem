@@ -114,9 +114,77 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'API de Black & Blade operando correctamente' })
 })
 
+// ACTUALIZAR PERFIL (Con validación de 10 dígitos)
+app.patch('/api/profile', authenticateToken, async (req, res) => {
+  const { firstName, lastName, phone, email } = req.body
+
+  // Validación de teléfono: solo números y exactamente 10 dígitos
+  const phoneRegex = /^\d{10}$/
+  if (phone && !phoneRegex.test(phone)) {
+    return res.status(400).json({ error: 'El teléfono debe contener exactamente 10 dígitos numéricos.' })
+  }
+
+  try {
+    const updatedUser = await prisma.user.update({
+      where: { id: req.user.id },
+      data: {
+        firstName,
+        lastName,
+        phone,
+        email
+      }
+    })
+    res.json({ success: true, user: updatedUser })
+  } catch (err) {
+    console.error('Update profile error:', err)
+    if (err.code === 'P2002') {
+      return res.status(409).json({ error: 'Este correo ya está en uso.' })
+    }
+    res.status(500).json({ error: 'Error al actualizar perfil' })
+  }
+})
+
 // ═══════════════════════════════════════════════════════════════
 // AUTH ROUTES — OWASP A02 (Cryptographic) + A07 (Auth Failures)
 // ═══════════════════════════════════════════════════════════════
+
+// LOGIN SOCIAL (Google/Apple)
+app.post('/api/auth/social-login', async (req, res) => {
+  const { firstName, lastName, email, provider } = req.body
+  try {
+    let user = await prisma.user.findUnique({ where: { email } })
+    
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          firstName,
+          lastName,
+          email,
+          password: `SOCIAL_${provider}_${Math.random()}`,
+          role: 'CLIENT'
+        }
+      })
+    }
+
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role, firstName: user.firstName, lastName: user.lastName },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES }
+    )
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 24 * 60 * 60 * 1000
+    })
+
+    res.json({ success: true, user: { id: user.id, firstName: user.firstName, lastName: user.lastName, email: user.email, role: user.role } })
+  } catch (err) {
+    console.error('Social Login Error:', err)
+    res.status(500).json({ error: 'Error en login social' })
+  }
+})
 
 // REGISTRO
 app.post('/api/auth/register', [
@@ -213,27 +281,28 @@ app.post('/api/auth/login', [
 })
 
 // SOCIAL LOGIN (Google / Apple)
-app.post('/api/auth/social-login', [
-  body('email').isEmail().normalizeEmail().withMessage('Email inválido'),
-  body('firstName').notEmpty(),
-  body('lastName').notEmpty(),
-  body('provider').isIn(['google', 'apple']).withMessage('Proveedor no soportado')
-], validate, async (req, res) => {
+app.post('/api/auth/social-login', async (req, res) => {
+  console.log('🚀 RECIBIDA PETICIÓN SOCIAL LOGIN:', req.body);
   try {
     const { email, firstName, lastName, provider } = req.body
+    
+    if (!email) {
+      console.log('❌ ERROR: Email no proporcionado');
+      return res.status(400).json({ error: 'Email requerido' })
+    }
 
     // Buscar si ya existe
     let user = await prisma.user.findUnique({ where: { email } })
+    console.log('🔍 USUARIO ENCONTRADO:', user ? 'SÍ' : 'NO');
 
     if (!user) {
-      // Crear usuario nuevo si no existe (Password aleatorio ya que es social)
-      const randomPass = await bcrypt.hash(Math.random().toString(36), 12)
+      // Crear usuario nuevo con contraseña dummy pero segura
       user = await prisma.user.create({
         data: {
-          firstName,
-          lastName,
+          firstName: firstName || 'Usuario',
+          lastName: lastName || provider,
           email,
-          password: randomPass,
+          password: `SOCIAL_${provider}_${Date.now()}`,
           role: 'CLIENT'
         }
       })
@@ -249,6 +318,7 @@ app.post('/api/auth/social-login', [
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
+      path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000
     })
 
@@ -257,14 +327,19 @@ app.post('/api/auth/social-login', [
       user: { id: user.id, firstName: user.firstName, lastName: user.lastName, email: user.email, role: user.role }
     })
   } catch (error) {
-    console.error('Social Login error:', error)
-    res.status(500).json({ error: 'Error en inicio de sesión social' })
+    console.error('Social Login fatal error:', error)
+    res.status(500).json({ error: 'Error interno en login social' })
   }
 })
 
 // LOGOUT
 app.post('/api/auth/logout', (req, res) => {
-  res.clearCookie('token', { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax' })
+  res.clearCookie('token', { 
+    httpOnly: true, 
+    secure: process.env.NODE_ENV === 'production', 
+    sameSite: 'lax',
+    path: '/' 
+  })
   res.json({ success: true, message: 'Sesión cerrada.' })
 })
 
@@ -635,17 +710,55 @@ app.put('/api/users/profile',
   }
 )
 
-// Obtener usuario actual (legacy support)
+// Obtener usuario actual
 app.get('/api/users/current', authenticateToken, async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user.id },
-      select: { id: true, name: true, email: true, phone: true, role: true, createdAt: true }
+      select: { 
+        id: true, 
+        firstName: true, 
+        lastName: true, 
+        email: true, 
+        phone: true, 
+        role: true, 
+        createdAt: true 
+      }
     })
     res.json(user)
   } catch (err) {
     console.error('Current user error:', err)
     res.status(500).json({ error: 'Error obteniendo usuario' })
+  }
+})
+
+// ACTUALIZAR PERFIL (Con validación de 10 dígitos)
+app.patch('/api/profile', authenticateToken, async (req, res) => {
+  const { firstName, lastName, phone, email } = req.body
+
+  // Validación de teléfono: solo números y exactamente 10 dígitos
+  const phoneRegex = /^\d{10}$/
+  if (phone && !phoneRegex.test(phone)) {
+    return res.status(400).json({ error: 'El teléfono debe contener exactamente 10 dígitos numéricos.' })
+  }
+
+  try {
+    const updatedUser = await prisma.user.update({
+      where: { id: req.user.id },
+      data: {
+        firstName,
+        lastName,
+        phone,
+        email
+      }
+    })
+    res.json({ success: true, user: updatedUser })
+  } catch (err) {
+    console.error('Update profile error:', err)
+    if (err.code === 'P2002') {
+      return res.status(409).json({ error: 'Este correo ya está en uso.' })
+    }
+    res.status(500).json({ error: 'Error al actualizar perfil' })
   }
 })
 

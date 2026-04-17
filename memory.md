@@ -148,10 +148,24 @@ Este archivo es una bitácora de aprendizaje autoescrita por **Claude** para doc
 - **Entrada Cliente**: Botón "Soy Cliente" -> `/home`.
 - **Entrada Admin**: Botón "Soy Admin" -> `/admin`.
 
-#### Incidente 10: Navegación Circular (Bucle al Welcome)
-- **Causa**: Al mover el portal cliente a `/home`, los componentes `Login`, `TopAppBar` y `BottomNavBar` seguían usando `navigate('/')` o `to='/'`, lo que expulsaba al usuario logueado de vuelta al selector de roles.
-- **Corrección**: Se actualizaron todos los punteros de navegación del cliente para usar `/home` como su nueva ruta raíz operativa.
-- **Lección**: Al refactorizar la ruta base de un portal, se deben auditar todos los componentes de navegación (Header, Footer, Navbars) y los manejadores de eventos (Redirects post-auth).
+#### Incidente 11: Pantalla Blanca (SyntaxError de Exportación)
+- **Causa**: Se renombró la función `updateUserProfile` a `updateProfile` en `api.js`, pero no se actualizaron las importaciones en `Perfil.jsx`. Esto causó un error fatal durante el empaquetado de Vite.
+- **Corrección**: Se estandarizó el nombre a `updateProfile` en todo el proyecto.
+- **Lección**: Siempre usar herramientas de búsqueda global (`grep`) después de renombrar funciones en la capa de servicios para asegurar la integridad de las importaciones.
+
+#### Incidente 12: Bloqueo de Renderizado (Backend Offline)
+- **Causa**: El frontend intentaba realizar peticiones críticas durante el montaje de componentes (en `useEffect`) mientras el backend estaba apagado, lo que en algunos entornos causaba que la app no montara correctamente.
+- **Corrección**: Se implementaron bloques `try/catch` y validaciones de datos (`Array.isArray`) en el `Home.jsx` y se reactivó el proceso del servidor. Además, se añadió un **ErrorBoundary** en `App.jsx` para evitar pantallas blancas.
+- **Lección**: Nunca confiar en que los datos del backend llegarán siempre; blindar los componentes con estados iniciales vacíos (`[]` o `null`) y validaciones rigurosas.
+
+#### Mejora Técnica: Estabilidad y Carga
+- **Lazy Loading**: Se implementó `React.lazy` para cargar las páginas solo cuando se necesitan. Esto reduce el peso del paquete inicial y evita que un error en una página "mate" a las demás.
+- **Error Boundary**: Se añadió un capturador de errores global que muestra un mensaje descriptivo en lugar de una pantalla blanca si un componente falla.
+
+#### Nuevas Reglas de Negocio Implementadas
+1. **Regla de las 2 Horas**: Las citas solo pueden cancelarse con al menos 2 horas de antelación. Validado en backend y reflejado en el frontend con modales premium.
+2. **Cita Express**: Acceso directo desde el Home que salta pasos de selección mediante parámetros de URL (`?service=X&barber=Y`).
+3. **Persistencia de Perfil**: Separación de `firstName` y `lastName` para una mejor experiencia de usuario y compatibilidad con Social Login.
 
 ---
-*Este log debe actualizarse después de cada sesión de corrección importante. Cada entrada debe incluir: Incidente, Causa, Corrección y Lección.*
+*Este log es el cerebro del proyecto. Cada error resuelto aquí es una mejora garantizada para el futuro.*
