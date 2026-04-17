@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { getBarbers } from '../../services/api'
 import TopAppBar from '../../components/layout/TopAppBar'
 
 export default function BarbersList() {
+  const navigate = useNavigate()
   const [barbers, setBarbers] = useState([])
   const [loading, setLoading] = useState(true)
   const [selectedBarber, setSelectedBarber] = useState(null)
@@ -26,11 +28,21 @@ export default function BarbersList() {
       <TopAppBar title="Nuestros Barberos" showBack />
       
       <main className="flex-1 px-6 py-6">
-        <div className="mb-8">
-          <h1 className="font-headline font-black text-3xl text-on-surface leading-tight">
-            Elige a tu <span className="text-primary italic">Expert</span>
-          </h1>
-          <p className="text-outline text-sm mt-2">Maestros del detalle y la tradición.</p>
+        <div className="mb-8 flex justify-between items-start">
+          <div>
+            <h1 className="font-headline font-black text-4xl text-on-surface leading-none uppercase tracking-tighter">
+              Elige a tu <br /><span className="text-primary italic">Expert</span>
+            </h1>
+            <p className="text-outline text-[10px] font-black uppercase tracking-[0.2em] mt-3">Maestros de la Tradición</p>
+          </div>
+          
+          <button 
+            onClick={() => navigate('/home')}
+            className="flex items-center gap-2 bg-surface-container-high px-6 py-3 rounded-2xl border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-on-primary transition-all shadow-lg shadow-black/20"
+          >
+            <span className="material-symbols-outlined text-sm">home</span>
+            Regresar
+          </button>
         </div>
 
         {loading ? (
@@ -43,7 +55,7 @@ export default function BarbersList() {
               <div 
                 key={barber.id} 
                 onClick={() => setSelectedBarber(barber)}
-                className="bg-surface-container rounded-2xl p-4 flex items-center gap-5 border border-primary/5 hover:border-primary/20 transition-all group cursor-pointer"
+                className="bg-surface-container rounded-2xl p-5 flex items-center gap-5 border-2 border-primary/20 hover:border-primary shadow-xl shadow-black/10 transition-all group cursor-pointer"
               >
                 {/* Avatar */}
                 <div className="w-20 h-20 rounded-xl overflow-hidden bg-surface-container-high relative flex-shrink-0">
@@ -94,26 +106,21 @@ export default function BarbersList() {
       {selectedBarber && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-6 animate-in fade-in duration-300">
           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setSelectedBarber(null)} />
-          <div className="bg-surface-container rounded-3xl p-8 max-w-sm w-full relative z-10 border border-primary/20 shadow-2xl">
-            <button 
-              onClick={() => setSelectedBarber(null)}
-              className="absolute right-4 top-4 text-outline hover:text-on-surface"
-            >
-              <span className="material-symbols-outlined">close</span>
-            </button>
-
-            <div className="flex flex-col items-center text-center">
-              <div className="w-24 h-24 rounded-2xl overflow-hidden mb-4 border-2 border-primary/20 p-1">
-                <img src={selectedBarber.avatar} className="w-full h-full object-cover rounded-xl" />
-              </div>
-              <h2 className="font-headline font-black text-2xl text-on-surface">{selectedBarber.name}</h2>
-              <p className="text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-6">{selectedBarber.specialty}</p>
-              
-              <div className="bg-surface-container-low p-6 rounded-2xl text-left border border-primary/5">
-                <h4 className="text-[10px] uppercase font-black text-outline tracking-widest mb-3">Biografía & Habilidades</h4>
-                <p className="text-on-surface text-sm leading-relaxed italic">
-                  {selectedBarber.bio || "Este experto barbero prefiere que su trabajo hable por él. Especialista en cortes clásicos y modernos."}
-                </p>
+          <div className="bg-surface-container p-1 rounded-[2.5rem] max-w-sm w-full relative z-10 border-2 border-primary shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] animate-in zoom-in-95">
+            <div className="bg-surface-container-high rounded-[2.3rem] p-8 border border-primary/10">
+              <div className="flex flex-col items-center text-center">
+                <div className="w-28 h-28 rounded-2xl overflow-hidden mb-6 border-2 border-primary shadow-lg p-1">
+                  <img src={selectedBarber.avatar} className="w-full h-full object-cover rounded-xl" />
+                </div>
+                <h2 className="font-headline font-black text-3xl text-on-surface italic uppercase tracking-tighter leading-none mb-2">{selectedBarber.name}</h2>
+                <p className="text-primary text-[10px] font-black uppercase tracking-[0.3em] mb-8">{selectedBarber.specialty}</p>
+                
+                <div className="bg-surface-container-highest p-6 rounded-3xl text-left border border-primary/5 mb-8">
+                  <h4 className="text-[9px] uppercase font-black text-outline tracking-[0.2em] mb-4 border-b border-outline/10 pb-2">Habilidades Maestras</h4>
+                  <p className="text-on-surface/90 text-sm leading-relaxed italic font-medium">
+                    "{selectedBarber.bio || "Este experto barbero prefiere que su trabajo hable por él. Especialista en cortes de alta gama y diseño de barbas."}"
+                  </p>
+                </div>
               </div>
             </div>
           </div>

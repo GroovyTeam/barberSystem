@@ -32,7 +32,6 @@ const Welcome = lazy(() => import('./pages/Welcome'))
 const Login = lazy(() => import('./pages/auth/Login'))
 const ClientLayout = lazy(() => import('./layouts/ClientLayout'))
 const Home = lazy(() => import('./pages/client/Home'))
-const Servicios = lazy(() => import('./pages/client/Servicios'))
 const ReservaCita = lazy(() => import('./pages/client/ReservaCita'))
 const MisCitas = lazy(() => import('./pages/client/MisCitas'))
 const Perfil = lazy(() => import('./pages/client/Perfil'))
@@ -53,7 +52,6 @@ export default function App() {
             
             <Route element={<ClientLayout />}>
               <Route path="/home" element={<Home />} />
-              <Route path="/servicios" element={<Servicios />} />
               <Route path="/reservar" element={<ReservaCita />} />
               <Route path="/mis-citas" element={<MisCitas />} />
               <Route path="/perfil" element={<Perfil />} />

@@ -44,6 +44,11 @@ export default function Dashboard() {
         getServices(),
         getBarbers(true)
       ]).then(([statsData, servicesData, barbersData]) => {
+        if (statsData?.error || statsData?.status === 403) {
+           alert("⛔ ACCESO DENEGADO: Tu cuenta actual no tiene permisos de Administrador. Por favor, cierra sesión e ingresa con la cuenta de Admin para ver las citas.")
+           setLoading(false)
+           return
+        }
         setStats(statsData)
         setServices(servicesData)
         setBarberList(barbersData)
@@ -56,7 +61,10 @@ export default function Dashboard() {
     // TIEMPO REAL: Refrescar estadísticas cada 10 segundos
     const interval = setInterval(() => {
       getDashboardStats(selectedDate).then(data => {
-        if (data) setStats(data)
+        if (data) {
+          console.log('[DEBUG ADMIN] Citas recibidas:', data.recentAppointments)
+          setStats(data)
+        }
       })
     }, 10000)
 
@@ -212,7 +220,12 @@ export default function Dashboard() {
 
           <div className="space-y-2 relative">
             {['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'].map(hour => {
-              const appointmentsAtHour = (stats?.recentAppointments || []).filter(a => a.time.startsWith(hour.split(':')[0]))
+              const hourNumber = hour.split(':')[0]
+              const appointmentsAtHour = (stats?.recentAppointments || []).filter(a => {
+                const apptHour = a.time.split(':')[0]
+                // Comparar solo el número de la hora (ej: 10 == 10) para evitar fallos de formato AM/PM o minutos
+                return apptHour.replace(/^0+/, '') === hourNumber.replace(/^0+/, '')
+              })
               
               return (
                 <div key={hour} className="flex gap-6 group">

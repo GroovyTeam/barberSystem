@@ -163,47 +163,59 @@ export default function ReservaCita() {
 
       {/* Step 0: Select Service */}
       {step === 0 && (
-        <div className="space-y-8">
+        <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
+          {/* Filtros de Categoría */}
+          <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
+            {['Todos', 'Corte', 'Barba'].map(cat => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-8 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all border ${activeCategory === cat ? 'bg-primary text-on-primary border-primary shadow-lg shadow-primary/20' : 'bg-surface-container border-outline/5 text-outline hover:border-primary/20'}`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {services.map(service => (
+            {(services.filter(s => activeCategory === 'Todos' || s.category === activeCategory)).map(service => (
               <button
                 key={service.id}
                 onClick={() => setSelectedService(service)}
-                className={`p-5 rounded-xl text-left transition-all duration-300 border relative group ${
+                className={`p-6 rounded-2xl text-left transition-all duration-300 border relative group overflow-hidden ${
                   selectedService?.id === service.id
-                    ? 'bg-primary-container/20 border-primary shadow-[0_0_20px_rgba(249,186,130,0.1)]'
-                    : 'bg-surface-container border-transparent hover:border-outline-variant/30'
+                    ? 'bg-primary/5 border-primary shadow-xl shadow-primary/10 scale-[1.02]'
+                    : 'bg-surface-container border-outline/5 hover:border-primary/30'
                 }`}
               >
-                <div className="flex items-start gap-4">
-                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors ${selectedService?.id === service.id ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-secondary'}`}>
-                    <span className="material-symbols-outlined text-xl">{service.icon}</span>
+                <div className="flex items-center gap-5 relative z-10">
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all ${selectedService?.id === service.id ? 'bg-primary text-on-primary rotate-3' : 'bg-surface-container-high text-outline'}`}>
+                    <span className="material-symbols-outlined text-2xl font-variation-icon">{service.icon}</span>
                   </div>
-                  <div className="flex-1 pr-10">
-                    <h3 className="font-headline font-bold text-on-surface">{service.name}</h3>
-                    <p className="text-[10px] text-on-surface-variant line-clamp-1 mt-0.5">{service.description}</p>
-                    <div className="flex gap-3 mt-2 items-center">
-                      <span className="text-primary text-sm font-black">${service.price}</span>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-on-surface text-lg leading-tight mb-1">{service.name}</h3>
+                    <div className="flex gap-3 items-center">
+                      <span className="text-primary text-sm font-black italic">${service.price}</span>
                       <span className="w-1 h-1 bg-outline/30 rounded-full" />
-                      <span className="text-outline text-[10px] font-bold uppercase tracking-wider">{service.duration} min</span>
+                      <span className="text-outline text-[10px] font-black uppercase tracking-wider">{service.duration} min</span>
                     </div>
                   </div>
-
-                  {/* Botón Siguiente Mini (solo si está seleccionado) */}
                   {selectedService?.id === service.id && (
                     <div 
                       onClick={(e) => { e.stopPropagation(); handleNext(); }}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-secondary text-on-secondary rounded-full flex items-center justify-center shadow-lg hover:scale-110 active:scale-90 transition-all animate-in zoom-in duration-300"
+                      className="w-10 h-10 bg-secondary text-on-secondary rounded-full flex items-center justify-center shadow-lg hover:scale-110 active:scale-90 transition-all animate-in zoom-in"
                     >
                       <span className="material-symbols-outlined text-xl">arrow_forward</span>
                     </div>
                   )}
                 </div>
+                {/* Subtle Gold Pulse if selected */}
+                {selectedService?.id === service.id && (
+                  <div className="absolute inset-0 bg-primary/5 animate-pulse" />
+                )}
               </button>
             ))}
           </div>
-          
-
         </div>
       )}
 
@@ -211,11 +223,11 @@ export default function ReservaCita() {
       {step === 1 && (
         <div className="space-y-6">
           <button 
-            onClick={handleBack}
+            onClick={() => navigate('/home')}
             className="flex items-center gap-2 text-outline hover:text-secondary transition-colors text-sm font-bold group mb-2"
           >
             <span className="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">arrow_back</span>
-            Volver a Servicios
+            Volver al Inicio
           </button>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

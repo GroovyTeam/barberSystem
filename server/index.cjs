@@ -573,18 +573,21 @@ app.put('/api/appointments/:id/cancel',
 // DASHBOARD STATS — Solo Admin
 // ═══════════════════════════════════════════════════════════════
 app.get('/api/dashboard/stats', authenticateToken, async (req, res) => {
-  if (req.user.role !== 'ADMIN') return res.status(403).json({ error: 'Acceso denegado' })
+  const userRole = (req.user.role || '').toUpperCase().trim()
+  if (userRole !== 'ADMIN') return res.status(403).json({ error: 'Acceso denegado. Rol insuficiente.' })
 
   try {
     const { date } = req.query
-    // Normalizar la fecha para que busque por día natural sin importar la hora exacta
     const targetDate = date ? new Date(date + 'T12:00:00') : new Date()
     
-    const startOfDay = new Date(targetDate)
-    startOfDay.setHours(0, 0, 0, 0)
+    // Rango extendido: Buscar desde 12 horas antes hasta 12 horas después para evitar fallos de zona horaria
+    const startRange = new Date(targetDate)
+    startRange.setHours(-12, 0, 0, 0)
     
-    const endOfDay = new Date(targetDate)
-    endOfDay.setHours(23, 59, 59, 999)
+    const endRange = new Date(targetDate)
+    endRange.setHours(36, 0, 0, 0)
+
+    console.log(`[DEBUG] Buscando citas entre: ${startRange.toISOString()} y ${endRange.toISOString()}`)
 
       const [
         appointmentsToday,
@@ -596,7 +599,7 @@ app.get('/api/dashboard/stats', authenticateToken, async (req, res) => {
       ] = await Promise.all([
         prisma.appointment.count({
           where: {
-            date: { gte: startOfDay, lte: endOfDay },
+            date: { gte: startRange, lte: endRange },
             status: { not: 'CANCELLED' }
           }
         }),
@@ -606,21 +609,21 @@ app.get('/api/dashboard/stats', authenticateToken, async (req, res) => {
         prisma.user.count({
           where: {
             role: 'CLIENT',
-            createdAt: { gte: startOfDay, lte: endOfDay }
+            createdAt: { gte: startRange, lte: endRange }
           }
         }),
         prisma.appointment.aggregate({
           where: {
-            date: { gte: startOfDay, lte: endOfDay },
+            date: { gte: startRange, lte: endRange },
             status: { not: 'CANCELLED' }
           },
           _sum: { price: true }
         }),
-      prisma.appointment.findMany({
-        where: {
-          date: { gte: startOfDay, lte: endOfDay },
-          status: { not: 'CANCELLED' }
-        },
+        prisma.appointment.findMany({
+          where: {
+            date: { gte: startRange, lte: endRange },
+            status: { not: 'CANCELLED' }
+          },
         take: 20,
         orderBy: [{ date: 'asc' }, { time: 'asc' }],
         include: {
@@ -634,7 +637,7 @@ app.get('/api/dashboard/stats', authenticateToken, async (req, res) => {
         _count: { id: true },
         _sum: { price: true },
         where: {
-          date: { gte: startOfDay, lte: endOfDay },
+          date: { gte: startRange, lte: endRange },
           status: { not: 'CANCELLED' }
         },
         orderBy: { _count: { id: 'desc' } },
