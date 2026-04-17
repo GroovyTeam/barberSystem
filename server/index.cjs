@@ -577,7 +577,8 @@ app.get('/api/dashboard/stats', authenticateToken, async (req, res) => {
 
   try {
     const { date } = req.query
-    const targetDate = date ? new Date(date) : new Date()
+    // Normalizar la fecha para que busque por día natural sin importar la hora exacta
+    const targetDate = date ? new Date(date + 'T12:00:00') : new Date()
     
     const startOfDay = new Date(targetDate)
     startOfDay.setHours(0, 0, 0, 0)
@@ -615,26 +616,30 @@ app.get('/api/dashboard/stats', authenticateToken, async (req, res) => {
           },
           _sum: { price: true }
         }),
-        prisma.appointment.findMany({
-          where: {
-            date: { gte: startOfDay, lte: endOfDay },
-            status: 'PENDING'
-          },
-          take: 5,
-          orderBy: [{ date: 'asc' }, { time: 'asc' }],
-          include: {
-            client: { select: { name: true } },
-            service: true,
-            barber: true
-          }
-        }),
-        prisma.appointment.groupBy({
-          by: ['barberId'],
-          _count: { id: true },
-          _sum: { price: true },
-          orderBy: { _count: { id: 'desc' } },
-          take: 3
-        })
+      prisma.appointment.findMany({
+        where: {
+          date: { gte: startOfDay, lte: endOfDay },
+          status: { not: 'CANCELLED' }
+        },
+        take: 20,
+        orderBy: [{ date: 'asc' }, { time: 'asc' }],
+        include: {
+          user: { select: { name: true } },
+          service: true,
+          barber: true
+        }
+      }),
+      prisma.appointment.groupBy({
+        by: ['barberId'],
+        _count: { id: true },
+        _sum: { price: true },
+        where: {
+          date: { gte: startOfDay, lte: endOfDay },
+          status: { not: 'CANCELLED' }
+        },
+        orderBy: { _count: { id: 'desc' } },
+        take: 3
+      })
       ])
 
       // Enriquecer datos de desempeño
@@ -654,8 +659,8 @@ app.get('/api/dashboard/stats', authenticateToken, async (req, res) => {
         revenueToday: revenueTodayResult?._sum?.price || 0,
         recentAppointments: (recentAppointments || []).map(a => ({
           id: a.id,
-          client: a.client?.name || 'Cliente',
-          initials: (a.client?.name || 'C').split(' ').map(n => n[0]).join(''),
+          client: a.user?.name || 'Cliente',
+          initials: (a.user?.name || 'C').split(' ').map(n => n[0]).join(''),
           clientType: 'Cliente Regular',
           service: a.service?.name || 'Servicio',
           barber: a.barber?.name || 'Barbero',
@@ -786,6 +791,23 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // ═══════════════════════════════════════════════════════════════
+app.delete('/api/appointments/:id', authenticateToken, async (req, res) => {
+  const { id } = req.params
+  try {
+    const appt = await prisma.appointment.findUnique({ where: { id } })
+    if (!appt) return res.status(404).json({ error: 'Cita no encontrada' })
+
+    if (req.user.role !== 'ADMIN' && appt.userId !== req.user.id) {
+      return res.status(403).json({ error: 'No tienes permiso' })
+    }
+
+    await prisma.appointment.delete({ where: { id } })
+    res.json({ message: 'Cita eliminada permanentemente' })
+  } catch (err) {
+    res.status(500).json({ error: 'Error al eliminar' })
+  }
+})
+
 // OWASP A10 — Error Handler Centralizado
 // Nunca exponer stack traces ni detalles internos al cliente
 // ═══════════════════════════════════════════════════════════════

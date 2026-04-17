@@ -154,6 +154,15 @@ export const cancelAppointment = async (apptId) => {
   }
 }
 
+export const deleteAppointment = async (apptId) => {
+  try {
+    return await apiFetch(`/appointments/${apptId}`, { method: 'DELETE' })
+  } catch (err) {
+    console.error(err)
+    return { error: true }
+  }
+}
+
 export const getAppointments = async () => {
   try {
     return await apiFetch('/appointments')

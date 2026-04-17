@@ -37,17 +37,30 @@ export default function Dashboard() {
     else if (path.includes('reportes')) setActiveTab('reportes')
     else if (path.includes('configuracion')) setActiveTab('configuracion')
     else setActiveTab('resumen')
-    
-    Promise.all([
-      getDashboardStats(selectedDate),
-      getServices(),
-      getBarbers(true)
-    ]).then(([statsData, servicesData, barbersData]) => {
-      setStats(statsData)
-      setServices(servicesData)
-      setBarberList(barbersData)
-      setLoading(false)
-    })
+
+    const fetchAll = () => {
+      Promise.all([
+        getDashboardStats(selectedDate),
+        getServices(),
+        getBarbers(true)
+      ]).then(([statsData, servicesData, barbersData]) => {
+        setStats(statsData)
+        setServices(servicesData)
+        setBarberList(barbersData)
+        setLoading(false)
+      })
+    }
+
+    fetchAll()
+
+    // TIEMPO REAL: Refrescar estadísticas cada 10 segundos
+    const interval = setInterval(() => {
+      getDashboardStats(selectedDate).then(data => {
+        if (data) setStats(data)
+      })
+    }, 10000)
+
+    return () => clearInterval(interval)
   }, [location.pathname, selectedDate])
 
   if (loading) return (
@@ -185,10 +198,10 @@ export default function Dashboard() {
                     onClick={() => setSelectedDate(dateStr)}
                     className={`flex flex-col items-center justify-center min-w-[70px] h-[90px] rounded-2xl transition-all border-2 ${isActive ? 'bg-primary border-primary shadow-xl shadow-primary/20 scale-105' : 'bg-surface-container-low border-outline/5 hover:border-primary/40'}`}
                   >
-                    <span className={`text-[9px] font-black uppercase tracking-widest mb-1 ${isToday ? 'text-on-primary' : 'text-outline'}`}>
+                    <span className={`text-[9px] font-black uppercase tracking-widest mb-1 ${isActive ? 'text-on-primary' : 'text-outline'}`}>
                       {date.toLocaleDateString('es-MX', { weekday: 'short' }).replace('.', '')}
                     </span>
-                    <span className={`text-2xl font-headline font-black ${isToday ? 'text-on-primary' : 'text-on-surface'}`}>
+                    <span className={`text-2xl font-headline font-black ${isActive ? 'text-on-primary' : 'text-on-surface'}`}>
                       {date.getDate()}
                     </span>
                   </button>
